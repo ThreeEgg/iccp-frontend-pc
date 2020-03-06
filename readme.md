@@ -1,4 +1,21 @@
-# 国际风险管理平台ICCP - PC网页端
+# 国际风险管理平台 ICCP - PC 网页端
+
+## TODOs
+
+[ ] CDN 配置 [ ] OSS 集成
+
+## 工程化
+
+### 代码质量配置
+
+`eslint`、`prettier`、`stylelint`均使用`@umijs/fabric`库做出的规范，与`ant.design pro`项目模板保持一致
+
+### 部署
+
+- 测试环境页面访问地址：http://172.16.110.5:1993/
+- 端口自定义 配置环境变量`PORT`
+- 部署脚本：deploy-test.sh
+- 使用`pm2`管理 server，运行`npm run pm2`启动，具体见`pm2.json`配置
 
 ## Antd
 
@@ -10,17 +27,23 @@
 
 参考以下两篇文章已完成配置
 
-> https://www.cnblogs.com/1wen/p/10793868.html
-> https://www.jianshu.com/p/823537e79fa4
+> https://www.cnblogs.com/1wen/p/10793868.html > https://www.jianshu.com/p/823537e79fa4
 
-## 状态机DVA
+## DVA
 
 > 参考该项目配置：https://github.com/smithyj/nextjs-dva-ssr
 
-### loading
+### 加载 Loading
 
-使用`dva-loading`简化loading逻辑代码
+使用`dva-loading`简化 loading 逻辑代码
 
 ## 国际化
 
-使用`react-intl-universal`方案，特点主要是`修改语言需要刷新页面才能生效`，临时方案
+使用`react-intl-universal`方案，特点主要是`修改语言需要刷新页面才能生效`，_临时方案_
+
+## 实现细节
+
+### OSS 后续需要支持为私有读写
+
+- 使用 oss sdk 对图片、文件进行签名，然后使用签名后的地址进行访问
+- 考虑代码方便，考虑将相关资源全部放在同一路径下，对该路径进行签名，统一使用，可以减少签名调用次数
