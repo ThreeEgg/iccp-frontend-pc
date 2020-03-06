@@ -1,4 +1,15 @@
-# 国际风险管理平台ICCP - PC网页端
+# 国际风险管理平台 ICCP - PC 网页端
+
+## 工程化
+
+### 代码质量配置
+
+`eslint`、`prettier`、`stylelint`均使用`@umijs/fabric`库做出的规范，与`ant.design pro`项目模板保持一致
+
+### 部署
+
+- 端口自定义 配置环境变量`PORT`
+- 部署脚本：deploy-test.sh
 
 ## Antd
 
@@ -10,16 +21,15 @@
 
 参考以下两篇文章已完成配置
 
-> https://www.cnblogs.com/1wen/p/10793868.html
-> https://www.jianshu.com/p/823537e79fa4
+> https://www.cnblogs.com/1wen/p/10793868.html > https://www.jianshu.com/p/823537e79fa4
 
-## 状态机DVA
+## 状态机 DVA
 
 > 参考该项目配置：https://github.com/smithyj/nextjs-dva-ssr
 
 ### loading
 
-使用`dva-loading`简化loading逻辑代码
+使用`dva-loading`简化 loading 逻辑代码
 
 ## 国际化
 
