@@ -1,5 +1,9 @@
 # 国际风险管理平台 ICCP - PC 网页端
 
+## TODOs
+
+[ ] CDN 配置 [ ] OSS 集成
+
 ## 工程化
 
 ### 代码质量配置
@@ -25,14 +29,21 @@
 
 > https://www.cnblogs.com/1wen/p/10793868.html > https://www.jianshu.com/p/823537e79fa4
 
-## 状态机 DVA
+## DVA
 
 > 参考该项目配置：https://github.com/smithyj/nextjs-dva-ssr
 
-### loading
+### 加载 Loading
 
 使用`dva-loading`简化 loading 逻辑代码
 
 ## 国际化
 
 使用`react-intl-universal`方案，特点主要是`修改语言需要刷新页面才能生效`，_临时方案_
+
+## 实现细节
+
+### OSS 后续需要支持为私有读写
+
+- 使用 oss sdk 对图片、文件进行签名，然后使用签名后的地址进行访问
+- 考虑代码方便，考虑将相关资源全部放在同一路径下，对该路径进行签名，统一使用，可以减少签名调用次数
