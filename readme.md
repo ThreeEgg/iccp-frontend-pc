@@ -10,6 +10,7 @@
 
 - 端口自定义 配置环境变量`PORT`
 - 部署脚本：deploy-test.sh
+- 使用`pm2`管理 server，运行`npm run pm2`启动，具体见`pm2.json`配置
 
 ## Antd
 
@@ -33,4 +34,4 @@
 
 ## 国际化
 
-使用`react-intl-universal`方案，特点主要是`修改语言需要刷新页面才能生效`，临时方案
+使用`react-intl-universal`方案，特点主要是`修改语言需要刷新页面才能生效`，_临时方案_
