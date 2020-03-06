@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-06 15:43:36
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-06 17:07:13
+ * @FilePath: \PC端-前端\src\pages\index.js
+ */
 import React from 'react';
 import Link from 'next/link';
 import intl from 'react-intl-universal';
@@ -51,6 +60,10 @@ export default class extends React.Component {
         </div>
         <Link href="/home">
           <a>跳转页面</a>
+        </Link>
+        <br></br>
+        <Link href="/chat">
+          <a>聊天</a>
         </Link>
         <p>客户端UA： {this.props.userAgent}</p>
         <p>服务端请求的数据： {this.props.stars}</p>
