@@ -38,7 +38,6 @@
   "dependencies": {
     "antd": "^4.0.1",
     "axios": "^0.19.2",
-    "chat-react": "^0.1.2",
     "cross-env": "^7.0.2",
     "dva-immer": "^0.4.19",
     "dva-loading": "^3.0.20",
