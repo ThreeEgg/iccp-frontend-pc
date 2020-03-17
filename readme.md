@@ -2,7 +2,7 @@
 
 ## TODOs
 
-[ ] CDN 配置 [ ] OSS 集成
+[ ] CDN 配置 [ ] OSS 集成 [ ] im进阶功能 
 
 ## 工程化
 
