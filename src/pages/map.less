@@ -1,0 +1,111 @@
+@import '../components/common.less';
+.map{
+    width: 100%;
+    height: 100%;
+    .mapT{
+        width: 100%;
+        height: 100%;
+        background-image: url('/images/map.png');
+        background-size: cover;
+    }
+    .content{
+        width: 100%;
+        background: #F6F6F6;
+        padding: 70px 0 20px;
+        .content-t{
+            height: 40px;
+            color: #1B2857;
+            justify-content: space-between;
+            p{
+                width: 470px;
+                height: 1px;
+                margin: 0;
+                background: #DDDDDD;
+            }
+            div{
+                div{
+                    font-size: 28px;
+                    margin-left: 15px;
+                    margin-right: 7px;
+                    font-weight: 800;
+                }
+            }
+            sup{
+                font-size: 16px;
+                top: -6px;
+            }
+        }
+        .content-b{
+            text-align: center;
+            Button{
+                color: #CCCCCC;
+                font-size: 18px;
+                border-radius: 19px;
+                background: transparent;
+                position: relative;
+                padding: 4px 24px;
+                line-height: 12px;
+                border:1px solid rgba(204,204,204,1);
+            }
+        }
+        .content-c{
+            margin: 46px 0 40px;
+            line-height: 28px;
+        }
+        .content-caseC{
+            margin: 55px 0 40px;
+            .item{
+                width: 384px;
+                height: 280px;
+                cursor: pointer;
+                position: relative;
+                img{
+                    width: 100%;
+                    height: 100%;
+                }
+                .item-hover{
+                    height: 330px;
+                    padding: 8px 24px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    background: url('/images/img_cardbg_hover.png') center no-repeat;
+                    background-size: cover;
+                    color: #fff;
+                    border-radius: 10px;
+                    box-shadow: 0px 0px 10px 0px #1B2857;
+                    h1{
+                        color: #ffffff;
+                        font-size: 24px;
+                        font-weight: 600;
+                    }
+                    p{
+                        font-size: 20px;
+                        font-weight: 600;
+                        margin: 30px 0;
+                    }
+                    div{
+                        font-size: 16px;
+                        line-height: 22px;
+                        color: rgba(255,255,255,.8);
+                    }
+                }
+            }
+            .item1{
+                box-shadow: 0px 36px 30px -25px #229fb3;
+            }
+            .item2{
+                box-shadow: 0px 36px 30px -25px #909FBD;
+            }
+            .item3{
+                box-shadow: 0px 36px 30px -25px #5966a2;
+            }
+        }
+    }
+    .mapImg{
+        background: #F6F6F6;
+        img{
+            width: 100%;
+        }
+    }
+}

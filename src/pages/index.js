@@ -1,18 +1,15 @@
-/*
- * @Descripttion: 
- * @version: 
- * @Author: 毛翔宇
- * @Date: 2020-03-06 15:43:36
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-06 17:07:13
- * @FilePath: \PC端-前端\src\pages\index.js
- */
 import React from 'react';
 import Link from 'next/link';
 import intl from 'react-intl-universal';
 import BasicLayout from '../layouts/BasicLayout';
-import { Button } from 'antd';
+import LoginLayout from '../layouts/LoginLayout';
+import Header from '../components/Header';
+import Login from './login';
+import RetrievePWD from './retrievePWD';
+import changePWD from './changePWD';
+import { Tabs } from 'antd';
 import './index.less';
+const { TabPane } = Tabs;
 
 export default class extends React.Component {
   static async getInitialProps({ req }) {
@@ -48,26 +45,9 @@ export default class extends React.Component {
 
   render() {
     return (
-      <BasicLayout>
-        <div>
-          <img className='logo' src="/logo.svg" alt="" />
-        </div>
-        <div>
-          当前语言：{this.state.lang} <Button onClick={this.changLang}>切换</Button>
-        </div>
-        <div>
-          国际化示例： {intl.get('home')}
-        </div>
-        <Link href="/home">
-          <a>跳转页面</a>
-        </Link>
-        <br></br>
-        <Link href="/chat">
-          <a>聊天</a>
-        </Link>
-        <p>客户端UA： {this.props.userAgent}</p>
-        <p>服务端请求的数据： {this.props.stars}</p>
-      </BasicLayout>
+        <LoginLayout >
+            <Login />
+        </LoginLayout>
     )
   }
 }
