@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-13 17:49:16
+ * @LastEditTime: 2020-03-18 18:08:10
  * @FilePath: \PC端-前端\src\modules\NIM\pages\components\ChatEditor.js
  */
 import React from 'react';
@@ -18,10 +18,10 @@ export default class ChatEditor extends React.Component {
         type: PropTypes.string,
         scene: PropTypes.string,
         to: PropTypes.string,
-        isRobot: PropTypes.boolean,
-        invalid: PropTypes.boolean,
+        isRobot: PropTypes.bool,
+        invalid: PropTypes.bool,
         invalidHint: PropTypes.string,
-        advancedTeam: PropTypes.boolean,
+        advancedTeam: PropTypes.bool,
     }
     //如果没有传值，可以给一个默认值
     static defaultProps = {
@@ -72,7 +72,7 @@ export default class ChatEditor extends React.Component {
                 })
             }
             // 重置
-            this.props.dispatch('chat/continueRobotMsg', '')
+            this.props.dispatch({ type: 'chat/continueRobotMsg', delta: '' })
         }
         if (prevState.msgToSent !== this.state.msgToSent) {
             if (this.isRobot) {
@@ -95,7 +95,7 @@ export default class ChatEditor extends React.Component {
 
     sendTextMsg = () => {
         if (this.invalid) {
-            this.$toast(this.invalidHint)
+            message.error(this.invalidHint)
             return
         }
         if (/^\s*$/.test(this.msgToSent)) {
@@ -109,7 +109,7 @@ export default class ChatEditor extends React.Component {
         if (this.type === 'session') {
             // 如果是机器人
             if (this.isRobot) {
-                this.$store.dispatch('sendRobotMsg', {
+                this.props.dispatch('sendRobotMsg', {
                     type: 'text',
                     scene: this.scene,
                     to: this.to,
@@ -136,7 +136,7 @@ export default class ChatEditor extends React.Component {
                 }
                 if (robotAccid) {
                     if (robotText) {
-                        this.$store.dispatch('sendRobotMsg', {
+                        this.props.dispatch('sendRobotMsg', {
                             type: 'text',
                             scene: this.scene,
                             to: this.to,
@@ -147,7 +147,7 @@ export default class ChatEditor extends React.Component {
                             body: this.msgToSent
                         })
                     } else {
-                        this.$store.dispatch('sendRobotMsg', {
+                        this.props.dispatch('sendRobotMsg', {
                             type: 'welcome',
                             scene: this.scene,
                             to: this.to,
@@ -157,7 +157,7 @@ export default class ChatEditor extends React.Component {
                         })
                     }
                 } else {
-                    this.$store.dispatch('sendMsg', {
+                    this.props.dispatch('sendMsg', {
                         type: 'text',
                         scene: this.scene,
                         to: this.to,
@@ -165,7 +165,8 @@ export default class ChatEditor extends React.Component {
                     })
                 }
             }
-        } else if (this.type === 'chatroom') {
+        }
+         else if (this.type === 'chatroom') {
             let robotAccid = ''
             let robotText = ''
 
@@ -182,7 +183,7 @@ export default class ChatEditor extends React.Component {
             }
             if (robotAccid) {
                 if (robotText) {
-                    this.$store.dispatch('sendChatroomRobotMsg', {
+                    this.props.dispatch('sendChatroomRobotMsg', {
                         type: 'text',
                         robotAccid,
                         // 机器人后台消息
@@ -191,7 +192,7 @@ export default class ChatEditor extends React.Component {
                         body: this.msgToSent
                     })
                 } else {
-                    this.$store.dispatch('sendChatroomRobotMsg', {
+                    this.props.dispatch('sendChatroomRobotMsg', {
                         type: 'welcome',
                         robotAccid,
                         // 显示的文本消息
@@ -199,13 +200,248 @@ export default class ChatEditor extends React.Component {
                     })
                 }
             } else {
-                this.$store.dispatch('sendChatroomMsg', {
+                this.props.dispatch('sendChatroomMsg', {
                     type: 'text',
                     text: this.msgToSent
                 })
             }
         }
         this.msgToSent = ''
+    }
+    sendPlayMsg() {
+        if (this.invalid) {
+            message.error(this.invalidHint)
+            return
+        }
+        // 发送猜拳消息
+        if (this.type === 'session') {
+            this.props.dispatch('sendMsg', {
+                type: 'custom',
+                scene: this.scene,
+                to: this.to,
+                pushContent: '[猜拳]',
+                content: {
+                    type: 1,
+                    data: {
+                        value: Math.ceil(Math.random() * 3)
+                    }
+                }
+            })
+        } else if (this.type === 'chatroom') {
+            this.props.dispatch('sendChatroomMsg', {
+                type: 'custom',
+                pushContent: '[猜拳]',
+                content: {
+                    type: 1,
+                    data: {
+                        value: Math.ceil(Math.random() * 3)
+                    }
+                }
+            })
+        }
+    }
+    sendFileMsg() {
+        if (this.invalid) {
+            message.error(this.invalidHint)
+            return
+        }
+        let ipt = this.$refs.fileToSent
+        if (ipt.value) {
+            if (this.type === 'session') {
+                this.props.dispatch('sendFileMsg', {
+                    scene: this.scene,
+                    to: this.to,
+                    fileInput: ipt
+                })
+            } else if (this.type === 'chatroom') {
+                this.props.dispatch('sendChatroomFileMsg', {
+                    fileInput: ipt
+                })
+            }
+        }
+    }
+    showEmoji() {
+        this.isEmojiShown = true
+    }
+    hideEmoji() {
+        this.isEmojiShown = false
+    }
+    addEmoji(emojiName) {
+        this.msgToSent += emojiName
+        this.hideEmoji()
+    }
+    chooseRobot(robot) {
+        if (robot && robot.account) {
+            let len = this.msgToSent.length
+            if (len === 0 || this.msgToSent[len - 1] !== '@') {
+                this.msgToSent += '@' + robot.nick + ' '
+            } {
+                this.msgToSent += robot.nick + ' '
+            }
+        }
+    }
+    hideRobotList() {
+        this.isRobotListShown = false
+    }
+    onInputFocus(e) {
+        setTimeout(() => {
+            // todo fixme 解决iOS输入框被遮挡问题，但会存在空白缝隙
+            e.target.scrollIntoView()
+            pageUtil.scrollChatListDown()
+        }, 200)
+    }
+    turnToMsgReceipt() {
+        if (this.invalid) {
+            message.error(this.invalidHint)
+            return
+        }
+        location = `#/teamSendMsgReceipt/${this.to}`
+    }
+    swicthMsgType() {
+        this.sendTxt = !this.sendTxt
+    }
+    toRecord() {
+        var self = this
+        self.toRecordCount++
+        if (window.stopPlayAudio) {
+            window.stopPlayAudio()
+        }
+        if (location.protocol === 'http:') {
+            self.$toast('请使用https协议')
+            return
+        }
+        if (self.recording) {
+            return
+        }
+        if (self.toRecordCount > 1 && !self.recorder) {
+            self.recordDisable = true
+        }
+        if (self.recordDisable || !self.audioContext || !window.AudioContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            self.$toast('当前浏览器不支持录音')
+            return
+        }
+        if (self.recorder) {
+            self.recorder.record()
+            self.resumeAudioContext()
+        } else {
+            function failed() {
+                self.recordDisable = true
+                self.$toast('当前浏览器不支持录音')
+            }
+            try {
+                var value = navigator.mediaDevices.getUserMedia({
+                    audio: true
+                }).then(stream => {
+                    var input
+                    try {
+                        input = self.audioContext.createMediaStreamSource(stream)
+                        self.recorder = new Recorder(input)
+                        self.recorder.record()
+                        self.resumeAudioContext()
+                        if (!self.recorder) {
+                            failed()
+                        }
+                    } catch (e) {
+                        failed()
+                    }
+                }).catch(err => {
+                    self.$toast('没有权限获取麦克风')
+                    self.recordDisable = true
+                    console.log('No live audio input: ' + err, err.name + ": " + err.message)
+                })
+            } catch (e) {
+                failed()
+            }
+        }
+    }
+    runRecorderTime() {
+        if (this.recorder) {
+            this.recording = true
+            this.recordTime = 0
+            setTimeout(() => {
+                this.$recordTime = document.getElementById('recordTime')
+            }, 800)
+            this.recordTimeout = setTimeout(this.runRecordDuration.bind(this), 1000)
+        }
+    }
+    resumeAudioContext() {
+        if (this.audioContext && ~this.audioContext.state.indexOf('suspend')) {
+            this.audioContext.resume().then(() => {
+                console.log('audioContext suspend state resume')
+                this.recorder.record()
+                this.runRecorderTime()
+            })
+        } else {
+            this.runRecorderTime()
+        }
+    }
+    runRecordDuration() {
+        this.recordTimeout = setTimeout(this.runRecordDuration.bind(this), 1000)
+        this.recordTime++
+        if (this.recordTime >= 60) {
+            clearTimeout(this.recordTimeout)
+            this.sendRecord()
+        }
+        this.$recordTime.innerText = '00:' + (this.recordTime > 9 ? this.recordTime : '0' + this.recordTime)
+    }
+    siwtchRecord() {
+        if (this.recording) {
+            this.sendRecordMsg()
+        } else {
+            this.toRecord()
+        }
+    }
+    cancelRecord() {
+        if (this.recording) {
+            this.recording = false
+            clearTimeout(this.recordTimeout)
+            if (this.$recordTime) {
+                this.$recordTime.innerText = '00:00'
+            }
+            this.recorder.stop()
+            this.recorder.clear()
+        }
+    }
+    sendRecordMsg() {
+        setTimeout(this.sendRecord, 500)
+    }
+    sendRecord() {
+        if (this.recording) {
+            clearTimeout(this.recordTimeout)
+            if (this.recordTime < 2) {
+                message.warning('语音消息最短2s')
+                this.cancelRecord()
+                return
+            }
+            this.recording = false
+            this.$recordTime.innerText = '00:00'
+            this.recorder.stop()
+            this.recorder.exportWAV(blob => {
+                this.props.dispatch('showLoading')
+                this.props.dispatch('sendFileMsg', {
+                    scene: this.scene,
+                    to: this.to,
+                    type: 'audio',
+                    blob: blob,
+                    uploadprogress: obj => {
+                        console.log('文件总大小: ' + obj.total + 'bytes')
+                        console.log('已经上传的大小: ' + obj.loaded + 'bytes')
+                        console.log('上传进度: ' + obj.percentage)
+                        console.log('上传进度文本: ' + obj.percentageText)
+                        if (obj.percentage === 100) {
+                            this.props.dispatch('hideLoading')
+                        }
+                    },
+                    uploaderror: () => {
+                        console && console.log('上传失败')
+                    },
+                    uploaddone: (error, file) => {
+                        console.log(error)
+                    }
+                })
+            })
+            this.recorder.clear()
+        }
     }
 
     render() {
