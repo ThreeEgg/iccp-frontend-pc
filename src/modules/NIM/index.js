@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 10:08:44
+ * @LastEditTime: 2020-03-20 10:54:39
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -17,7 +17,7 @@ import { Layout } from 'antd';
 import util from './utils'
 import pageUtil from './utils/page'
 import './index.less';
-function InvalidHint(props) {
+function InvalidHint() {
   const teamInfo = this.teamInfo();
   if (this.scene() === "team" && this.teamInvalid()) {
     const name = teamInfo && teamInfo.type === 'normal' ? '讨论组' : '群';
