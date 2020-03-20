@@ -1,15 +1,15 @@
-import React from 'react'
-import createLoading from 'dva-loading'
+import React from 'react';
+import createLoading from 'dva-loading';
 import dva from 'dva-no-router';
 import immer from 'dva-immer';
 import models from '../models';
 
-const isServer = typeof window === 'undefined'
-const __NEXT_DVA_STORE__ = '__NEXT_DVA_STORE__'
+const isServer = typeof window === 'undefined';
+const __NEXT_DVA_STORE__ = '__NEXT_DVA_STORE__';
 
 // 初始化 Dva
 function initDva(initialState) {
-  let app
+  let app;
   if (initialState) {
     app = dva({
       initialState,
@@ -23,30 +23,35 @@ function initDva(initialState) {
   app.use(createLoading());
   const isArray = Array.isArray(models);
   if (isArray) {
-    models.forEach((m) => {
+    models.forEach(m => {
+      if (!m.namespace) {
+        return;
+      }
       app.model(m);
     });
   } else {
-    app.model(models);
+    if (models.namespace) {
+      app.model(models);
+    }
   }
-  app.router(() => { });
+  app.router(() => {});
   app.start();
 
-  return app._store
+  return app._store;
 }
 
 // 获取或创建 Store
 function getOrCreateStore(initialState) {
   // Always make a new store if server, otherwise state is shared between requests
   if (isServer) {
-    return initDva(initialState)
+    return initDva(initialState);
   }
 
   // Create store if unavailable on the client and set it on the window object
   if (!window[__NEXT_DVA_STORE__]) {
-    window[__NEXT_DVA_STORE__] = initDva(initialState)
+    window[__NEXT_DVA_STORE__] = initDva(initialState);
   }
-  return window[__NEXT_DVA_STORE__]
+  return window[__NEXT_DVA_STORE__];
 }
 
 export default App => {
@@ -55,29 +60,29 @@ export default App => {
     static async getInitialProps(appContext) {
       // Get or Create the store with `undefined` as initialState
       // This allows you to set a custom default initialState
-      const dvaStore = getOrCreateStore()
+      const dvaStore = getOrCreateStore();
 
       // Provide the store to getInitialProps of pages
-      appContext.ctx.dvaStore = dvaStore
+      appContext.ctx.dvaStore = dvaStore;
 
-      let appProps = {}
+      let appProps = {};
       if (typeof App.getInitialProps === 'function') {
-        appProps = await App.getInitialProps(appContext)
+        appProps = await App.getInitialProps(appContext);
       }
 
       return {
         ...appProps,
-        initialDvaState: dvaStore.getState()
-      }
+        initialDvaState: dvaStore.getState(),
+      };
     }
 
     constructor(props) {
-      super(props)
-      this.dvaStore = getOrCreateStore(props.initialDvaState)
+      super(props);
+      this.dvaStore = getOrCreateStore(props.initialDvaState);
     }
 
     render() {
-      return <App {...this.props} dvaStore={this.dvaStore} />
+      return <App {...this.props} dvaStore={this.dvaStore} />;
     }
-  }
-}
+  };
+};

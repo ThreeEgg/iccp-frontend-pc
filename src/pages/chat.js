@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: 毛翔宇
  * @Date: 2020-03-20 09:04:49
  * @LastEditors: 毛翔宇
@@ -9,14 +9,15 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import dynamic from 'next/dynamic';
 
-import NIMChat from '../modules/NIM';
+const NIMChat = dynamic(import('../modules/NIM'), {
+  ssr: false,
+});
 
 class Chat extends React.Component {
   static async getInitialProps(props) {
-
-    return {
-    };
+    return {};
   }
 
   async componentDidMount() {
@@ -27,9 +28,7 @@ class Chat extends React.Component {
     const { index, loading } = this.props;
     const { name, count } = index;
     // console.log('rendered!!');
-    return (
-      <NIMChat/>
-    );
+    return <NIMChat />;
   }
 }
 
