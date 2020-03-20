@@ -4,12 +4,12 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-19 18:08:35
- * @FilePath: \PC端-前端\src\modules\NIM\pages\components\ChatList.js
+ * @LastEditTime: 2020-03-20 10:18:01
+ * @FilePath: \PC端-前端\src\modules\NIM\components\ChatList.js
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import ChatItem from './components/ChatItem';
+import ChatItem from './ChatItem';
 import './ChatList.less';
 
 
@@ -74,4 +74,3 @@ export default class ChatList extends React.Component {
         );
     }
 }
-export default ChatList;

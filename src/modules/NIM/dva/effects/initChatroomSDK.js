@@ -1,14 +1,23 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-16 15:56:52
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-20 10:22:21
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\initChatroomSDK.js
+ */
 /* 
  * 聊天室SDK，依赖于nim sdk
  */
 
-import config from '@/configs'
-import pageUtil from '@/utils/page'
-import util from '@/utils'
+import config from '../../configs'
+import pageUtil from '../../utils/page'
+import util from '../../utils'
 import store from '..'
 import {onChatroomMsgs} from './chatroomMsgs'
 
-const SDK = require('@/sdk/' + config.sdk)
+const SDK = require('../../sdk/' + config.sdk)
 
 // 切换聊天室之前需要断开连接，原因是移动端不断累积连接实例，消息并发较大时会有性能问题
 // 重新初始化 NIM SDK

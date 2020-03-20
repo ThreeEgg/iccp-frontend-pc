@@ -2,9 +2,9 @@
  * SDK连接相关
  */
 
-import config from '@/configs'
-import pageUtil from '@/utils/page'
-import util from '@/utils'
+import config from '../../configs'
+import pageUtil from '../../utils/page'
+import util from '../../utils'
 import store from '..'
 import {onFriends, onSyncFriendAction} from './friends'
 import {onRobots} from './robots'
@@ -15,7 +15,7 @@ import {onRoamingMsgs, onOfflineMsgs, onMsg} from './msgs'
 import {onSysMsgs, onSysMsg, onSysMsgUnread, onCustomSysMsgs} from './sysMsgs'
 import { onTeams, onSynCreateTeam, onCreateTeam, onUpdateTeam, onTeamMembers, onUpdateTeamMember, onAddTeamMembers, onRemoveTeamMembers, onUpdateTeamManagers, onDismissTeam, onUpdateTeamMembersMute, onTeamMsgReceipt} from './team'
 
-const SDK = require('@/sdk/' + config.sdk)
+const SDK = require('../../sdk/' + config.sdk)
 
 // 重新初始化 NIM SDK
 export function initNimSDK ({ state, commit, dispatch }, loginInfo) {

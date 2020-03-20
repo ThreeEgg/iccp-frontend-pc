@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import store from '../store'
+import store from '../dva'
 
 if(!Function.prototype.bind){
   Function.prototype.bind = function(){
@@ -50,23 +49,11 @@ Utils.object2query = function (obj) {
   return queryArray.join('&')
 }
 
-// https://cn.vuejs.org/v2/guide/reactivity.html
-// Vue 不能检测到对象属性的添加或删除。然而它可以使用 Vue.set(object, key, value) 方法将响应属性添加到嵌套的对象上
 Utils.mergeObject = function (dest, src) {
   if (typeof dest !== 'object' || dest === null) {
     dest = Object.create(null)
   }
   dest = Object.assign(Object.create(null), dest, src)
-  return dest
-}
-
-Utils.mergeVueObject = function (dest, src) {
-  let keys = Object.keys(src)
-  keys.forEach(item => {
-    if (typeof src[item] !== 'undefined') {
-      Vue.set(dest, item, src[item])
-    }
-  })
   return dest
 }
 

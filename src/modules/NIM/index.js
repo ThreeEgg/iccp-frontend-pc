@@ -4,23 +4,19 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-19 18:11:04
- * @FilePath: \PC端-前端\src\modules\NIM\pages\Chat.js
+ * @LastEditTime: 2020-03-20 10:08:44
+ * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
 import { connect } from 'react-redux';
-// import dynamic from 'next/dynamic';
 import ChatList from './components/ChatList';
 import ChatEditor from './components/ChatEditor';
-import util from '../utils'
-import pageUtil from '../utils/page'
-import './Chat.less';
-// const LXChat = dynamic(
-//   import('../components/chat/LXChat'),
-//   {
-//     ssr: false   //这个要加上,禁止使用 SSR
-//   }
-// )
+import Session from './components/Session';
+import Login from './components/Login';
+import { Layout } from 'antd';
+import util from './utils'
+import pageUtil from './utils/page'
+import './index.less';
 function InvalidHint(props) {
   const teamInfo = this.teamInfo();
   if (this.scene() === "team" && this.teamInvalid()) {
@@ -31,10 +27,7 @@ function InvalidHint(props) {
 }
 class Chat extends React.Component {
   state = {
-    leftBtnOptions: {
-      backText: ' ',
-      preventGoBack: true,
-    }
+    showLogin: false
   }
   // 进入该页面，文档被挂载
   async componentDidMount() {
@@ -186,9 +179,11 @@ class Chat extends React.Component {
     const { chat } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
     return (
-      <div class="g-inherit m-article">
-        <div class="m-chat-main">
-          <InvalidHint />
+      <Layout>
+        <Login/>
+        <Session></Session>
+        <Layout className="site-layout" style={{ marginLeft: 200 }}>
+        <InvalidHint />
           <ChatList
             type="session"
             msglist={currSessionMsgs}
@@ -206,8 +201,8 @@ class Chat extends React.Component {
             invalidHint={sendInvalidHint()}
             advancedTeam={teamInfo() && teamInfo().type === 'advanced'}
           ></ChatEditor>
-        </div>
-      </div >
+        </Layout>
+      </Layout>
     );
   }
 }

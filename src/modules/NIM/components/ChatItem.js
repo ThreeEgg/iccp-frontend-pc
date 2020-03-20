@@ -4,17 +4,16 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-18 13:42:35
- * @FilePath: \PC端-前端\src\modules\NIM\pages\components\ChatItem.js
+ * @LastEditTime: 2020-03-20 10:24:13
+ * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import config from '../../configs'
 
 
-export default class ChatItem extends React.Component {
+class ChatItem extends React.Component {
 
 }
 export default connect(({ chat }) => ({

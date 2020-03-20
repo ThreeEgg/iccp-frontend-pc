@@ -4,15 +4,14 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-18 18:08:10
- * @FilePath: \PC端-前端\src\modules\NIM\pages\components\ChatEditor.js
+ * @LastEditTime: 2020-03-20 10:24:32
+ * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import config from '../../configs'
-export default class ChatEditor extends React.Component {
-
+import config from '../configs'
+class ChatEditor extends React.Component {
     //在这里进行类型检测(这里的名字不是随便自定义的，规定这样写的)
     static propTypes = {
         type: PropTypes.string,

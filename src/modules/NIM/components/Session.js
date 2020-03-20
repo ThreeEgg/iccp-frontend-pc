@@ -4,31 +4,14 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-19 18:25:30
- * @FilePath: \PC端-前端\src\modules\NIM\pages\Session.js
+ * @LastEditTime: 2020-03-20 10:07:42
+ * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
 import { connect } from 'react-redux';
-// import dynamic from 'next/dynamic';
-import ChatList from './components/ChatList';
-import ChatEditor from './components/ChatEditor';
 import util from '../utils'
 import pageUtil from '../utils/page'
-import './Chat.less';
-// const LXChat = dynamic(
-//   import('../components/chat/LXChat'),
-//   {
-//     ssr: false   //这个要加上,禁止使用 SSR
-//   }
-// )
-function InvalidHint(props) {
-  const teamInfo = this.teamInfo();
-  if (this.scene() === "team" && this.teamInvalid()) {
-    const name = teamInfo && teamInfo.type === 'normal' ? '讨论组' : '群';
-    return "<div class='invalidHint'>您已退出该" + name + "</div>";
-  }
-  return "";
-}
+import { Form, Input } from 'antd';
 class Session extends React.Component {
   state = {
     delSessionId: null,
@@ -148,7 +131,6 @@ class Session extends React.Component {
     const { chat } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
     return (
-      <Layout>
         <Sider
           style={{
             overflow: 'auto',
@@ -173,7 +155,6 @@ class Session extends React.Component {
             }
           </Menu>
         </Sider>
-      </Layout>
     );
   }
 }

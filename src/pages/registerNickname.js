@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-19 18:30:05
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-20 10:00:08
+ * @FilePath: \PC端-前端\src\pages\registerNickname.js
+ */
 import React from 'react';
 import { Form, Input, Button, Switch } from 'antd';
 import { MailOutlined, UserOutlined, LockOutlined, CheckSquareOutlined } from '@ant-design/icons';
