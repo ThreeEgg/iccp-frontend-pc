@@ -4,23 +4,23 @@ import cookie from '../../utils/cookie'
 import pageUtil from '../../utils/page'
 
 /* 导出actions方法 */
-import {showLoading, hideLoading, showFullscreenImg, hideFullscreenImg} from './widgetUi'
-import {initNimSDK} from './initNimSDK'
-import {initChatroomSDK, resetChatroomSDK} from './initChatroomSDK'
-import {updateBlack} from './blacks'
-import {updateFriend, addFriend, deleteFriend} from './friends'
-import {resetSearchResult, searchUsers, searchTeam} from './search'
-import {deleteSession, setCurrSession, resetCurrSession} from './session'
-import {sendMsg, sendFileMsg, sendMsgReceipt, sendRobotMsg, revocateMsg, updateLocalMsg, getHistoryMsgs, resetNoMoreHistoryMsgs, continueRobotMsg} from './msgs'
-import {markSysMsgRead, resetSysMsgs, deleteSysMsgs, markCustomSysMsgRead} from './sysMsgs'
-import {sendChatroomMsg, sendChatroomRobotMsg, sendChatroomFileMsg, getChatroomHistoryMsgs} from './chatroomMsgs'
-import {initChatroomInfos, getChatroomInfo, getChatroomMembers, clearChatroomMembers} from './chatroomInfos'
-import { delegateTeamFunction, onTeamNotificationMsg, enterSettingPage, getTeamMembers, checkTeamMsgReceipt, getTeamMsgReads} from './team'
+import { showLoading, hideLoading, showFullscreenImg, hideFullscreenImg } from './widgetUi'
+import { initNimSDK } from './initNimSDK'
+import { initChatroomSDK, resetChatroomSDK } from './initChatroomSDK'
+import { updateBlack } from './blacks'
+import { updateFriend, addFriend, deleteFriend } from './friends'
+import { resetSearchResult, searchUsers, searchTeam } from './search'
+import { deleteSession, setCurrSession, resetCurrSession } from './session'
+import { sendMsg, sendFileMsg, sendMsgReceipt, sendRobotMsg, revocateMsg, updateLocalMsg, getHistoryMsgs, resetNoMoreHistoryMsgs, continueRobotMsg } from './msgs'
+import { markSysMsgRead, resetSysMsgs, deleteSysMsgs, markCustomSysMsgRead } from './sysMsgs'
+import { sendChatroomMsg, sendChatroomRobotMsg, sendChatroomFileMsg, getChatroomHistoryMsgs } from './chatroomMsgs'
+import { initChatroomInfos, getChatroomInfo, getChatroomMembers, clearChatroomMembers } from './chatroomInfos'
+import { delegateTeamFunction, onTeamNotificationMsg, enterSettingPage, getTeamMembers, checkTeamMsgReceipt, getTeamMsgReads } from './team'
 
-function connectNim ({state, commit, dispatch}, obj) {
-  let {force} = Object.assign({}, obj)
+function connectNim({ payload: { nim, obj } }, { call }) {
+  let { force } = Object.assign({}, obj)
   // 操作为内容页刷新页面，此时无nim实例
-  if (!state.nim || force) {
+  if (!nim || force) {
     let loginInfo = {
       uid: cookie.readCookie('uid'),
       sdktoken: cookie.readCookie('sdktoken'),
@@ -30,33 +30,32 @@ function connectNim ({state, commit, dispatch}, obj) {
       pageUtil.turnPage('无历史登录记录，请重新登录', 'login')
     } else {
       // 有cookie，重新登录
-      dispatch('initNimSDK', loginInfo)
+      call('initNimSDK', { loginInfo })
     }
   }
 }
 
-function connectChatroom ({state, commit, dispatch}, obj) {
-  let {chatroomId} = Object.assign({}, obj)
-  const nim = state.nim
+function connectChatroom(nim, call, obj) {
+  let { chatroomId } = Object.assign({}, obj)
   if (nim) {
-    dispatch('showLoading')
+    call('showLoading');
     nim.getChatroomAddress({
       chatroomId,
-      done: function getChatroomAddressDone (error, obj) {
+      done: function getChatroomAddressDone(error, obj) {
         if (error) {
           alert(error.message)
           location.href = '#/room'
           return
         }
-        dispatch('initChatroomSDK', obj)
+        call('initChatroomSDK', { obj })
       }
     })
   }
 }
 
 export default {
-  updateRefreshState ({commit}) {
-    commit('updateRefreshState')
+  *updateRefreshState({ put }) {
+    yield put({ type: 'updateRefreshState'});
   },
 
   // UI 及页面状态变更
@@ -67,22 +66,24 @@ export default {
   continueRobotMsg,
 
   // 连接sdk请求，false表示强制重连
-  connect (store, obj) {
-    let {type} = Object.assign({}, obj)
-    // type 可为 nim chatroom
-    type = type || 'nim'
-    switch (type) {
-      case 'nim':
-        connectNim(store, obj)
-        break
-      case 'chatroom':
-        connectChatroom(store, obj)
-        break
-    }
+  *connect(obj, { call, select }) {
+    console.log('ok');
+    // const nim = yield select(state => state.chat.nim);
+    // let { type } = Object.assign({}, obj)
+    // // type 可为 nim chatroom
+    // type = type || 'nim'
+    // switch (type) {
+    //   case 'nim':
+    //     yield call(connectNim, { payload: { nim, obj } }, { call })
+    //     break
+    //   case 'chatroom':
+    //     connectChatroom(nim, call, obj)
+    //     break
+    // }
   },
 
   // 用户触发的登出逻辑
-  logout ({ state, commit }) {
+  logout({ state, commit }) {
     cookie.delCookie('uid')
     cookie.delCookie('sdktoken')
     if (state.nim) {

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 10:24:32
+ * @LastEditTime: 2020-03-20 16:43:58
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
@@ -457,7 +457,7 @@ class ChatEditor extends React.Component {
     const { chat } = this.props;
     const { continueRobotAccid, robotslist, robotInfos, robotInfosByNick } = chat;
     return (
-      <div class="m-chat-editor" onClick="hideRobotList">
+      <div className="m-chat-editor" onClick={this.hideRobotList}>
         {/* <group v-show="isRobotListShown" class="m-chat-emoji m-chat-robot">
                     <cell v-for="robot in robotslist" : title="robot.nick" :key="robot.account" @click.native="chooseRobot(robot)">
         <img class="icon u-circle" slot="icon" width="20" height="20" : src="robot.avatar">

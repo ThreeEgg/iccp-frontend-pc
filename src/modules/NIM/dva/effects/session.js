@@ -24,6 +24,7 @@ function updateSessionAccount (sessions) {
 
 // onSessions只在初始化完成后回调
 export function onSessions (sessions) {
+  debugger
   updateSessionAccount(sessions)
   store.commit('updateSessions', sessions)
 }

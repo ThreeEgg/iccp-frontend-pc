@@ -4,17 +4,15 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 10:07:42
+ * @LastEditTime: 2020-03-20 17:49:15
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import util from '../utils';
 import pageUtil from '../utils/page';
-import { Form, Input, Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd';
 import config from '../configs';
-
-const { Sider } = Layout;
 
 class Session extends React.Component {
   state = {
@@ -33,7 +31,7 @@ class Session extends React.Component {
     pageUtil.scrollChatListDown();
 
     setTimeout(() => {
-      this.props.dispatch({ type: 'chat/chat/hideLoading' });
+      this.props.dispatch({ type: 'chat/hideLoading' });
     }, 1000);
 
     // 获取群成员
@@ -135,32 +133,23 @@ class Session extends React.Component {
     const { chat, sessionlist } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
     return (
-      <Sider
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-        }}
-      >
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-          <Menu.Item key="1">
-            <span className="nav-text">消息中心</span>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <span className="nav-text">我的手机</span>
-          </Menu.Item>
-          {sessionlist.map((session, index) => {
-            return (
-              <Menu.Item key={index + 3} sessionId={session.id} inlineDesc={session.lastMsgShow}>
-                <span className="nav-text" onClick={this.enterChat(session)}>
-                  {session.name}
-                </span>
-              </Menu.Item>
-            );
-          })}
-        </Menu>
-      </Sider>
+      <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+        <Menu.Item key="1">
+          <span className="nav-text">消息中心</span>
+        </Menu.Item>
+        <Menu.Item key="2">
+          <span className="nav-text">我的手机</span>
+        </Menu.Item>
+        {sessionlist.map((session, index) => {
+          return (
+            <Menu.Item key={index + 3} sessionId={session.id} inlineDesc={session.lastMsgShow}>
+              <span className="nav-text" onClick={this.enterChat(session)}>
+                {session.name}
+              </span>
+            </Menu.Item>
+          );
+        })}
+      </Menu>
     );
   }
 }
