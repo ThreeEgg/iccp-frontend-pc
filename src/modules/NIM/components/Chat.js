@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 16:42:13
+ * @LastEditTime: 2020-03-20 18:03:07
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -32,7 +32,7 @@ class Chat extends React.Component {
     pageUtil.scrollChatListDown();
 
     setTimeout(() => {
-      this.props.dispatch({ type: 'chat/chat/hideLoading' });
+      this.props.dispatch({ type: 'chat/hideLoading' });
     }, 1000);
 
     // 获取群成员

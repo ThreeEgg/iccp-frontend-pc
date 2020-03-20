@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 17:05:57
+ * @LastEditTime: 2020-03-20 18:13:47
  * @FilePath: \PC端-前端\src\modules\NIM\components\Login.js
  */
 import React from 'react';
@@ -67,7 +67,7 @@ class Login extends React.Component {
       visible: false,
     });
     // 提交sdk连接请求
-    this.props.dispatch({ type: 'chat/connect' })
+    this.props.dispatch({ type: 'chat/connect',obj:{} })
   };
   handleCancel = e => {
     this.setState({
@@ -137,4 +137,5 @@ class Login extends React.Component {
   }
 }
 export default connect(({ chat }) => ({
+  chat:chat
 }))(Login);
