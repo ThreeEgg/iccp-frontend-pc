@@ -1,0 +1,78 @@
+@font-face {
+  font-family: 'iconfont';
+  src: url('../../public/fonts/iconfont.eot');
+  src: url('../../public/fonts/iconfont.eot?#iefix') format('embedded-opentype'),
+      url('../../public/fonts/iconfont.woff2') format('woff2'),
+      url('../../public/fonts/iconfont.woff') format('woff'),
+      url('../../public/fonts/iconfont.ttf') format('truetype'),
+      url('../../public/fonts/iconfont.svg#iconfont') format('svg');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.iconic_im_video:before {
+  content: "\e68f";
+}
+
+.iconic_im_document:before {
+  content: "\e690";
+}
+
+.iconic_im_evaluate:before {
+  content: "\e691";
+}
+
+.iconic_im_voice:before {
+  content: "\e692";
+}
+
+.iconic_date:before {
+  content: "\e682";
+}
+
+.iconic_breif:before {
+  content: "\e683";
+}
+
+.iconic_header_leadback:before {
+  content: "\e684";
+}
+
+.iconic_login_confirm:before {
+  content: "\e685";
+}
+
+.iconic_nav_expand:before {
+  content: "\e686";
+}
+
+.iconic_login_email:before {
+  content: "\e687";
+}
+
+.iconic_pop_close:before {
+  content: "\e688";
+}
+
+.iconic_login_password:before {
+  content: "\e689";
+}
+
+.iconic_tag:before {
+  content: "\e68a";
+}
+
+.iconic_online:before {
+  content: "\e68b";
+}
+
+.iconic_evaluate:before {
+  content: "\e68c";
+}
+
