@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { Form, Input, Button, Switch } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import Router from 'next/router';
+import Map from '../components/Map';
 import './map.less';
 
 export default class extends React.Component {
@@ -17,7 +18,7 @@ export default class extends React.Component {
             <div className="map">
                 <Header />
                 <div className="mapT">
-
+                  <Map />
                 </div>
                 <div className="content contentAbout">
                     <div className="commonWidth">

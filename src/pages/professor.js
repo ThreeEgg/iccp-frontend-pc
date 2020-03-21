@@ -56,7 +56,10 @@ export default class Platform extends React.Component {
                             
                         </div>
                         <div className="con-pro-l">
-                            
+                            <div className="con-pro-r-list flex flex-align flex-justifyBetween" onClick={this.timeList}>
+                                查看专家时间表
+                                <img src="/images/ic_date.png"></img>
+                            </div>
                         </div>
                     </div>
                 </div>
