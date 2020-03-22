@@ -11,8 +11,8 @@ export default class extends React.Component {
   goToNickname = () => {
     Router.push('/registerNickname');
   }
-  goTo = () => {
-    Router.push('/');
+  goToMap = () => {
+    Router.push('/map');
   }
 
   render() {
@@ -81,7 +81,7 @@ export default class extends React.Component {
               />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button" onClick={this.goTo}>
+              <Button type="primary" htmlType="submit" className="login-form-button" onClick={this.goToMap}>
                 立即登录
               </Button>
             </Form.Item>

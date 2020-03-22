@@ -1,23 +1,24 @@
-const withLess = require("@zeit/next-less");
-const withCss = require("@zeit/next-css");
+const withLess = require('@zeit/next-less');
+const withCss = require('@zeit/next-css');
 const lessToJS = require('less-vars-to-js');
-const withPlugins = require("next-compose-plugins");
+const withPlugins = require('next-compose-plugins');
 const path = require('path');
 const fs = require('fs');
 
 const themeVariables = lessToJS(
-  fs.readFileSync(path.resolve(__dirname, './src/antd-custom-theme.less'), 'utf8')
-)
+  fs.readFileSync(path.resolve(__dirname, './src/antd-custom-theme.less'), 'utf8'),
+);
 
 // fix: prevents error when .css files are required by node
 if (typeof require !== 'undefined') {
-  require.extensions['.less'] = file => { }
+  require.extensions['.less'] = file => {};
 }
 
 module.exports = withPlugins([withLess, withCss], {
-  lessLoaderOptions: {//如果是antd就需要，antd-mobile不需要
+  lessLoaderOptions: {
+    //如果是antd就需要，antd-mobile不需要
     javascriptEnabled: true,
-    modifyVars: themeVariables
+    modifyVars: themeVariables,
   },
   // distDir: 'build',
   generateEtags: false,
@@ -31,9 +32,7 @@ module.exports = withPlugins([withLess, withCss], {
         if (typeof external !== 'function') return external;
         return (ctx, req, cb) => {
           return includes.find(include =>
-            req.startsWith('.')
-              ? include.test(path.resolve(ctx, req))
-              : include.test(req)
+            req.startsWith('.') ? include.test(path.resolve(ctx, req)) : include.test(req),
           )
             ? cb()
             : external(ctx, req, cb);
@@ -41,5 +40,5 @@ module.exports = withPlugins([withLess, withCss], {
       });
     }
     return config;
-  }
+  },
 });

@@ -7,12 +7,12 @@ import './platformIndex.less';
 export default class RetrievePWD extends React.Component{
     render () {
         return (
-            <Platform title="Platform Introduce" url="/images/ic_header_introduce.png">
+            <Platform title="Business Introduce" url="/images/ic_header_business.png">
                 <div className="content-t flex flex-align">
                     <p></p>
                     <div className="flex flex-align">
-                        <img src="/images/ic_header_introduce_black.png"></img>
-                        <div>Platform Introduce</div>
+                        <img src="/images/ic_header_business_black.png"></img>
+                        <div>Business Introduce</div>
                     </div>
                     <p></p>
                 </div>

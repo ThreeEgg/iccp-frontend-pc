@@ -1,0 +1,114 @@
+@import '../components/common.less';
+.banner {
+  position: relative;
+  color: #fff;
+  > img {
+    width: 100%;
+  }
+  .bannerTitle {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 90px;
+    background: rgba(27, 40, 87, 0.5);
+    .bannerText {
+      height: 100%;
+      > div {
+        font-size: 24px;
+        letter-spacing: 4px;
+        img {
+          margin-right: 32px;
+        }
+        a {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 16px;
+          letter-spacing: 2px;
+        }
+        a:hover {
+          color: #337aff;
+        }
+      }
+    }
+  }
+}
+.content {
+  .content-pro-c {
+    padding: 24px 0 90px;
+    .con-pro-r {
+      width: 270px;
+      margin-right: 20px;
+      padding-top: 40px;
+      box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+      .con-pro-r-img {
+        position: relative;
+        width: 72px;
+        height: 72px;
+        margin: 0 auto;
+        text-align: center;
+        .img-avatar {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+        }
+        .img-type {
+          position: absolute;
+          right: -5px;
+          bottom: -5px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+      .con-pro-r-name {
+        margin-top: 10px;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+        font-size: 18px;
+        text-align: center;
+      }
+      .con-pro-r-status {
+        color: #aaa;
+        font-size: 16px;
+        text-align: center;
+      }
+      button {
+        display: block;
+        width: 220px;
+        height: 40px;
+        margin: 15px auto 30px;
+        color: #fff;
+        font-size: 16px;
+        background: #1b2857;
+        border-radius: 28px;
+      }
+      .con-pro-r-title {
+        padding-left: 16px;
+        color: #333;
+        font-weight: 600;
+        font-size: 16px;
+      }
+      // .con-pro-r-time{
+
+      // }
+      .con-pro-r-list {
+        height: 55px;
+        padding: 0 12px 0 16px;
+        color: #333;
+        font-size: 16px;
+        img {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+    .con-pro-m {
+      flex: 1;
+      box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+    }
+    .con-pro-l {
+      width: 270px;
+      margin-left: 20px;
+      box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+}
