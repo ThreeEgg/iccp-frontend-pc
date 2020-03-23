@@ -36,6 +36,7 @@
         padding: 24px 0 90px;
         .con-pro-r{
             width: 270px;
+            height: 685px;
             margin-right: 20px;
             padding-top: 40px;
             box-shadow:0px 2px 24px 0px rgba(0,0,0,0.1);
@@ -86,15 +87,43 @@
                 font-size: 16px;
                 font-weight: 600;
                 padding-left: 16px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid rgba(238,238,238,.8);
             }
             .con-pro-r-time{
-    
+                padding: 10px;
+                box-shadow: 0px 6px 10px 0px rgba(0,0,0,0.05);
+                border-radius: 0px 0px 12px 12px;
+                .time-date{
+                    color: #1B2857;
+                    text-align: center;
+                    font-size: 16px;
+                }
+                .site-calendar-demo-card {
+                    width: 100%;
+                    border: 1px solid #f0f0f0;
+                    border-radius: 4px;
+                }
+                .ant-picker-cell{
+                    .ant-picker-cell-inner{
+                        div{
+                            font-size: 14px;
+                        }
+                    }
+                }
+                .ant-picker-date-panel{
+                    .ant-picker-content{
+                        th{
+                            font-size: 14px;
+                        }
+                    }
+                }
             }
             .con-pro-r-list{
-                height: 55px;
+                height: 66px;
                 color: #333333;
                 font-size: 16px;
-                padding: 0 12px 0 16px;
+                padding: 0 16px;
                 img{
                     width: 24px;
                     height: 24px;
@@ -103,13 +132,210 @@
         }
         .con-pro-m{
             flex: 1;
-            box-shadow:0px 2px 24px 0px rgba(0,0,0,0.1);
+            width: 620px;
+            .con-pro-m-title{
+                color: #333333;
+                .ant-tabs{
+                    box-shadow: 0px 2px 24px 0px rgba(0, 0, 0, 0.1);
+                }
+                .ant-tabs-nav{
+                    .ant-tabs-tab{
+                        font-size: 16px;
+                    }
+                    .ant-tabs-tab-active{
+                        color: #333333;
+                        font-size: 18px;
+                        font-weight: 600;
+                    }
+                }
+                .ant-tabs-bar{
+                    padding-left: 30px;
+                    padding-top: 10px;
+                    box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.1);
+                }
+                .pro-statu-item{
+                    padding: 20px 40px 0px;
+                    .statu-con{
+                        margin-left: 50px;
+                        padding-left: 24px;
+                        padding-top: 15px;
+                        position: relative;
+                        border-left: 1px solid #CCCCCC;
+                        .statu-title{
+                            position: absolute;
+                            top: -15px;
+                            left: -57px;
+                            .statu-year{
+                                color: #999999;
+                                font-size: 16px;
+                                font-weight: 600;
+                            }
+                            > div{
+                                display: inline-block;
+                                margin-left: 45px;
+                                p{
+                                    margin: 0;
+                                    line-height: 16px;
+                                }
+                                .statu-monthNo{
+                                    color: #333333;
+                                    font-size: 22px;
+                                    font-weight: 600;
+                                }
+                                .statu-monthEN{
+                                    color: #999999;
+                                    font-size: 14px;
+                                }
+                            }
+                        }
+                        .statu-text{
+                            width: 400px;
+                            color: #666666;
+                            font-size: 16px;
+                            line-height:22px;
+                            background: #F5F5F5;
+                            border-radius: 4px;
+                            padding: 15px 20px;
+                            margin: 5px 0 25px;
+                            position: relative;
+                            span{
+                                position: absolute;
+                                top: 0;
+                                right: -60px;
+                                color: #aaaaaa;
+                                font-size: 16px;
+                            }
+                            .statu-circle-big{
+                                width: 16px;
+                                height: 16px;
+                                border-radius: 50%;
+                                background: #337AFF;
+                                position: absolute;
+                                top: -25px;
+                                left: -32px;
+                            }
+                            .statu-circle-small{
+                                width: 12px;
+                                height: 12px;
+                                border-radius: 50%;
+                                background: #CCCCCC;
+                                position: absolute;
+                                top: -2px;
+                                left: -30px;
+                            }
+                        }
+                    }
+                }
+                .pro-essay-item, .pro-info-item{
+                    padding: 24px;
+                    box-shadow:0px 6px 6px 0px rgba(0,0,0,0.1);
+                    h1{
+                        color: #333333;
+                        font-size: 16px;
+                        font-weight:600;
+                        padding-bottom: 15px;
+                        border-bottom: 1px solid #eeeeee;
+                    }
+                    p{
+                        color: #666666;
+                        font-size: 16px;
+                        line-height:22px;
+                        padding: 15px 0 20px;
+                        margin: 0;
+                    }
+                }
+                .pro-essay-item{
+                    cursor: pointer;
+                }
+                .pro-info-item{
+                    > div{
+                        img{
+                            width: 185px;
+                            height: 185px;
+                        }
+                        img:not(:last-child){
+                            margin-right: 5px;
+                        }
+                    }
+                }
+            }
         }
         .con-pro-l{
             width: 270px;
+            height: 625px;
             margin-left: 20px;
+            padding-top: 30px;
             box-shadow:0px 2px 24px 0px rgba(0,0,0,0.1);
-            
+            .con-pro-r-list{
+                color: #333333;
+                font-size: 16px;
+                padding: 0 16px 8px;
+                font-weight: 600;
+                border-bottom: 1px solid rgba(238,238,238,.8);
+                img{
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+            p{
+                padding: 20px;
+                color: #666666;
+                font-size: 15px;
+                line-height:21px;
+            }
+            .con-pro-r-label{
+                padding: 20px;
+                color: #999999;
+                font-size: 13px;
+                span{
+                    margin-bottom: 16px;
+                    margin-right: 16px;
+                    display: inline-block;
+                }
+            }
+            .con-pro-r-rate{
+                color: #333333;
+                padding: 20px;
+                > div{
+                    line-height: 0;
+                    margin-bottom: 20px;
+                    font-size: 14px;
+                    .ant-rate{
+                        color: #FF7D16;
+                        margin-left: 18px;
+                        .ant-rate-star:not(:last-child) {
+                            margin-right: 14px;
+                        }
+                    }
+                }
+                
+            }
         }
     }
+}
+// 日历样式重绘
+.ant-picker-calendar .ant-picker-panel,
+.content .content-pro-c .con-pro-r .con-pro-r-time .site-calendar-demo-card{
+    border: none;
+}
+.ant-picker-calendar-header,
+.ant-picker-content thead{
+    display: none;
+}
+// 分页样式重绘
+.common-pagination{
+    text-align: center;
+    margin-top: 25px;
+}
+.ant-pagination-item-active{
+    color: #ffffff;
+    background: #337AFF;
+}
+.ant-pagination-item-active:focus a, 
+.ant-pagination-item-active:hover a,
+.ant-pagination-item-active a{
+    color: #ffffff;
+}
+.ant-pagination-item{
+    border-radius: 8px;
 }
