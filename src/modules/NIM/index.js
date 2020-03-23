@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 17:00:24
+ * @LastEditTime: 2020-03-23 11:50:53
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -54,16 +54,16 @@ class Index extends React.Component {
           }}
         >
           <Login />
-          <Session />
+          {/* <Session /> */}
         </Sider>
-        <Chat/>
+        {/* <Chat/> */}
       </Layout>
     );
   }
 }
 
 export default connect(({ chat }) => ({
-  chat: chat,
+  chat,
   userUID: chat.userUID,
   teamMembers: chat.teamMembers,
   myInfo: chat.myInfo,

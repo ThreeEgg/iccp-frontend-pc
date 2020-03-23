@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 18:15:27
+ * @LastEditTime: 2020-03-23 10:03:46
  * @FilePath: \PC端-前端\src\modules\NIM\dva\index.js
  */
 import reducers from './reducers'
@@ -17,23 +17,7 @@ const chat = {
   // 唯一拥有更改内存数据的接口，不可进行异步操作
   reducers,
   // 与reducers通讯，ui层写入内存数据的接口，可异步操作
-  effects:{
-    *connect(obj, { call, select }) {
-      console.log('ok');
-      // const nim = yield select(state => state.chat.nim);
-      // let { type } = Object.assign({}, obj)
-      // // type 可为 nim chatroom
-      // type = type || 'nim'
-      // switch (type) {
-      //   case 'nim':
-      //     yield call(connectNim, { payload: { nim, obj } }, { call })
-      //     break
-      //   case 'chatroom':
-      //     connectChatroom(nim, call, obj)
-      //     break
-      // }
-    },
-  },
+  effects,
 }
 
 export default chat

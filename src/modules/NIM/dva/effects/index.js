@@ -2,50 +2,24 @@
 // Action 可以包含任意异步操作。
 import cookie from '../../utils/cookie';
 import pageUtil from '../../utils/page';
-
-/* 导出actions方法 */
-import { showLoading, hideLoading, showFullscreenImg, hideFullscreenImg } from './widgetUi';
-import { initNimSDK } from './initNimSDK';
-import { initChatroomSDK, resetChatroomSDK } from './initChatroomSDK';
 import { updateBlack } from './blacks';
-import { updateFriend, addFriend, deleteFriend } from './friends';
-import { resetSearchResult, searchUsers, searchTeam } from './search';
-import { deleteSession, setCurrSession, resetCurrSession } from './session';
-import {
-  sendMsg,
-  sendFileMsg,
-  sendMsgReceipt,
-  sendRobotMsg,
-  revocateMsg,
-  updateLocalMsg,
-  getHistoryMsgs,
-  resetNoMoreHistoryMsgs,
-  continueRobotMsg,
-} from './msgs';
-import { markSysMsgRead, resetSysMsgs, deleteSysMsgs, markCustomSysMsgRead } from './sysMsgs';
-import {
-  sendChatroomMsg,
-  sendChatroomRobotMsg,
-  sendChatroomFileMsg,
-  getChatroomHistoryMsgs,
-} from './chatroomMsgs';
-import {
-  initChatroomInfos,
-  getChatroomInfo,
-  getChatroomMembers,
-  clearChatroomMembers,
-} from './chatroomInfos';
-import {
-  delegateTeamFunction,
-  onTeamNotificationMsg,
-  enterSettingPage,
-  getTeamMembers,
-  checkTeamMsgReceipt,
-  getTeamMsgReads,
-} from './team';
+import { clearChatroomMembers, getChatroomInfo, getChatroomMembers, initChatroomInfos } from './chatroomInfos';
+import { getChatroomHistoryMsgs, sendChatroomFileMsg, sendChatroomMsg, sendChatroomRobotMsg } from './chatroomMsgs';
+import { addFriend, deleteFriend, updateFriend } from './friends';
+import { initChatroomSDK, resetChatroomSDK } from './initChatroomSDK';
+import { initNimSDK } from './initNimSDK';
+import { continueRobotMsg, getHistoryMsgs, resetNoMoreHistoryMsgs, revocateMsg, sendFileMsg, sendMsg, sendMsgReceipt, sendRobotMsg, updateLocalMsg } from './msgs';
+import { resetSearchResult, searchTeam, searchUsers } from './search';
+import { deleteSession, resetCurrSession, setCurrSession } from './session';
+import { deleteSysMsgs, markCustomSysMsgRead, markSysMsgRead, resetSysMsgs } from './sysMsgs';
+import { checkTeamMsgReceipt, delegateTeamFunction, enterSettingPage, getTeamMembers, getTeamMsgReads, onTeamNotificationMsg } from './team';
+/* 导出actions方法 */
+import { hideFullscreenImg, hideLoading, showFullscreenImg, showLoading } from './widgetUi';
 
-async function connectNim({ payload: { nim, obj } }, { call }) {
-  let { force } = Object.assign({}, obj);
+
+async function *connectNim(callback, {put, call, select}) {
+  let { force } = Object.assign({}, callback);
+  const nim = yield select(state => state.chat.nim);
   // 操作为内容页刷新页面，此时无nim实例
   if (!nim || force) {
     let loginInfo = {
@@ -57,7 +31,8 @@ async function connectNim({ payload: { nim, obj } }, { call }) {
       pageUtil.turnPage('无历史登录记录，请重新登录', 'login');
     } else {
       // 有cookie，重新登录
-      call('initNimSDK', { loginInfo });
+      debugger
+      yield call(initNimSDK, {loginInfo},{ put, call, select} );
     }
   }
 }
@@ -91,20 +66,17 @@ export default {
   showFullscreenImg,
   hideFullscreenImg,
   continueRobotMsg,
-
   // 连接sdk请求，false表示强制重连
-  *connect(obj, { call, select }) {
-    console.log('ok');
-    const nim = yield select(state => state.chat.nim);
-    let { type } = Object.assign({}, obj);
+  *connect({ callback }, { put, call, select }) {
+    let { type } = Object.assign({}, callback);
     // type 可为 nim chatroom
     type = type || 'nim';
     switch (type) {
       case 'nim':
-        yield call(connectNim, { payload: { nim, obj } }, { call });
+        yield call(connectNim, callback, {put, call, select});
         break;
       case 'chatroom':
-        yield call(connectChatroom, nim, call, obj);
+        yield call(connectChatroom, nim, call, callback);
         break;
     }
   },

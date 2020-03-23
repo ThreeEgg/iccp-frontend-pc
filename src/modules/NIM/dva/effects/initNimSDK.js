@@ -31,11 +31,14 @@ import {
 import dynamic from 'next/dynamic';
 
 // 重新初始化 NIM SDK
-export function initNimSDK({ state, commit, dispatch }, loginInfo) {
-  if (state.nim) {
-    state.nim.disconnect();
+export function *initNimSDK({ loginInfo }, { put, call, select }, ) {
+  console.log('initNimSDK')
+  debugger
+  const nim = yield select(state => state.chat.nim);
+  if (nim) {
+    nim.disconnect();
   }
-  dispatch('showLoading');
+  put({ type: 'showLoading' });
   const SDK = dynamic(import('../../sdk/' + config.sdk), {
     ssr: false,
   });
