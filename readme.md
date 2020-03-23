@@ -14,8 +14,9 @@
 
 - 测试环境页面访问地址：http://172.16.110.5:1993/
 - 端口自定义 配置环境变量`PORT`
-- 部署脚本：deploy-test.sh
+- 测试环境脚本，仅同步代码使用：deploy-test.sh
 - 使用`pm2`管理 server，运行`npm run pm2`启动，具体见`pm2.json`配置
+- 部署各环境脚本: run.sh --env test
 
 ## Antd
 
