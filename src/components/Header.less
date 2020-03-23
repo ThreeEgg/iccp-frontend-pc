@@ -2,62 +2,63 @@
 div {
   font-size: @font-size;
 }
-.header{
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 999;
-    width: 100%;
-    height: 96px;
-    display: flex;
-    align-items: center;
-    padding-left: 30px;
-    background:linear-gradient(180deg,rgba(34,44,62,1) 0%,rgba(34,44,62,0) 100%);
-    .logo {
-        width: 100px;
-        height: 48px;
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 96px;
+  padding-left: 30px;
+  background: linear-gradient(180deg, rgba(34, 44, 62, 1) 0%, rgba(34, 44, 62, 0) 100%);
+  .logo {
+    width: 100px;
+    height: 48px;
+  }
+  .line {
+    width: 1px;
+    height: 28px;
+    margin: 0 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  .platName {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+  }
+  .type {
+    position: absolute;
+    right: 26px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    .ant-btn {
+      color: #fff;
+      background: transparent;
+      border: none;
     }
-    .line{
-        width: 1px;
-        height: 28px;
-        margin: 0 15px;
-        background-color: rgba(255,255,255,.8);
+    .ant-btn:focus,
+    .ant-btn.active {
+      color: #fff;
+      background-color: #337aff;
     }
-    .platName{
-        color: rgba(255,255,255,.8);
-        font-size: 14px;
+    .line {
+      display: inline-block;
+      margin: 0 19px 0 24px;
+      vertical-align: middle;
     }
-    .type{
-        position: absolute;
-        right: 26px;
-        font-size: 14px;
-        color: rgba(255,255,255,.8);
-        .ant-btn{
-            background: transparent;
-            border: none;
-            color: #fff;
-        }
-        .ant-btn:focus, .ant-btn.active{
-            color: #fff;
-            background-color: #337AFF;
-        }
-        .line{
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 19px 0 24px;
-        }
-        .en{
-            font-size: 16px;
-            vertical-align: middle;
-        }
-        .cn{
-            vertical-align: middle;
-        }
-        .ant-switch-small{
-            margin: 0 10px;
-        }
-        .ant-switch-checked{
-            background-color: #337AFF;
-        }
+    .en {
+      font-size: 16px;
+      vertical-align: middle;
     }
+    .cn {
+      vertical-align: middle;
+    }
+    .ant-switch-small {
+      margin: 0 10px;
+    }
+    .ant-switch-checked {
+      background-color: #337aff;
+    }
+  }
 }

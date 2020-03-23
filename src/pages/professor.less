@@ -1,31 +1,31 @@
 @import '../components/common.less';
-.banner{
-    color: #ffffff;
+.banner {
     position: relative;
-    > img{
+    color: #fff;
+    > img {
         width: 100%;
     }
-    .bannerTitle{
-        width: 100%;
-        height: 90px;
-        background: rgba(27, 40, 87, .5);
+    .bannerTitle {
         position: absolute;
         bottom: 0;
-        .bannerText{
+        width: 100%;
+        height: 90px;
+        background: rgba(27, 40, 87, 0.5);
+        .bannerText {
             height: 100%;
-            > div{
+            > div {
                 font-size: 24px;
-                letter-spacing:4px;
-                img{
+                letter-spacing: 4px;
+                img {
                     margin-right: 32px;
                 }
-                a{
-                    color: rgba(255, 255, 255, .8);
+                a {
+                    color: rgba(255, 255, 255, 0.8);
                     font-size: 16px;
-                    letter-spacing:2px;
+                    letter-spacing: 2px;
                 }
-                a:hover{
-                    color: #337AFF;
+                a:hover {
+                    color: #337aff;
                 }
             }
         }
@@ -338,4 +338,13 @@
 }
 .ant-pagination-item{
     border-radius: 8px;
+    .con-pro-m {
+      flex: 1;
+      box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+    }
+    .con-pro-l {
+      width: 270px;
+      margin-left: 20px;
+      box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+    }
 }

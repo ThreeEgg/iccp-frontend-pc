@@ -4,25 +4,36 @@
 // 公用类
 @font-size: 20px;
 div {
-    font-size: @font-size;
+  font-size: @font-size;
 }
-.flex{
-    display: flex;
+.flex {
+  display: flex;
 }
-.flex-align{
-    align-items: center;
+.flex-column {
+  flex-direction: column;
 }
-.flex-justifyCenter{
-    justify-content: center;
+.flex-align {
+  align-items: center;
 }
-.flex-justifyBetween{
-    justify-content: space-between;
+.flex-justifyCenter {
+  justify-content: center;
 }
-.flex-justifyAround{
-    justify-content: space-around;
+.flex-justifyBetween {
+  justify-content: space-between;
 }
-.commonWidth{
-    width: 1200px;
-    margin: 0 auto;
+.flex-justifyAround {
+  justify-content: space-around;
 }
-
+.flex-alignCenter {
+  align-items: center;
+}
+.flex-alignStart {
+  align-items: flex-start;
+}
+.flex-alignEnd {
+  align-items: flex-end;
+}
+.commonWidth {
+  width: 1200px;
+  margin: 0 auto;
+}
