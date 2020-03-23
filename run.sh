@@ -26,4 +26,4 @@ npm install --registry=http://registry.npm.taobao.org
 npm run build
 
 # pm2运行
-npm run pm2
+# npm run pm2
