@@ -4,6 +4,7 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import { getAuthorityToken } from '../common/authority';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -23,15 +24,12 @@ const codeMessage = {
   504: '网关超时。',
 };
 
-/**
- * 异常处理程序
- */
-const errorHandler = (error: { response: Response }): Response => {
+const errorHandler = error => {
   const { response } = error;
-  if (response && response.status) {
-    const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
 
+  if (response && response.status) {
+    const errorText = codeMessage[response.status] || response.message;
+    const { status, url } = response;
     notification.error({
       message: `请求错误 ${status}: ${url}`,
       description: errorText,
@@ -42,6 +40,7 @@ const errorHandler = (error: { response: Response }): Response => {
       message: '网络异常',
     });
   }
+
   return response;
 };
 
@@ -49,8 +48,62 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
-  errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+  errorHandler,
+  // 默认错误处理
+  // credentials: 'include', // 默认请求是否带上cookie
+  prefix: process.env.NODE_ENV === 'production' ? '/api' : '/api',
+});
+
+/**
+ * request拦截
+ * 1. header中加入token
+ */
+request.interceptors.request.use((url, options) => {
+  const token = getAuthorityToken();
+  let { headers } = options;
+
+  if (token) {
+    headers = {
+      ...options.headers,
+      token,
+    };
+  }
+
+  return {
+    url,
+    options: { ...options, headers },
+  };
+});
+
+/**
+ * response拦截
+ * 1. 权限自动跳转
+ * 2. 错误码提示
+ */
+request.interceptors.response.use(async (response, options) => {
+  // 文件类型的请求，不处理请求体
+  if (options.responseType === 'blob') {
+    return response;
+  }
+  const data = await response.clone().json();
+  if (!data) {
+    return response;
+  }
+  // FIXME: 这里需要补全所有的错误情况
+  if (data.code !== 0) {
+    // 16000 token无效
+    // 12000 需要人机验证
+    if (data.code == 16000) {
+      message.error('登录失效');
+    } else {
+      notification.error({
+        description: data.msg,
+        message: '请求错误',
+      });
+    }
+    return {};
+  }
+  return response;
 });
 
 export default request;

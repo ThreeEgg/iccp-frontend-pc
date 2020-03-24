@@ -1,24 +1,6 @@
 import api from './api';
 import request from './request';
 
-// getExpertList: '/expert/list',
-// getExpertIndividualIntroduce: '/expert/introduction',
-// saveExpertIndividualIntroduce: '/expert/introduction/update',
-// getExpertActivityList: '/expert/activity/list',
-// getExpertActivityById: '/expert/activity/get',
-// saveExpertActivity: '/expert/activity/create',
-// deleteExpertActivity: '/expert/activity/delete',
-// getExpertArticleById: '/expert/article/get',
-// saveExpertArticle: '/expert/article/update',
-// deleteExpertArticle: '/expert/article/delete',
-// getAllServiceTagList: '/expert/service/list',
-// getServiceTagList: '/expert/service/list',
-// saveServiceTagList: '/expert/service/update',
-// getExpertInfomation: '/expert/information',
-// saveExpertInfomation: '/expert/information/update',
-// getExpertScheduleByGreenwich: '/expert/schedule',
-// saveExpertSchedule: '/expert/schedule/update',
-
 export const getExpertList = async ({ countryCode, serviceTagIdList = [] }) => {
   return request(api.getExpertList, {
     params: {
@@ -44,10 +26,10 @@ export const saveExpertIndividualIntroduce = async ({ content }) => {
   });
 };
 
-export const getExpertActivityList = async ({ pageNo, pageSize, userId }) => {
+export const getExpertActivityList = async ({ pageNum, pageSize, userId }) => {
   return request(api.getExpertActivityList, {
     params: {
-      pageNo,
+      pageNum,
       pageSize,
       userId,
     },
@@ -110,10 +92,45 @@ export const getAllServiceTagList = async ({ userId }) => {
   });
 };
 
-export const saveServiceTagList = async ({ userId }) => {
+export const saveServiceTagList = async ({ serviceIdList }) => {
   return request(api.saveServiceTagList, {
     params: {
+      serviceIdList,
+    },
+  });
+};
+
+export const getExpertInformation = async ({ userId }) => {
+  return request(api.getExpertInformation, {
+    params: {
       userId,
+    },
+  });
+};
+
+export const saveExpertInformation = async ({ content }) => {
+  return request.post(api.saveServiceTagList, {
+    params: {
+      content,
+    },
+  });
+};
+
+export const getExpertScheduleByGreenwich = async ({ timeZone, userId }) => {
+  return request(api.getExpertScheduleByGreenwich, {
+    params: {
+      timeZone,
+      userId,
+    },
+  });
+};
+
+export const saveExpertSchedule = async ({ isBusyStr, timeZone, userId }) => {
+  return request.post(api.saveExpertSchedule, {
+    params: {
+      isBusyStr,
+      userId,
+      timeZone,
     },
   });
 };
