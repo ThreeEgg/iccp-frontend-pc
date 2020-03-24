@@ -1,0 +1,47 @@
+export default {
+  //用户管理
+  registry: '/user/registry',
+  getRegistryAgreement: '/user/registry-agreement',
+  login: '/user/login',
+  logout: '/user/logout',
+  getUserInfo: '/user/userinfo',
+  modifyPassword: '/user/password/update',
+  modifyUserName: '/user/name/update',
+  resetPassword: '/user/reset-passwd',
+  requestEmailForResetPassword: '/user/request-passwd-reset',
+
+  //专家管理
+  getExpertList: '/expert/list',
+  getExpertIndividualIntroduce: '/expert/introduction',
+  saveExpertIndividualIntroduce: '/expert/introduction/update',
+  getExpertActivityList: '/expert/activity/list',
+  getExpertActivityById: '/expert/activity/get',
+  saveExpertActivity: '/expert/activity/create',
+  deleteExpertActivity: '/expert/activity/delete',
+  getExpertArticleList: '/expert/article/list',
+  getExpertArticleById: '/expert/article/get',
+  saveExpertArticle: '/expert/article/update',
+  deleteExpertArticle: '/expert/article/delete',
+  getAllServiceTagList: '/expert/service/list',
+  getServiceTagList: '/expert/service/list',
+  saveServiceTagList: '/expert/service/update',
+  getExpertInfomation: '/expert/information',
+  saveExpertInfomation: '/expert/information/update',
+  getExpertScheduleByGreenwich: '/expert/schedule',
+  saveExpertSchedule: '/expert/schedule/update',
+
+  //聊天管理
+  requestIMId: '/im/request-imid',
+  checkFirstChat: '/im/check-welcome',
+  recentChatList: '/im/recent-chat',
+  caseInfo: '/case/get',
+  caseInfoSave: '/case/update',
+  orderSave: '/order/create',
+  customerEvaluationToExpert: '/expert/user-rating/update',
+  historyChatMsg: '/im/chat-history',
+  getTranslate: '/support/translate',
+  downloadCaseBatch: '/support/downloadBatch',
+
+  // 其他
+  fileUpload: '/support/upload',
+};
