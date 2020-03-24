@@ -1,4 +1,13 @@
 /*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-16 15:56:52
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-24 10:42:58
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\session.js
+ */
+/*
  * 会话列表
  */
 
@@ -24,15 +33,14 @@ function updateSessionAccount (sessions) {
 
 // onSessions只在初始化完成后回调
 export function onSessions (sessions) {
-  debugger
   updateSessionAccount(sessions)
-  store.commit('updateSessions', sessions)
+  window.dispatch({ type: 'chat/updateSessionsExt', sessions })
 }
 
 export function onUpdateSession (session) {
   let sessions = [session]
   updateSessionAccount(sessions)
-  store.commit('updateSessions', sessions)
+  window.dispatch({ type: 'chat/updateSessionsExt', sessions })
 }
 
 export function deleteSession ({state, commit}, sessionId) {

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 18:13:47
+ * @LastEditTime: 2020-03-24 09:44:06
  * @FilePath: \PC端-前端\src\modules\NIM\components\Login.js
  */
 import React from 'react';
@@ -63,11 +63,8 @@ class Login extends React.Component {
     // 服务端帐号均为小写
     cookie.setCookie('uid', this.state.account.toLowerCase());
     cookie.setCookie('sdktoken', sdktoken);
-    this.setState({
-      visible: false,
-    });
     // 提交sdk连接请求
-    this.props.dispatch({ type: 'chat/connect',obj:{} })
+    this.props.dispatch({ type: 'chat/connect' })
   };
   handleCancel = e => {
     this.setState({
@@ -79,6 +76,14 @@ class Login extends React.Component {
     if (!localStorage.imAccount || !localStorage.imToken) {
       this.setState({
         visible: true,
+      });
+    }
+  };
+
+  componentDidUpdate = (prevProps, prevState) =>  {
+    if (prevProps.isLogin !== this.props.isLogin) {
+      this.setState({
+        visible: !prevProps.isLogin,
       });
     }
   };
@@ -137,5 +142,6 @@ class Login extends React.Component {
   }
 }
 export default connect(({ chat }) => ({
-  chat:chat
+  chat,
+  isLogin: chat.isLogin
 }))(Login);

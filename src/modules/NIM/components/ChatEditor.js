@@ -4,13 +4,15 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 16:43:58
+ * @LastEditTime: 2020-03-23 15:06:49
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import config from '../configs';
+import { message } from 'antd'
+
 class ChatEditor extends React.Component {
   //在这里进行类型检测(这里的名字不是随便自定义的，规定这样写的)
   static propTypes = {
@@ -426,7 +428,6 @@ class ChatEditor extends React.Component {
       this.$recordTime.innerText = '00:00';
       this.recorder.stop();
       this.recorder.exportWAV(blob => {
-        this.props.dispatch('showLoading');
         this.props.dispatch('sendFileMsg', {
           scene: this.scene,
           to: this.to,
@@ -437,9 +438,6 @@ class ChatEditor extends React.Component {
             console.log('已经上传的大小: ' + obj.loaded + 'bytes');
             console.log('上传进度: ' + obj.percentage);
             console.log('上传进度文本: ' + obj.percentageText);
-            if (obj.percentage === 100) {
-              this.props.dispatch('hideLoading');
-            }
           },
           uploaderror: () => {
             console && console.log('上传失败');

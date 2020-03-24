@@ -13,83 +13,84 @@ import { resetSearchResult, searchTeam, searchUsers } from './search';
 import { deleteSession, resetCurrSession, setCurrSession } from './session';
 import { deleteSysMsgs, markCustomSysMsgRead, markSysMsgRead, resetSysMsgs } from './sysMsgs';
 import { checkTeamMsgReceipt, delegateTeamFunction, enterSettingPage, getTeamMembers, getTeamMsgReads, onTeamNotificationMsg } from './team';
+import * as extFunction from './extFunction';
 /* 导出actions方法 */
-import { hideFullscreenImg, hideLoading, showFullscreenImg, showLoading } from './widgetUi';
-
-
-async function *connectNim(callback, {put, call, select}) {
-  let { force } = Object.assign({}, callback);
-  const nim = yield select(state => state.chat.nim);
-  // 操作为内容页刷新页面，此时无nim实例
-  if (!nim || force) {
-    let loginInfo = {
-      uid: cookie.readCookie('uid'),
-      sdktoken: cookie.readCookie('sdktoken'),
-    };
-    if (!loginInfo.uid) {
-      // 无cookie，直接跳转登录页
-      pageUtil.turnPage('无历史登录记录，请重新登录', 'login');
-    } else {
-      // 有cookie，重新登录
-      debugger
-      yield call(initNimSDK, {loginInfo},{ put, call, select} );
-    }
-  }
-}
-
-async function connectChatroom(nim, call, obj) {
-  let { chatroomId } = Object.assign({}, obj);
-  if (nim) {
-    call('showLoading');
-    nim.getChatroomAddress({
-      chatroomId,
-      done: function getChatroomAddressDone(error, obj) {
-        if (error) {
-          alert(error.message);
-          location.href = '#/room';
-          return;
-        }
-        call('initChatroomSDK', { obj });
-      },
-    });
-  }
-}
-
+import { hideFullscreenImg, showFullscreenImg } from './widgetUi';
+import { message } from 'antd';
 export default {
-  *updateRefreshState({ put }) {
+  *updateRefreshState(action, { put }) {
+    debugger
     yield put({ type: 'updateRefreshState' });
   },
 
   // UI 及页面状态变更
-  showLoading,
-  hideLoading,
   showFullscreenImg,
   hideFullscreenImg,
   continueRobotMsg,
+  *connectNim({ callback }, { put, select }) {
+    let { force } = Object.assign({}, callback);
+    const nim = yield select(state => state.chat.nim);
+    // 操作为内容页刷新页面，此时无nim实例
+    if (!nim || force) {
+      let loginInfo = {
+        uid: cookie.readCookie('uid'),
+        sdktoken: cookie.readCookie('sdktoken'),
+      };
+      if (!loginInfo.uid) {
+        // 无cookie，直接跳转登录页
+        pageUtil.turnPage('无历史登录记录，请重新登录', 'login');
+      } else {
+        // 有cookie，重新登录
+        yield put({ type: 'initNimSDK', loginInfo });
+      }
+    }
+  },
+  *connectChatroom({ callback }, { put, select }) {
+    let { chatroomId } = Object.assign({}, callback);
+    const nim = yield select(state => state.chat.nim);
+    if (nim) {
+      nim.getChatroomAddress({
+        chatroomId,
+        done: function getChatroomAddressDone(error, callback) {
+          if (error) {
+            message.error(error.message);
+            location.href = '#/room';
+            return;
+          }
+          put({ type: 'initChatroomSDK', callback });
+        },
+      });
+    }
+  },
   // 连接sdk请求，false表示强制重连
-  *connect({ callback }, { put, call, select }) {
+  *connect({ callback }, { put }) {
     let { type } = Object.assign({}, callback);
     // type 可为 nim chatroom
     type = type || 'nim';
     switch (type) {
       case 'nim':
-        yield call(connectNim, callback, {put, call, select});
+        yield put({ type: 'connectNim', callback });
         break;
       case 'chatroom':
-        yield call(connectChatroom, nim, call, callback);
+        yield put({ type: 'connectChatroom', callback });
         break;
     }
   },
 
   // 用户触发的登出逻辑
-  logout({ state, commit }) {
+  *logout(action, { select }) {
     cookie.delCookie('uid');
     cookie.delCookie('sdktoken');
-    if (state.nim) {
-      state.nim.disconnect();
+    const nim = yield select(state => state.chat.nim);
+    if (nim) {
+      nim.disconnect();
     }
     pageUtil.turnPage('', 'login');
   },
+
+  // 解决SDK无法调用外部dispatch的映射方法集合start
+  ...extFunction,
+  // 解决SDK无法调用外部dispatch的映射方法集合end
 
   // 初始化 重新连接SDK
   initNimSDK,

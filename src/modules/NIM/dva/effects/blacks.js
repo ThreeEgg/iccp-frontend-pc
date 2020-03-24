@@ -4,8 +4,8 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-16 16:54:26
- * @FilePath: \PC端-前端\src\modules\NIM\dva\actions\blacks.js
+ * @LastEditTime: 2020-03-24 10:25:12
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\blacks.js
  */
 /*
  * 黑名单及静音列表
@@ -14,7 +14,7 @@
 import store from '..'
 
 // 完成添加/删除黑名单，初始化获取黑名单列表，都会触发此函数
-export function onBlacklist (blacks) {
+export function onBlacklist(blacks) {
   blacks = blacks.map(item => {
     if (typeof item.isBlack !== 'boolean') {
       item.isBlack = true
@@ -22,14 +22,14 @@ export function onBlacklist (blacks) {
     return item
   })
   // 更新黑名单列表
-  store.commit('updateBlacklist', blacks)
+  window.dispatch({ type: 'chat/updateBlacklistExt', blacks })
   // 在好友身上打上标记
-  store.commit('updateFriends', blacks)
+  window.dispatch({ type: 'chat/updateFriendsExt', friends: blacks })
   // 更新好友信息字典
-  store.commit('updateUserInfo', blacks)
+  window.dispatch({ type: 'chat/updateUserInfoExt', users: blacks })
 }
 
-export function onMarkInBlacklist (obj) {
+export function onMarkInBlacklist(obj) {
   obj = obj || obj2
   let account = obj.account
   // 说明是自己，被别人加入黑名单
@@ -46,7 +46,7 @@ export function onMarkInBlacklist (obj) {
   }
 }
 
-export function updateBlack ({state}, {account, isBlack}) {
+export function updateBlack({ state }, { account, isBlack }) {
   const nim = state.nim
   if (account && (typeof isBlack === 'boolean')) {
     nim.markInBlacklist({

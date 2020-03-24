@@ -14,12 +14,12 @@ export function onTeams(teams) {
       team.avatar = team.avatar + '?imageView&thumbnail=300y300'
     }
   })
-  store.commit('updateTeamList', teams)
+  // //store.commit('updateTeamList', teams)
 }
 
 // 收到群成员及更新群成员接口
 export function onTeamMembers(obj) {
-  store.commit('updateTeamMembers', obj)
+  // //store.commit('updateTeamMembers', obj)
 }
 
 export function onCreateTeam(team) {
@@ -36,9 +36,9 @@ export function onSynCreateTeam(team){
 }
 
 export function onDismissTeam(obj) {
-  store.commit('updateTeamList', {
-    invalid: { teamId: obj.teamId }
-  })
+  // store.commit('updateTeamList', {
+  //   invalid: { teamId: obj.teamId }
+  // })
 }
 
 export function onUpdateTeam(team) {
@@ -47,7 +47,7 @@ export function onUpdateTeam(team) {
 
 export function onTeamNotificationMsg({state, commit}, msg) {
   if (msg.attach.type === 'updateTeam' && msg.attach.team) {
-    store.commit('updateTeamInfo', msg.attach.team)
+    // //store.commit('updateTeamInfo', msg.attach.team)
   }
   if (msg.attach.type === 'transferTeam') {
     onTeamMembers({
@@ -80,10 +80,10 @@ export function onRemoveTeamMembers(obj) {
       onTeams(team)
     }
   })
-  store.commit('removeTeamMembersByAccounts', {
-    teamId: obj.team.teamId,
-    accounts: obj.accounts
-  })
+  // store.commit('removeTeamMembersByAccounts', {
+  //   teamId: obj.team.teamId,
+  //   accounts: obj.accounts
+  // })
 }
 
 export function onUpdateTeamMember(teamMember) {
@@ -110,7 +110,7 @@ export function onUpdateTeamManagers(obj) {
 export function onTeamMsgReceipt(obj) {
   obj.teamMsgReceipts.forEach(item => {
     if (item.teamId === store.state.currReceiptQueryTeamId) {
-      store.commit('updateSingleTeamMsgReads', item)
+      // //store.commit('updateSingleTeamMsgReads', item)
     }
   })
   console.log('群消息回执通知' + obj)
@@ -179,16 +179,16 @@ export function checkTeamMsgReceipt({state}, msgs) {
       done: (err, obj, content) => {
         console.log('标记群组消息已读' + (!err ? '成功' : '失败'));
         if (!err) {
-          store.commit('updateSentReceipedMap', needToPeceiptList)
+          // //store.commit('updateSentReceipedMap', needToPeceiptList)
         }
       }
     })
   }
 
-  store.commit('updateReceiptQueryList', {
-    teamId: teamId,
-    msgs: msgs
-  })
+  // store.commit('updateReceiptQueryList', {
+  //   teamId: teamId,
+  //   msgs: msgs
+  // })
 }
 
 // 查询需要发送回执的消息
@@ -214,7 +214,7 @@ export function getTeamMsgReads({ state }, needQuery) {
         console.log('获取群组消息已读' + error)
       }else {
         console.log('获取群组消息已读：', content)
-        store.commit('updateTeamMsgReads', content)
+        // //store.commit('updateTeamMsgReads', content)
       }
     }
   })

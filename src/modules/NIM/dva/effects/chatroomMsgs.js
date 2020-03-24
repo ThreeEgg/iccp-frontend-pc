@@ -11,15 +11,14 @@ export function onChatroomMsgs (msgs) {
     return formatMsg(msg)
   })
   if (store.state.currChatroomId) {
-    store.commit('updateCurrChatroomMsgs', {
-      type: 'put',
-      msgs
-    })
+    // // store.commit('updateCurrChatroomMsgs', {
+    //   type: 'put',
+    //   msgs
+    // })
   }
 }
 
 function onSendMsgDone (error, msg) {
-  store.dispatch('hideLoading')
   if (error) {
     alert(error.message)
     return
@@ -31,7 +30,6 @@ export function sendChatroomMsg ({state, commit}, obj) {
   const chatroom = state.currChatroom
   obj = obj || {}
   let type = obj.type || ''
-  store.dispatch('showLoading')
   switch (type) {
     case 'text':
       chatroom.sendText({
@@ -93,7 +91,6 @@ export function sendChatroomFileMsg ({state, commit}, obj) {
   } else if (/\.(mov|mp4|ogg|webm)$/i.test(fileInput.value)) {
     type = 'video'
   }
-  store.dispatch('showLoading')
   chatroom.sendFile({
     type,
     fileInput,
@@ -140,10 +137,8 @@ export function getChatroomHistoryMsgs ({state, commit}, obj) {
             })
           }
         }
-        store.dispatch('hideLoading')
       }
     }
-    store.dispatch('showLoading')
     nim.getHistoryMsgs(options)
   }
 }

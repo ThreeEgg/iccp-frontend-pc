@@ -4,25 +4,26 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-16 16:54:41
- * @FilePath: \PC端-前端\src\modules\NIM\dva\actions\sysMsgs.js
+ * @LastEditTime: 2020-03-24 16:26:16
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\sysMsgs.js
  */
 import store from '..'
 import {onUpdateFriend, onDeleteFriend} from './friends'
 import {onRevocateMsg} from './msgs'
 
 export function onSysMsgs (sysMsgs) {
-  store.commit('updateSysMsgs', sysMsgs)
+  // //store.commit('updateSysMsgs', sysMsgs)
 }
 
 export function onSysMsg (sysMsg) {
+  debugger
   switch (sysMsg.type) {
     // 在其他端添加或删除好友
     case 'addFriend':
       onUpdateFriend(null, {
         account: sysMsg.from
       })
-      store.commit('updateSysMsgs', [sysMsg])
+      // //store.commit('updateSysMsgs', [sysMsg])
       break
     case 'deleteFriend':
       onDeleteFriend(null, {
@@ -42,14 +43,14 @@ export function onSysMsg (sysMsg) {
     case 'applyTeam':  // 申请入群
     case 'rejectTeamApply':  // 申请入群被拒绝
     case 'rejectTeamInvite': // 拒绝入群邀请
-      store.commit('updateSysMsgs', [sysMsg])
+      // //store.commit('updateSysMsgs', [sysMsg])
       break
   }
-  store.commit('updateSysMsgState', sysMsg)
+  // //store.commit('updateSysMsgState', sysMsg)
 }
 
 export function onSysMsgUnread (obj) {
-  store.commit('updateSysMsgUnread', obj)
+  // // //store.commit('updateSysMsgUnread', obj)
 }
 
 export function onCustomSysMsgs (customSysMsgs) {
@@ -72,7 +73,7 @@ export function onCustomSysMsgs (customSysMsgs) {
     return true
   })
   if (customSysMsgs.length > 0) {
-    store.commit('updateCustomSysMsgs', customSysMsgs)
+    // //store.commit('updateCustomSysMsgs', customSysMsgs)
   }
 }
 

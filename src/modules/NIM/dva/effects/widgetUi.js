@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-16 15:56:52
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-23 17:44:19
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\widgetUi.js
+ */
 import pageUtil from '../../utils/page'
 
 // 显示加载中进度条

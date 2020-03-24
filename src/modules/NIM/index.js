@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-23 11:50:53
+ * @LastEditTime: 2020-03-23 16:16:06
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -30,10 +30,13 @@ class Index extends React.Component {
   // 进入该页面，文档被挂载
   async componentDidMount() {
     // 提交sdk连接请求
-    this.props.dispatch({ type: 'chat/connect' })
+    // this.props.dispatch({ type: 'chat/connect' })
+    if(!window.dispatch){
+      window.dispatch = this.props.dispatch;
+    }
   }
   async componentDidUpdate(prevProps, prevState) {
-    this.props.dispatch({ type: 'chat/updateRefreshState' })
+    // this.props.dispatch({ type: 'chat/updateRefreshState' })
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {

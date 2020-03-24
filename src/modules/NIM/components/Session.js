@@ -25,15 +25,9 @@ class Session extends React.Component {
   };
   // 进入该页面，文档被挂载
   async componentDidMount() {
-    this.props.dispatch({ type: 'chat/showLoading' });
     // 此时设置当前会话
     this.props.dispatch({ type: 'chat/setCurrSession', sessionId: this.sessionId() });
     pageUtil.scrollChatListDown();
-
-    setTimeout(() => {
-      this.props.dispatch({ type: 'chat/hideLoading' });
-    }, 1000);
-
     // 获取群成员
     if (this.scene === 'team') {
       var teamMembers = this.props.state.teamMembers[this.to];

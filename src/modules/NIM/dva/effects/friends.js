@@ -3,19 +3,20 @@
  */
 
 import store from '..'
-import { formatUserInfo } from './userInfo' 
+import { formatUserInfo } from './userInfo'
 
 // 好友关系，回调
-export function onFriends (friends) {
+export function onFriends(friends) {
   friends = friends.map(item => {
     if (typeof item.isFriend !== 'boolean') {
       item.isFriend = true
     }
     return item
   })
-  store.commit('updateFriends', friends)
+
+  window.dispatch({ type: 'chat/updateFriendsExt', friends });
   // 更新好友信息字典，诸如昵称
-  store.commit('updateUserInfo', friends)
+  window.dispatch({ type: 'chat/updateUserInfoExt', users: friends });
 }
 
 // 更新好友资料，添加好友成功
@@ -41,12 +42,12 @@ export function onUpdateFriend(error, friends) {
       return item.account
     }),
     done: (users) => {
-      const nim = store.state.nim
+      const nim = window.nim
       friends = nim.mergeFriends(friends, users).map(formatUserInfo)
       // 更新好友列表
-      store.commit('updateFriends', friends)
+      // //store.commit('updateFriends', friends)
       // 更新好友资料
-      store.commit('updateUserInfo', friends)
+      // //store.commit('updateUserInfo', friends)
     }
   })
 }
@@ -65,9 +66,9 @@ export function onDeleteFriend(error, friends) {
     return item
   })
   // 更新好友列表
-  store.commit('updateFriends', [], friends)
+  // //store.commit('updateFriends', [], friends)
   // 更新好友资料
-  store.commit('updateUserInfo', friends)
+  // //store.commit('updateUserInfo', friends)
 }
 
 export function onSyncFriendAction(obj) {
@@ -100,7 +101,7 @@ export function onSyncFriendAction(obj) {
 }
 
 // 更新好友昵称
-export function updateFriend ({state, commit}, friend) {
+export function updateFriend({ state, commit }, friend) {
   const nim = state.nim
   nim.updateFriend({
     account: friend.account,
@@ -109,7 +110,7 @@ export function updateFriend ({state, commit}, friend) {
   })
 }
 
-export function addFriend ({state, commit}, account) {
+export function addFriend({ state, commit }, account) {
   const nim = state.nim
   nim.addFriend({
     account,
@@ -118,7 +119,7 @@ export function addFriend ({state, commit}, account) {
   })
 }
 
-export function deleteFriend ({state, commit}, account) {
+export function deleteFriend({ state, commit }, account) {
   const nim = state.nim
   nim.deleteFriend({
     account,

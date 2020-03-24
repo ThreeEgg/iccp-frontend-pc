@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-16 15:56:52
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-24 16:51:03
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
+ */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
 // put({ type: 'caculate', delta });
 
@@ -7,16 +16,19 @@ import util from '../../utils'
 import config from '../../configs'
 
 export default {
-  updateRefreshState (state) {
-    state.isRefresh = false
+  updateLogin(state, { isLogin }) {
+    return { ...state, isLogin };
   },
-  updateLoading (state, status) {
-    clearTimeout(state.loadingTimer)
-    state.loadingTimer = setTimeout(() => {
-      state.isLoading = status
-    }, 20)
+  updateNim(state, { nim }) {
+    return { ...state, nim };
   },
-  updateFullscreenImage (state, obj) {
+  updateCurrSession(state, { currSessionId }) {
+    return { ...state, currSessionId };
+  },
+  updateRefreshState(state) {
+    return { ...state, isRefresh: false };
+  },
+  updateFullscreenImage(state, obj) {
     obj = obj || {}
     if (obj.src && obj.type === 'show') {
       state.fullscreenImgSrc = obj.src
@@ -26,33 +38,47 @@ export default {
       state.isFullscreenImgShow = false
     }
   },
-  updateUserUID (state, loginInfo) {
-    state.userUID = loginInfo.uid
-    state.sdktoken = loginInfo.sdktoken
+  updateUserUID(state, payload) {
+    const { loginInfo } = payload;
     cookie.setCookie('uid', loginInfo.uid)
     cookie.setCookie('sdktoken', loginInfo.sdktoken)
+    return {
+      ...state,
+      userUID: loginInfo.uid,
+      sdktoken: loginInfo.sdktoken,
+      isLogin: true,
+    };
   },
-  updateMyInfo (state, myInfo) {
-    state.myInfo = util.mergeObject(state.myInfo, myInfo)
+  updateMyInfo(state, myInfo) {
+    const { myInfoOld } = state;
+    myInfo = util.mergeObject(myInfoOld, myInfo)
+    return { ...state, myInfo: myInfo };
+
   },
-  updateUserInfo (state, users) {
-    let userInfos = state.userInfos
+  updateUserInfo(state, { users }) {
+    const { userInfos } = state;
+    let temp = { ...userInfos };
     users.forEach(user => {
       let account = user.account
       if (account) {
-        userInfos[account] = util.mergeObject(userInfos[account], user)
+        temp[account] = util.mergeObject(temp[account], user)
       }
     })
-    state.userInfos = util.mergeObject(state.userInfos, userInfos)
+    temp = util.mergeObject(userInfos, temp)
+    return { ...state, userInfos: temp };
   },
-  updateFriends (state, friends, cutFriends = []) {
-    const nim = state.nim
-    state.friendslist = nim.mergeFriends(state.friendslist, friends)
-    // state.friendslist = nim.cutFriends(state.friendslist, cutFriends)
-    state.friendslist = nim.cutFriends(state.friendslist, friends.invalid)
+  updateFriends(state, { friends, cutFriends = [] }) {
+    const { nim } = state;
+    let { friendslist } = state;
+    friendslist = nim.mergeFriends(friendslist, friends)
+    // friendslist = nim.cutFriends(friendslist, cutFriends)
+    friendslist = nim.cutFriends(friendslist, friends.invalid)
+    return { ...state, friendslist };
   },
-  updateRobots (state, robots) {
-    const nim = state.nim
+  updateRobots(state, { robots }) {
+    const { nim, robotInfosByNick: robotInfosByNickOld } = state;
+    let robotInfosByNick = { ...robotInfosByNickOld };
+
     robots = robots.map(item => {
       if (item.avatar) {
         item.originAvatar = item.avatar
@@ -69,16 +95,18 @@ export default {
       }
       return item
     })
-    state.robotslist = robots
-    state.robotInfos = Object.create(null)
+    let robotslist = robots
+    let robotInfos = Object.create(null)
     robots.forEach(robot => {
-      state.robotInfos[robot.account] = robot
-      state.robotInfosByNick[robot.nick] = robot
+      robotInfos[robot.account] = robot
+      robotInfosByNick[robot.nick] = robot
     })
+    return { ...state, robotslist, robotInfos, robotInfosByNick };
+
   },
-  updateBlacklist (state, blacks) {
-    const nim = state.nim
-    state.blacklist = nim.cutFriends(state.blacklist, blacks.invalid)
+  updateBlacklist(state, { blacks }) {
+    const { nim } = state;
+    let blacklist = nim.cutFriends(state.blacklist, blacks.invalid)
     let addBlacks = blacks.filter(item => {
       return item.isBlack === true
     })
@@ -86,11 +114,12 @@ export default {
       return item.isBlack === false
     })
     // 添加黑名单
-    state.blacklist = nim.mergeFriends(state.blacklist, addBlacks)
+    blacklist = nim.mergeFriends(blacklist, addBlacks)
     // 解除黑名单
-    state.blacklist = nim.cutFriends(state.blacklist, remBlacks)
+    blacklist = nim.cutFriends(blacklist, remBlacks)
+    return { ...state, blacklist };
   },
-  updateSearchlist (state, obj) {
+  updateSearchlist(state, obj) {
     const type = obj.type
     switch (type) {
       case 'user':
@@ -109,64 +138,44 @@ export default {
         break
     }
   },
-  updateSessions (state, sessions) {
-    const nim = state.nim
-    state.sessionlist = nim.mergeSessions(state.sessionlist, sessions)
-    state.sessionlist.sort((a, b) => {
+  updateSessions(state, { sessions }) {
+    const { nim, sessionlist: sessionlistOld, sessionMap: sessionMapOld } = state;
+    let sessionlist = [...sessionlistOld], sessionMap = { ...sessionMapOld };
+    sessionlist = nim.mergeSessions(sessionlist, sessions)
+    sessionlist.sort((a, b) => {
       return b.updateTime - a.updateTime
     })
-    state.sessionlist.forEach(item => {
-      state.sessionMap[item.id] = item
+    sessionlist.forEach(item => {
+      sessionMap[item.id] = item
     })
+    return { ...state, sessionlist, sessionMap };
   },
-  deleteSessions (state, sessionIds) {
-    const nim = state.nim
+  deleteSessions(state, sessionIds) {
+    const { nim } = state;
     state.sessionlist = nim.cutSessionsByIds(state.sessionlist, sessionIds)
   },
   // 初始化，收到离线漫游消息时调用
-  updateMsgs (state, msgs) {
-    const nim = state.nim
-    let tempSessionMap = {}
+  updateMsgs(state, { msgs }) {
+    const { nim, msgs: msgsOld } = state;
+    let msgsNew = { ...msgsOld };
     msgs.forEach(msg => {
       let sessionId = msg.sessionId
-      tempSessionMap[sessionId] = true
-      if (!state.msgs[sessionId]) {
-        state.msgs[sessionId] = []
+      if (!msgsNew[sessionId]) {
+        msgsNew[sessionId] = []
       }
       // sdk会做消息去重
-      state.msgs[sessionId] = nim.mergeMsgs(state.msgs[sessionId], [msg])
+      msgsNew[sessionId] = nim.mergeMsgs(msgsNew[sessionId], [msg])
       // state.msgs[sessionId].push(msg)
     })
-    store.commit('updateMsgByIdClient', msgs)
-    for (let sessionId in tempSessionMap) {
-      state.msgs[sessionId].sort((a, b) => {
-        if (a.time === b.time) {
-          // 机器人消息，回复消息时间和提问消息时间相同，提问在前，回复在后
-          if (a.type === 'robot' && b.type === 'robot') {
-            if (a.content && a.content.msgOut) {
-              return 1
-            }
-            if (b.content && b.content.msgOut) {
-              return -1
-            }
-          }
-        }
-        return a.time - b.time
-      })
-      if (sessionId === state.currSessionId) {
-        store.commit('updateCurrSessionMsgs', {
-          type: 'init'
-        })
-      }
-    }
+    return { ...state, msgs: msgsNew };
   },
   // 更新追加消息，追加一条消息
-  putMsg (state, msg) {
+  putMsg(state, msg) {
     let sessionId = msg.sessionId
     if (!state.msgs[sessionId]) {
       state.msgs[sessionId] = []
     }
-    store.commit('updateMsgByIdClient', msg)
+    //store.commit('updateMsgByIdClient', msg)
     let tempMsgs = state.msgs[sessionId]
     let lastMsgIndex = tempMsgs.length - 1
     if (tempMsgs.length === 0 || msg.time >= tempMsgs[lastMsgIndex].time) {
@@ -182,7 +191,7 @@ export default {
     }
   },
   // 删除消息列表消息
-  deleteMsg (state, msg) {
+  deleteMsg(state, msg) {
     let sessionId = msg.sessionId
     let tempMsgs = state.msgs[sessionId]
     if (!tempMsgs || tempMsgs.length === 0) {
@@ -198,8 +207,8 @@ export default {
     }
   },
   // 替换消息列表消息，如消息撤回
-  replaceMsg (state, obj) {
-    let {sessionId, idClient, msg} = obj
+  replaceMsg(state, obj) {
+    let { sessionId, idClient, msg } = obj
     let tempMsgs = state.msgs[sessionId]
     if (!tempMsgs || tempMsgs.length === 0) {
       return
@@ -215,7 +224,9 @@ export default {
     }
   },
   // 用idClient 更新消息，目前用于消息撤回
-  updateMsgByIdClient (state, msgs) {
+  updateMsgByIdClient(state, { msgs }) {
+    const { msgsMap:msgsMapOld } = state;
+    let msgsMap = {...msgsMapOld}
     if (!Array.isArray(msgs)) {
       msgs = [msgs]
     }
@@ -223,12 +234,13 @@ export default {
     msgs.forEach(msg => {
       // 有idClient 且 5分钟以内的消息
       if (msg.idClient && (tempTime - msg.time < 1000 * 300)) {
-        state.msgsMap[msg.idClient] = msg
+        msgsMap[msg.idClient] = msg
       }
     })
+    return { ...state, msgsMap };
   },
   // 更新当前会话id，用于唯一判定是否在current session状态
-  updateCurrSessionId (state, obj) {
+  updateCurrSessionId(state, obj) {
     let type = obj.type || ''
     if (type === 'destroy') {
       state.currSessionId = null
@@ -240,15 +252,15 @@ export default {
   },
   // 更新当前会话列表的聊天记录，包括历史消息、单聊消息等，不包括聊天室消息
   // replace: 替换idClient的消息
-  updateCurrSessionMsgs (state, obj) {
-    let type = obj.type || ''
-    if (type === 'destroy') { // 清空会话消息
+  updateCurrSessionMsgs(state, payload) {
+    let { methodtype } = payload
+    if (method === 'destroy') { // 清空会话消息
       state.currSessionMsgs = []
       state.currSessionLastMsg = null
-      store.commit('updateCurrSessionId', {
-        type: 'destroy'
-      })
-    } else if (type === 'init') { // 初始化会话消息列表
+      // store.commit('updateCurrSessionId', {
+      //   method: 'destroy'
+      // })
+    } else if (method === 'init') { // 初始化会话消息列表
       if (state.currSessionId) {
         let sessionId = state.currSessionId
         let currSessionMsgs = [].concat(state.msgs[sessionId] || [])
@@ -269,7 +281,7 @@ export default {
           if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
             lastMsgTime = msg.time
             state.currSessionMsgs.push({
-              type: 'timeTag',
+              method: 'timeTag',
               text: util.formatDate(msg.time, false)
             })
           }
@@ -277,32 +289,33 @@ export default {
         })
         store.dispatch('checkTeamMsgReceipt', state.currSessionMsgs)
       }
-    } else if (type === 'put') { // 追加一条消息
-      let newMsg = obj.msg
+    } else if (method === 'put') { // 追加一条消息
+      let { msg: newMsg } = payload
       let lastMsgTime = 0
       let lenCurrMsgs = state.currSessionMsgs.length
       if (lenCurrMsgs > 0) {
         lastMsgTime = state.currSessionMsgs[lenCurrMsgs - 1].time
       }
-      if (newMsg) { 
+      if (newMsg) {
         if ((newMsg.time - lastMsgTime) > 1000 * 60 * 5) {
           state.currSessionMsgs.push({
-            type: 'timeTag',
+            method: 'timeTag',
             text: util.formatDate(newMsg.time, false)
           })
         }
         state.currSessionMsgs.push(newMsg)
         store.dispatch('checkTeamMsgReceipt', [newMsg])
       }
-    } else if (type === 'concat') {
+    } else if (method === 'concat') {
       // 一般用于历史消息拼接
       let currSessionMsgs = []
       let lastMsgTime = 0
-      obj.msgs.forEach(msg => {
+      let { msgs, idClient, msg } = payload
+      msgs.forEach(msg => {
         if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
           lastMsgTime = msg.time
           currSessionMsgs.push({
-            type: 'timeTag',
+            method: 'timeTag',
             text: util.formatDate(msg.time, false)
           })
         }
@@ -312,25 +325,26 @@ export default {
       currSessionMsgs.forEach(msg => {
         state.currSessionMsgs.unshift(msg)
       })
-      if (obj.msgs[0]) {
-        state.currSessionLastMsg = obj.msgs[0]
+      if (msgs[0]) {
+        state.currSessionLastMsg = msgs[0]
       }
       store.dispatch('checkTeamMsgReceipt', currSessionMsgs)
-    } else if (type === 'replace') {
+    } else if (method === 'replace') {
+      let { idClient, msg } = payload
       let msgLen = state.currSessionMsgs.length
       let lastMsgIndex = msgLen - 1
       if (msgLen > 0) {
         for (let i = lastMsgIndex; i >= 0; i--) {
-          if (state.currSessionMsgs[i].idClient === obj.idClient) {
-            state.currSessionMsgs.splice(i, 1, obj.msg)
+          if (state.currSessionMsgs[i].idClient === idClient) {
+            state.currSessionMsgs.splice(i, 1, msg)
             break
           }
         }
       }
     }
   },
-  updateSysMsgs (state, sysMsgs) {
-    const nim = state.nim
+  updateSysMsgs(state, sysMsgs) {
+    const { nim } = state;
     if (!Array.isArray(sysMsgs)) {
       sysMsgs = [sysMsgs]
     }
@@ -343,7 +357,7 @@ export default {
     Vue.set(state, sysMsgs, state.sysMsgs)
   },
   // 更新消息的状态，如管理员批准或拒绝入群后，会收到新消息，更新入群申请的状态
-  updateSysMsgState (state, sysMsg) {
+  updateSysMsgState(state, sysMsg) {
     let exitMsg = state.sysMsgs.find(msg => {
       return msg.idServer === sysMsg.idServer
     })
@@ -351,11 +365,11 @@ export default {
       exitMsg.state = sysMsg.state
     }
   },
-  updateSysMsgUnread (state, obj) {
+  updateSysMsgUnread(state, obj) {
     state.sysMsgUnread = Object.assign({}, obj)
   },
-  updateCustomSysMsgs (state, sysMsgs) {
-    const nim = state.nim
+  updateCustomSysMsgs(state, sysMsgs) {
+    const { nim } = state;
     if (!Array.isArray(sysMsgs)) {
       sysMsgs = [sysMsgs]
     }
@@ -366,13 +380,13 @@ export default {
     // state.customSysMsgs = nim.mergeSysMsgs(state.customSysMsgs, sysMsgs)
     state.customSysMsgs = state.customSysMsgs.concat(sysMsgs)
     Vue.set(state, sysMsgs, state.customSysMsgs)
-    store.commit('updateCustomSysMsgUnread', {
-      type: 'add',
-      unread: sysMsgs.length
-    })
+    // store.commit('updateCustomSysMsgUnread', {
+    //   type: 'add',
+    //   unread: sysMsgs.length
+    // })
   },
-  updateCustomSysMsgUnread (state, obj) {
-    let {type, unread} = obj
+  updateCustomSysMsgUnread(state, obj) {
+    let { type, unread } = obj
     switch (type) {
       case 'reset':
         state.customSysMsgUnread = unread || 0
@@ -382,7 +396,7 @@ export default {
         break
     }
   },
-  resetSysMsgs (state, obj) {
+  resetSysMsgs(state, obj) {
     let type = obj.type
     switch (type) {
       case 0:
@@ -390,43 +404,43 @@ export default {
         break
       case 1:
         state.customSysMsgs = []
-        store.commit('updateCustomSysMsgUnread', {
-          type: 'reset'
-        })
+        // store.commit('updateCustomSysMsgUnread', {
+        //   type: 'reset'
+        // })
         break
     }
   },
-  deleteSysMsgs (state, obj) {
+  deleteSysMsgs(state, obj) {
     let type = obj.type
     let idServer = obj.idServer
-    let arr = type===0 ? state.sysMsgs : state.customSysMsgs
-    arr = arr.filter(msg=>{
+    let arr = type === 0 ? state.sysMsgs : state.customSysMsgs
+    arr = arr.filter(msg => {
       return msg.idServer !== idServer
     })
     Vue.set(state, 'sysMsgs', arr)
   },
-  setNoMoreHistoryMsgs (state) {
+  setNoMoreHistoryMsgs(state) {
     state.noMoreHistoryMsgs = true
   },
-  resetNoMoreHistoryMsgs (state) {
+  resetNoMoreHistoryMsgs(state) {
     state.noMoreHistoryMsgs = false
   },
   // 继续与机器人会话交互
-  continueRobotMsg (state, robotAccid) {
+  continueRobotMsg(state, robotAccid) {
     state.continueRobotAccid = robotAccid
   },
 
-  initChatroomInfos (state, obj) {
+  initChatroomInfos(state, obj) {
     state.chatroomInfos = obj
   },
-  setCurrChatroom (state, chatroomId) {
+  setCurrChatroom(state, chatroomId) {
     state.currChatroomId = chatroomId
     state.currChatroom = state.chatroomInsts[chatroomId]
     state.currChatroomMsgs = []
     state.currChatroomInfo = {}
     state.currChatroomMembers = []
   },
-  resetCurrChatroom (state) {
+  resetCurrChatroom(state) {
     state.currChatroomId = null
     state.currChatroom = null
     state.currChatroomMsgs = []
@@ -434,11 +448,11 @@ export default {
     state.currChatroomMembers = []
   },
   // 聊天室相关逻辑
-  updateChatroomInfo (state, obj) {
+  updateChatroomInfo(state, obj) {
     state.currChatroomInfo = Object.assign(state.currChatroomInfo, obj)
   },
-  updateCurrChatroomMsgs (state, obj) {
-    let {type, msgs} = Object.assign({}, obj)
+  updateCurrChatroomMsgs(state, obj) {
+    let { type, msgs } = Object.assign({}, obj)
     if (type === 'put') {
       msgs.forEach(msg => {
         let chatroomId = msg.chatroomId
@@ -460,11 +474,11 @@ export default {
       }
     }
   },
-  getChatroomInfo (state, obj) {
+  getChatroomInfo(state, obj) {
     state.currChatroomInfo = obj
   },
-  updateChatroomMembers (state, obj) {
-    let {type, members} = obj
+  updateChatroomMembers(state, obj) {
+    let { type, members } = obj
     if (type === 'destroy') {
       state.currChatroomMembers = []
     } else if (type === 'put') {
@@ -475,13 +489,13 @@ export default {
       })
     }
   },
-  updateTeamList (state, teams) {
-    const nim = state.nim
+  updateTeamList(state, teams) {
+    const { nim } = state;
     store.state.teamlist = nim.mergeTeams(store.state.teamlist, teams)
     store.state.teamlist = nim.cutTeams(store.state.teamlist, teams.invalid)
   },
-  updateTeamMembers (state, obj) {
-    const nim = state.nim
+  updateTeamMembers(state, obj) {
+    const { nim } = state;
     var teamId = obj.teamId
     var members = obj.members
     state.teamMembers = state.teamMembers || {}
@@ -503,8 +517,8 @@ export default {
     var teamId = obj.teamId
     var invalidAccounts = obj.accounts
     if (state.teamMembers[teamId] === undefined) return
-    state.teamMembers[teamId] = state.teamMembers[teamId].filter((member, index)=>{
-      return invalidAccounts.indexOf(member.account)===-1
+    state.teamMembers[teamId] = state.teamMembers[teamId].filter((member, index) => {
+      return invalidAccounts.indexOf(member.account) === -1
     })
     state.teamMembers = Object.assign({}, state.teamMembers)
   },
@@ -521,7 +535,7 @@ export default {
     state.teamSettingConfig = obj
   },
   updateSentReceipedMap(state, obj) {
-    if (!obj || obj.length<1) {
+    if (!obj || obj.length < 1) {
       return
     }
     var teamId = obj[0].teamId
@@ -537,16 +551,16 @@ export default {
       state.currReceiptQueryTeamId = obj.teamId
     }
     var needQuery = obj.msgs
-    .filter(msg => 
-      msg.needMsgReceipt && msg.from === state.myInfo.account &&  !state.receiptQueryList.find(item => item.idServer === msg.idServer)
-    )
-    .map(msg => {
-      return {
-        teamId: obj.teamId,
-        idServer: msg.idServer
-      }
-    })
-    if (needQuery.length>0) {
+      .filter(msg =>
+        msg.needMsgReceipt && msg.from === state.myInfo.account && !state.receiptQueryList.find(item => item.idServer === msg.idServer)
+      )
+      .map(msg => {
+        return {
+          teamId: obj.teamId,
+          idServer: msg.idServer
+        }
+      })
+    if (needQuery.length > 0) {
       state.receiptQueryList.push(...needQuery)
     }
     if (needQuery.length > 0) {
@@ -573,6 +587,6 @@ export default {
   },
   initMsgReceiptDetail(state, obj) {
     state.teamMsgReadsDetail.readAccounts = obj.readAccounts
-    state.teamMsgReadsDetail.unreadAccounts =  obj.unreadAccounts
+    state.teamMsgReadsDetail.unreadAccounts = obj.unreadAccounts
   },
 }

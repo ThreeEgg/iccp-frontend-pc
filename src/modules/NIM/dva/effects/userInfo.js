@@ -4,8 +4,8 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-16 16:53:48
- * @FilePath: \PC端-前端\src\modules\NIM\dva\actions\userInfo.js
+ * @LastEditTime: 2020-03-24 16:32:59
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\userInfo.js
  */
 /*
  * 用户账号信息
@@ -16,7 +16,7 @@ import config from '../../configs'
 import util from '../../utils'
 
 export function formatUserInfo (obj) {
-  const nim = store.state.nim
+  const nim = window.nim
   let gender = ''
   switch (obj.gender) {
     case 'male':
@@ -73,7 +73,7 @@ export function formatUserInfo (obj) {
 export function onMyInfo (obj) {
   obj = util.mergeObject(store.state.myInfo, obj);
   let myInfo = formatUserInfo(obj)
-  store.commit('updateMyInfo', myInfo)
+  window.dispatch({ type: 'chat/updateMyInfoExt', myInfo })
 }
 
 export function onUserInfo (users) {
@@ -81,5 +81,5 @@ export function onUserInfo (users) {
     users = [users]
   }
   users = users.map(formatUserInfo)
-  store.commit('updateUserInfo', users)
+  window.dispatch({ type: 'chat/updateUserInfoExt', users })
 }

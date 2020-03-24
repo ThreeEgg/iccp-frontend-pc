@@ -4,10 +4,12 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-13 14:53:30
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-16 15:58:28
+ * @LastEditTime: 2020-03-23 14:59:18
  * @FilePath: \PC端-前端\src\modules\NIM\dva\state.js
  */
 export default {
+    // 登录状态
+    isLogin: false,
     // 正在加载中
     isLoading: true,
     // 操作是否是刷新页面，刷新初始没有nim实例，会导致时序问题
