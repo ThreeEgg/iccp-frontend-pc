@@ -1,6 +1,6 @@
 {
   "name": "iccp-fe-pc",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "iccp frontend for pc platform",
   "main": "index.js",
