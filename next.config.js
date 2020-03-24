@@ -55,6 +55,4 @@ module.exports = withPlugins([withLess, withCss], {
   env: {
     BUILD_ID: buildId,
   },
-
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/pc' : '',
 });
