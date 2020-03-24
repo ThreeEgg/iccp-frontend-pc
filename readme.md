@@ -16,7 +16,7 @@
 - 端口自定义 配置环境变量`PORT`
 - 测试环境脚本，仅同步代码使用：deploy-test.sh
 - 使用`pm2`管理 server，运行`npm run pm2`启动，具体见`pm2.json`配置
-- 部署各环境脚本: run.sh --env test
+- 编译、部署各环境脚本: build.sh --env test \ run.sh
 
 ## Antd
 
