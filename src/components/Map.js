@@ -162,6 +162,21 @@ export default class extends Component {
     ],
   };
 
+  /**
+   * 手动加载百度地图API
+   */
+  initMap = () => {
+    window.initMap = () => {
+      this.updateMap();
+    };
+
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src =
+      'http://api.map.baidu.com/api?v=2.0&ak=RsyPXj9APuxPHxDTR5nPQkz6no2C4Rv2&callback=initMap'; //<-注意 callback回调，同步加载没有&callback
+    document.body.appendChild(script);
+  };
+
   updateMap = () => {
     if (!this.myChart) {
       this.myChart = echarts.init(document.getElementById(this.id));
@@ -181,22 +196,16 @@ export default class extends Component {
     this.updateMap();
   };
 
-  componentDidMount = () => {
-    if (!window) {
+  componentWillMount = () => {
+    if (typeof window === 'undefined') {
       return;
     }
-    this.updateMap();
+    this.initMap();
   };
 
   render() {
     return (
       <div style={{ width: '100%', height: '100%' }}>
-        <Head>
-          <script
-            type="text/javascript"
-            src="http://api.map.baidu.com/api?v=2.0&ak=RsyPXj9APuxPHxDTR5nPQkz6no2C4Rv2"
-          />
-        </Head>
         <div id={this.id} style={{ width: '100%', height: '100%' }} />
 
         {/* 测试那妞 */}
