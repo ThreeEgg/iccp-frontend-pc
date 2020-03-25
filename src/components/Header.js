@@ -22,20 +22,24 @@ class Header extends React.Component {
           {!isLogin ? (
             <>
               <Button className="login-btn">
-                <Link href="/login">登录</Link>
+                <Link href="/login">
+                  <a>登录</a>
+                </Link>
               </Button>
               <Button type="primary">
-                <Link href="/login?register=1">注册</Link>
+                <Link href="/login?register=1">
+                  <a>注册</a>
+                </Link>
               </Button>
             </>
           ) : (
             <>
-              <span style={{ display: 'inline-block', marginRight: 20 }}>
-                你好, {userInfo.name}
-              </span>
-              <Link href="/changePassword">
+              <span>你好, {userInfo.name}</span>
+              &nbsp; &nbsp;
+              <Link href="/modifyPWD">
                 <a>修改密码</a>
               </Link>
+              &nbsp; &nbsp;
               <a onClick={this.logout}>退出登录</a>
             </>
           )}
