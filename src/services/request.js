@@ -5,6 +5,7 @@
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { getAuthorityToken } from '../common/authority';
+import { getCommonHeader } from '../common';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -59,15 +60,12 @@ const request = extend({
  * 1. header中加入token
  */
 request.interceptors.request.use((url, options) => {
-  const token = getAuthorityToken();
   let { headers } = options;
 
-  if (token) {
-    headers = {
-      ...options.headers,
-      token,
-    };
-  }
+  headers = {
+    ...options.headers,
+    ...getCommonHeader(),
+  };
 
   return {
     url,
@@ -90,10 +88,10 @@ request.interceptors.response.use(async (response, options) => {
     return response;
   }
   // FIXME: 这里需要补全所有的错误情况
-  if (data.code !== 0) {
+  if (data.code !== '0') {
     // 16000 token无效
     // 12000 需要人机验证
-    if (data.code == 16000) {
+    if (data.code === '16000') {
       message.error('登录失效');
     } else {
       notification.error({
