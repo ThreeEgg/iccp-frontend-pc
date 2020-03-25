@@ -6,6 +6,7 @@ import { setAuthorityToken } from '../common/authority';
 export default {
   namespace: 'user',
   state: {
+    initAuthority: false,
     userInfo: {},
     imInfo: {},
     isLogin: false,
@@ -16,6 +17,10 @@ export default {
 
       if (res.code === '0') {
         const { baseInfo, imInfo, accessToken } = res.data;
+
+        localStorage.userInfo = JSON.stringify(baseInfo);
+        localStorage.imInfo = JSON.stringify(imInfo);
+        localStorage.isLogin = 1;
 
         yield put({
           type: 'save',
@@ -38,6 +43,9 @@ export default {
         const { baseInfo, imInfo, accessToken } = res.data;
 
         setAuthorityToken(accessToken);
+        localStorage.userInfo = JSON.stringify(baseInfo);
+        localStorage.imInfo = JSON.stringify(imInfo);
+        localStorage.isLogin = 1;
 
         yield put({
           type: 'save',
@@ -50,6 +58,25 @@ export default {
 
         router.replace('/');
       }
+    },
+
+    *logout({ payload }, { put, call }) {
+      const res = yield call(userService.logout);
+
+      localStorage.removeItem('userInfo');
+      localStorage.removeItem('imInfo');
+      localStorage.removeItem('isLogin');
+      localStorage.removeItem('accessToken');
+
+      yield put({
+        type: 'save',
+        payload: {
+          userInfo: {},
+          imInfo: {},
+          isLogin: false,
+        },
+      });
+      router.replace('/');
     },
 
     *register({ payload }, { call }) {
