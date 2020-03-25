@@ -3,7 +3,7 @@ import Router from 'next/router';
 import LoginLayout from '../layouts/LoginLayout';
 import { Form, Input, Button, Switch } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import Platform from '../layouts/platformindex';
+import Platform from '../layouts/platformIndex';
 import { Pagination } from 'antd';
 import './classic.less';
 

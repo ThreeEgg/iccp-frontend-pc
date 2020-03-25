@@ -1,7 +1,7 @@
 import React from 'react';
 import Router from 'next/router';
 import LoginLayout from '../layouts/LoginLayout';
-import Platform from '../layouts/platformindex';
+import Platform from '../layouts/platformIndex';
 import { Pagination } from 'antd';
 import './problems.less';
 
