@@ -111,6 +111,17 @@ export default {
         router.replace('/');
       }
     },
+
+    *modifyPassword({ payload }, { call }) {
+      const { newPassword, oldPassword } = payload;
+      const res = yield call(userService.modifyPassword, { newPassword, oldPassword });
+
+      if (res.code === '0') {
+        message.success('密码修改成功');
+
+        router.replace('/');
+      }
+    },
   },
   reducers: {
     save(state, { payload }) {
