@@ -46,6 +46,7 @@ export default {
         localStorage.userInfo = JSON.stringify(baseInfo);
         localStorage.imInfo = JSON.stringify(imInfo);
         localStorage.isLogin = 1;
+        localStorage.platform = platform;
 
         yield put({
           type: 'save',
@@ -56,6 +57,9 @@ export default {
           },
         });
 
+        if (localStorage.platform === 'expert') {
+          return router.replace('/expert');
+        }
         router.replace('/');
       }
     },
@@ -76,6 +80,9 @@ export default {
           isLogin: false,
         },
       });
+      if (localStorage.platform === 'expert') {
+        return router.replace('/expert');
+      }
       router.replace('/');
     },
 
@@ -108,6 +115,9 @@ export default {
       if (res.code === '0') {
         message.success('密码修改成功');
 
+        if (localStorage.platform === 'expert') {
+          return router.replace('/expert');
+        }
         router.replace('/');
       }
     },
@@ -119,6 +129,9 @@ export default {
       if (res.code === '0') {
         message.success('密码修改成功');
 
+        if (localStorage.platform === 'expert') {
+          return router.replace('/expert');
+        }
         router.replace('/');
       }
     },
