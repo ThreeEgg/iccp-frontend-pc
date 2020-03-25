@@ -2,17 +2,51 @@ import React from 'react';
 import Router from 'next/router';
 import { Menu } from 'antd';
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import { withRouter } from 'next/router';
 import './sider.less';
 
 const { SubMenu } = Menu;
 
-export default class Sider extends React.Component {
+const routerMap = {
+  1: 'platform',
+  2: 'business',
+  3: 'problems',
+  4: 'cooperative',
+  5: 'classic',
+  6: 'regulation',
+};
+
+class Sider extends React.Component {
+  componentWillMount = () => {
+    let activeKey;
+    Object.entries(routerMap).find(([key, router]) => {
+      if (this.props.router.pathname.match(router)) {
+        activeKey = key;
+        return true;
+      }
+    });
+
+    let openKeys = [];
+    if (activeKey <= 4) {
+      openKeys.push('sub1');
+    }
+    if (activeKey > 4) {
+      openKeys.push('sub2');
+    }
+    this.setState({
+      activeKey,
+      openKeys,
+    });
+  };
   // submenu keys of first level
   rootSubmenuKeys = ['sub1', 'sub2'];
 
   state = {
-    openKeys: ['sub1'],
+    openKeys: [],
+    activeKey: null,
   };
+
+  routerMap = routerMap;
 
   onOpenChange = openKeys => {
     const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
@@ -26,27 +60,7 @@ export default class Sider extends React.Component {
   };
 
   onClick = res => {
-    //console.log(res.key);
-    switch (res.key) {
-      case '1':
-        Router.push('/platform');
-        break;
-      case '2':
-        Router.push('/business');
-        break;
-      case '3':
-        Router.push('/problems');
-        break;
-      case '4':
-        Router.push('/cooperative');
-        break;
-      case '5':
-        Router.push('/classic');
-        break;
-      case '6':
-        Router.push('/regulation');
-        break;
-    }
+    Router.push('/' + this.routerMap[res.key]);
   };
 
   render() {
@@ -56,6 +70,7 @@ export default class Sider extends React.Component {
         onClick={this.onClick}
         openKeys={this.state.openKeys}
         onOpenChange={this.onOpenChange}
+        selectedKeys={[this.state.activeKey]}
         style={{ width: 240 }}
       >
         <SubMenu
@@ -88,3 +103,5 @@ export default class Sider extends React.Component {
     );
   }
 }
+
+export default withRouter(Sider);

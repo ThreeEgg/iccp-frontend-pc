@@ -43,6 +43,12 @@ export default {
   getTranslate: '/support/translate',
   downloadCaseBatch: '/support/downloadBatch',
 
+  // 平台内容管理
+  getPlatformContent: '/platform/get',
+  deletePlatformContent: '/platform/delete',
+  listPlatformContent: '/platform/list',
+  updatePlatformContent: '/platform/update',
+
   // 其他
   fileUpload: '/support/upload',
 };

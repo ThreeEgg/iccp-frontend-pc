@@ -31,7 +31,7 @@
     background-color: transparent;
   }
   .ant-collapse-content-box {
-    padding: 12px !important;
+    padding: 4px 12px 12px 12px !important;
   }
   .ant-collapse-header {
     padding: 10px 12px !important;
@@ -53,10 +53,15 @@
     .expand-content {
       color: rgba(255, 255, 255, 0.8);
       font-size: 12px;
+      line-height: 24px;
       span {
         display: inline-block;
         margin-right: 10px;
-        &.active {
+        cursor: pointer;
+        transition: color 0.3s;
+        user-select: none;
+        &.active,
+        &:hover {
           color: white;
         }
       }
