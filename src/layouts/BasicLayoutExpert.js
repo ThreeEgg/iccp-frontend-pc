@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from '../components/Head';
+import SimpleFooter from '../components/SimpleFooter';
 
 export default class extends React.Component {
   render() {
@@ -7,6 +8,7 @@ export default class extends React.Component {
       <div>
         <Head />
         {this.props.children}
+        <SimpleFooter />
       </div>
     );
   }

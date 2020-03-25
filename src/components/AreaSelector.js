@@ -7,6 +7,7 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import classNames from 'classnames';
+import Link from 'next/link';
 import './AreaSelector.less';
 
 const { Panel } = Collapse;
@@ -213,7 +214,11 @@ export default class extends Component {
               </div>
             </div>
             <div className="btns flex flex-justifyBetween">
-              <div>专家主页</div>
+              <div>
+                <Link href="/professor">
+                  <a>专家主页</a>
+                </Link>
+              </div>
               <div className="active">立即沟通</div>
             </div>
           </div>
