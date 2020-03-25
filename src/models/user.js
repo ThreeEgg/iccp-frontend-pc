@@ -62,6 +62,28 @@ export default {
         router.replace('/login');
       }
     },
+
+    *requestEmailForResetPassword({ payload }, { call }) {
+      const { email, callback } = payload;
+      const res = yield call(userService.requestEmailForResetPassword, { email });
+
+      if (res.code === '0') {
+        message.success('找回密码的连接已发送至邮箱账号，请前往邮箱找回密码。');
+
+        callback && callback();
+      }
+    },
+
+    *resetPassword({ payload }, { call }) {
+      const { newPassword, verifyCode } = payload;
+      const res = yield call(userService.resetPassword, { newPassword, verifyCode });
+
+      if (res.code === '0') {
+        message.success('密码修改成功');
+
+        router.replace('/');
+      }
+    },
   },
   reducers: {
     save(state, { payload }) {

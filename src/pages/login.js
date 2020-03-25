@@ -121,7 +121,7 @@ class Login extends React.Component {
               >
                 <Input
                   prefix={<CheckSquareOutlined className="site-form-item-icon" />}
-                  type="confirmPassword"
+                  type="password"
                   placeholder="请确认密码"
                 />
               </Form.Item>

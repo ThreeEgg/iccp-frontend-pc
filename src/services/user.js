@@ -51,7 +51,7 @@ export const modifyUserName = async ({ name, userId }) => {
 };
 
 export const resetPassword = async ({ newPassword, verifyCode }) => {
-  return request.post(api.registry, {
+  return request(api.resetPassword, {
     params: {
       newPassword,
       verifyCode,
@@ -60,7 +60,7 @@ export const resetPassword = async ({ newPassword, verifyCode }) => {
 };
 
 export const requestEmailForResetPassword = async ({ email }) => {
-  return request.post(api.registry, {
+  return request(api.requestEmailForResetPassword, {
     params: {
       email,
     },
