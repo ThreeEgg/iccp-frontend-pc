@@ -18,7 +18,7 @@ export const login = async ({ password, platform, userName }) => {
   return request(api.login, {
     params: {
       password,
-      platform,
+      platform, // user-用户端 expert-专家端 admin-管理端
       userName,
     },
   });

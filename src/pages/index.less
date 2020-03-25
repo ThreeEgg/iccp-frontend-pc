@@ -1,76 +1,118 @@
-@font-size: 20px;
-div {
-  font-size: @font-size;
-}
-.login {
+@import '../components/common.less';
+.map {
   width: 100%;
   height: 100%;
-  background-image: url('/images/ic_login_bg.png');
-  background-size: cover;
-  .content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 320px;
-    transform: translate(-50%, -50%);
-    // tabs
-    .ant-tabs {
-      color: #fff;
-    }
-    .ant-tabs-bar {
-      margin: 0;
-      border: none;
-    }
-    .ant-tabs-nav .ant-tabs-tab {
-      font-size: 18px;
-    }
-    .ant-tabs-nav .ant-tabs-tab-active {
-      color: #fff;
-      font-weight: 600;
-      font-size: 24px;
-    }
-    .ant-tabs-ink-bar {
-      display: none !important;
-    }
-    // form表单
-    .ant-input-affix-wrapper {
-      padding: 5px 11px;
-      color: #aaa;
-      font-size: 24px;
-    }
-    .ant-btn-primary {
-      width: 100%;
-      height: 40px;
-    }
-    .ant-input-prefix {
-      margin-right: 10px;
-    }
-    .login-form-forgot {
-      display: block;
-      color: #fff;
-      font-size: 14px;
-      text-align: center;
-    }
-    // 注册 昵称
-    .userName {
-      padding: 12px 11px;
-    }
-    // 修改密码
-    .retrieve {
-      color: #fff;
-      font-size: 24px;
+  .mapT {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/map.png');
+    background-size: cover;
+    .map-selector {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
     }
   }
-  .footer {
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .content {
     width: 100%;
-    height: 90px;
-    color: #fff;
-    font-size: 14px;
-    background: #25272b;
+    padding: 70px 0 20px;
+    background: #f6f6f6;
+    .content-t {
+      justify-content: space-between;
+      height: 40px;
+      color: #1b2857;
+      p {
+        width: 470px;
+        height: 1px;
+        margin: 0;
+        background: #ddd;
+      }
+      div {
+        div {
+          margin-right: 7px;
+          margin-left: 15px;
+          font-weight: 800;
+          font-size: 28px;
+        }
+      }
+      sup {
+        top: -6px;
+        font-size: 16px;
+      }
+    }
+    .content-b {
+      text-align: center;
+      button {
+        position: relative;
+        padding: 4px 24px;
+        color: #ccc;
+        font-size: 18px;
+        line-height: 12px;
+        background: transparent;
+        border: 1px solid rgba(204, 204, 204, 1);
+        border-radius: 19px;
+      }
+    }
+    .content-c {
+      margin: 46px 0 40px;
+      line-height: 28px;
+    }
+    .content-caseC {
+      margin: 55px 0 40px;
+      .item {
+        position: relative;
+        width: 384px;
+        height: 280px;
+        cursor: pointer;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+        .item-hover {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 330px;
+          padding: 8px 24px;
+          color: #fff;
+          background: url('/images/img_cardbg_hover.png') center no-repeat;
+          background-size: cover;
+          border-radius: 10px;
+          box-shadow: 0 0 10px 0 #1b2857;
+          h1 {
+            color: #fff;
+            font-weight: 600;
+            font-size: 24px;
+          }
+          p {
+            margin: 30px 0;
+            font-weight: 600;
+            font-size: 20px;
+          }
+          div {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 22px;
+          }
+        }
+      }
+      .item1 {
+        box-shadow: 0 36px 30px -25px #229fb3;
+      }
+      .item2 {
+        box-shadow: 0 36px 30px -25px #909fbd;
+      }
+      .item3 {
+        box-shadow: 0 36px 30px -25px #5966a2;
+      }
+    }
+  }
+  .mapImg {
+    background: #f6f6f6;
+    img {
+      width: 100%;
+    }
   }
 }

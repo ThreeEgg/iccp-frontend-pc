@@ -2,7 +2,9 @@ import App from 'next/app';
 import React from 'react';
 import intl from 'react-intl-universal';
 import { Provider } from 'react-redux';
-import { Badge } from 'antd';
+import { Badge, ConfigProvider } from 'antd';
+import zhCN from 'antd/lib/locale/zh_CN';
+import AuthorityLayout from '../layouts/AuthorityLayout';
 import withDva from '../utils/withDva';
 import './_app.less';
 
@@ -74,10 +76,14 @@ class MainApp extends App {
     const { Component, pageProps, dvaStore } = this.props;
 
     return (
-      <Provider store={dvaStore}>
-        <Component {...pageProps} />
-        <BuildInfo />
-      </Provider>
+      <ConfigProvider locale={zhCN}>
+        <Provider store={dvaStore}>
+          <AuthorityLayout>
+            <Component {...pageProps} />
+          </AuthorityLayout>
+          <BuildInfo />
+        </Provider>
+      </ConfigProvider>
     );
   }
 }
