@@ -1,20 +1,38 @@
 import React from 'react';
-import Router from 'next/router';
-import LoginLayout from '../layouts/LoginLayout';
+import api from '../services/api';
+import { platformContentType } from '../common/enum';
 import Platform from '../layouts/platformIndex';
 import { Pagination } from 'antd';
+import router from 'next/router';
 import './problems.less';
 
-export default class RetrievePWD extends React.Component {
+export default class Problems extends React.Component {
+  static async getInitialProps({ req, query }) {
+    const { pageNum = 1 } = query;
+    const fetch = require('isomorphic-unfetch');
+
+    const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
+    //
+    const problemContentRes = await fetch(
+      `${requestUrl}?pageNum=${pageNum}&pageSize=10&type=${platformContentType.COMMONQUESTION}`,
+    );
+    const problemContent = await problemContentRes.json();
+    const problems = problemContent.data.items;
+    const pageInfo = problemContent.data.pageInfo;
+
+    return {
+      problems,
+      pageInfo,
+      pageNum: pageNum * 1,
+    };
+  }
+
   state = {
     current: 1,
   };
 
   onChange = page => {
-    console.log(page);
-    this.setState({
-      current: page,
-    });
+    router.push('/problems?pageNum=' + page);
   };
 
   render() {
@@ -29,35 +47,27 @@ export default class RetrievePWD extends React.Component {
           <p />
         </div>
         <div className="problemsContent-m">
-          <div className="coo-item">
-            <h1>《国际贸易法》解释</h1>
-            <div className="coo-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-              laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin
-              sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et
-              viverra justo commodo. Proin sodales pulvinar sic tempor.
+          {this.props.problems.map(item => (
+            <div className="coo-item" key={item.id}>
+              <h1>《国际贸易法》解释</h1>
+              <div className="coo-text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
+                laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin
+                sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur adipiscing
+                elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan
+                et viverra justo commodo. Proin sodales pulvinar sic tempor.
+              </div>
+              <div className="coo-more">More</div>
             </div>
-            <div className="coo-more">More</div>
-          </div>
-          <div className="coo-item">
-            <h1>《国际贸易法》解释</h1>
-            <div className="coo-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-              laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin
-              sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et
-              viverra justo commodo. Proin sodales pulvinar sic tempor.
-            </div>
-            <div className="coo-more">More</div>
-          </div>
+          ))}
         </div>
         <div className="common-pagination">
           <Pagination
-            current={this.state.current}
+            current={this.props.pageNum}
             onChange={this.onChange}
             size="small"
-            total={50}
+            pageSize={10}
+            total={this.props.pageInfo.totalResults}
           />
         </div>
       </Platform>
