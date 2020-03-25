@@ -37,18 +37,16 @@ export function onUpdateFriend(error, friends) {
   })
 
   // 补充好友资料
-  store.dispatch('searchUsers', {
+  window.dispatch({
+    type: 'chat/searchUsers',
     accounts: friends.map(item => {
       return item.account
-    }),
-    done: (users) => {
-      const nim = window.nim
-      friends = nim.mergeFriends(friends, users).map(formatUserInfo)
-      // 更新好友列表
-      // //store.commit('updateFriends', friends)
-      // 更新好友资料
-      // //store.commit('updateUserInfo', friends)
-    }
+    })
+  }).then(() => {
+    window.dispatch({
+      type: 'chat/onUpdateFriend',
+      friends,
+    })
   })
 }
 
@@ -66,9 +64,16 @@ export function onDeleteFriend(error, friends) {
     return item
   })
   // 更新好友列表
-  // //store.commit('updateFriends', [], friends)
+  window.dispatch({
+    type:'chat/updateFriendsExt',
+    friends: [],
+    cutFriends: friends
+  })
   // 更新好友资料
-  // //store.commit('updateUserInfo', friends)
+  window.dispatch({
+    type:'chat/updateUserInfoExt',
+    users: friends
+  })
 }
 
 export function onSyncFriendAction(obj) {

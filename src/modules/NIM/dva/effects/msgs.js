@@ -41,18 +41,7 @@ export function onOfflineMsgs(obj) {
 
 export function onMsg(msg) {
   msg = formatMsg(msg)
-  // //store.commit('putMsg', msg)
-  if (msg.sessionId === store.state.currSessionId) {
-    // store.commit('updateCurrSessionMsgs', {
-    //   type: 'put',
-    //   msg
-    // })
-    // 发送已读回执
-    store.dispatch('sendMsgReceipt')
-  }
-  if (msg.scene === 'team' && msg.type === 'notification') {
-    store.dispatch('onTeamNotificationMsg', msg)
-  }
+  window.dispatch({ type: 'chat/onMsgExt', msg })
 }
 
 function onSendMsgDone(error, msg) {
@@ -97,23 +86,15 @@ export function onRevocateMsg(error, msg) {
     tip,
     time: msg.time,
     done: function sendTipMsgDone(error, tipMsg) {
-      let idClient = msg.deletedIdClient || msg.idClient
-      // store.commit('replaceMsg', {
-      //   sessionId: msg.sessionId,
-      //   idClient,
-      //   msg: tipMsg
-      // })
-      if (msg.sessionId === store.state.currSessionId) {
-        // store.commit('updateCurrSessionMsgs', {
-        //   type: 'replace',
-        //   idClient,
-        //   msg: tipMsg
-        // })
-      }
+      window.dispatch({
+        type: 'chat/sendTipMsgDoneExt',
+        tipMsg,
+        msg
+      })
+
     }
   })
 }
-
 
 export function revocateMsg({ state, commit }, msg) {
   const nim = state.nim
@@ -126,53 +107,57 @@ export function revocateMsg({ state, commit }, msg) {
     }
   })
 }
-export function updateLocalMsg({ state, commit }, msg) {
-  // store.commit('updateCurrSessionMsgs', {
-  //   type: 'replace',
-  //   idClient: msg.idClient,
-  //   msg: msg
-  // })
-  state.nim.updateLocalMsg({
+export function* updateLocalMsg({ msg }, { put, select }) {
+  yield put({
+    type: 'chat/updateCurrSessionMsgs',
+    method: 'replace',
+    idClient: msg.idClient,
+    msg: msg
+  })
+  const nim = yield select(state => state.chat.nim);
+  nim.updateLocalMsg({
     idClient: msg.idClient,
     localCustom: msg.localCustom
   })
-  // store.commit('replaceMsg', {
-  //   sessionId: msg.sessionId,
-  //   idClient: msg.idClient,
-  //   msg: msg
-  // })
+  yield put({
+    type: 'replaceMsg',
+    sessionId: msg.sessionId,
+    idClient: msg.idClient,
+    msg
+  });
 }
 
 // 发送普通消息
-export function sendMsg({ state, commit }, obj) {
-  const nim = state.nim
-  obj = obj || {}
-  let type = obj.type || ''
-  switch (type) {
+export function* sendMsg(paylord, { put, select }) {
+  const nim = yield select(state => state.chat.nim);
+  let { method, scene, to, pushContent, content, text, needMsgReceipt } = paylord
+  method = method || ''
+  needMsgReceipt = needMsgReceipt || false
+  switch (method) {
     case 'text':
       nim.sendText({
-        scene: obj.scene,
-        to: obj.to,
-        text: obj.text,
+        scene,
+        to,
+        text,
         done: onSendMsgDone,
-        needMsgReceipt: obj.needMsgReceipt || false
+        needMsgReceipt
       })
       break
     case 'custom':
       nim.sendCustomMsg({
-        scene: obj.scene,
-        to: obj.to,
-        pushContent: obj.pushContent,
-        content: JSON.stringify(obj.content),
+        scene,
+        to,
+        pushContent,
+        content: JSON.stringify(content),
         done: onSendMsgDone
       })
   }
 }
 
 // 发送文件消息
-export function sendFileMsg({ state, commit }, obj) {
-  const nim = state.nim
-  let { type, fileInput } = obj
+export function* sendFileMsg(paylord, { put, select }) {
+  const nim = yield select(state => state.chat.nim);
+  let { method: type, fileInput } = paylord
   if (!type && fileInput) {
     type = 'file'
     if (/\.(png|jpg|bmp|jpeg|gif)$/i.test(fileInput.value)) {
@@ -201,68 +186,73 @@ export function sendFileMsg({ state, commit }, obj) {
     done: function (error, msg) {
       onSendMsgDone(error, msg)
     }
-  }, obj)
+  }, paylord)
   nim.sendFile(data)
 }
 
 // 发送机器人消息
-export function sendRobotMsg({ state, commit }, obj) {
-  const nim = state.nim
-  let { type, scene, to, robotAccid, content, params, target, body } = obj
+export function* sendRobotMsg(paylord, { put, select }) {
+  const nim = yield select(state => state.chat.nim);
+  let { method, scene, to, robotAccid, content, params, target, body } = paylord
+  method = method || ''
   scene = scene || 'p2p'
-  if (type === 'text') {
-    nim.sendRobotMsg({
-      scene,
-      to,
-      robotAccid: robotAccid || to,
-      content: {
-        type: 'text',
-        content,
-      },
-      body,
-      done: onSendMsgDone
-    })
-  } else if (type === 'welcome') {
-    nim.sendRobotMsg({
-      scene,
-      to,
-      robotAccid: robotAccid || to,
-      content: {
-        type: 'welcome',
-      },
-      body,
-      done: onSendMsgDone
-    })
-  } else if (type === 'link') {
-    nim.sendRobotMsg({
-      scene,
-      to,
-      robotAccid: robotAccid || to,
-      content: {
-        type: 'link',
-        params,
-        target
-      },
-      body,
-      done: onSendMsgDone
-    })
+  switch (method) {
+    case 'text':
+      nim.sendRobotMsg({
+        scene,
+        to,
+        robotAccid: robotAccid || to,
+        content: {
+          type: 'text',
+          content,
+        },
+        body,
+        done: onSendMsgDone
+      })
+      break
+    case 'welcome':
+      nim.sendRobotMsg({
+        scene,
+        to,
+        robotAccid: robotAccid || to,
+        content: {
+          type: 'welcome',
+        },
+        body,
+        done: onSendMsgDone
+      })
+      break
+    case 'link':
+      nim.sendRobotMsg({
+        scene,
+        to,
+        robotAccid: robotAccid || to,
+        content: {
+          type: 'link',
+          params,
+          target
+        },
+        body,
+        done: onSendMsgDone
+      })
   }
 }
 
 // 发送消息已读回执
-export function sendMsgReceipt({ state, commit }) {
+export function* sendMsgReceipt(action, { select }) {
   // 如果有当前会话
-  let currSessionId = store.state.currSessionId
+  const currSessionId = yield select(state => state.chat.currSessionId);
   if (currSessionId) {
     // 只有点对点消息才发已读回执
     if (util.parseSession(currSessionId).scene === 'p2p') {
-      let msgs = store.state.currSessionMsgs
-      const nim = state.nim
-      if (state.sessionMap[currSessionId]) {
+      const currSessionMsgs = yield select(state => state.chat.currSessionMsgs);
+      const nim = yield select(state => state.chat.nim);
+      const sessionMap = yield select(state => state.chat.sessionMap);
+      if (sessionMap[currSessionId]) {
         nim.sendMsgReceipt({
-          msg: state.sessionMap[currSessionId].lastMsg,
+          msg: sessionMap[currSessionId].lastMsg,
           done: function sendMsgReceiptDone(error, obj) {
-            // do something
+            console.log('发送消息已读回执' + (!error ? '成功' : '失败'), error, obj);
           }
         })
       }
@@ -270,14 +260,10 @@ export function sendMsgReceipt({ state, commit }) {
   }
 }
 
-function sendMsgReceiptDone(error, obj) {
-  console.log('发送消息已读回执' + (!error ? '成功' : '失败'), error, obj);
-}
-
-export function getHistoryMsgs({ state, commit }, obj) {
-  const nim = state.nim
+export function* getHistoryMsgs(paylord, { put, select }) {
+  const nim = yield select(state => state.chat.nim);
   if (nim) {
-    let { scene, to } = obj
+    let { scene, to } = paylord
     let options = {
       scene,
       to,
@@ -287,14 +273,15 @@ export function getHistoryMsgs({ state, commit }, obj) {
       done: function getHistoryMsgsDone(error, obj) {
         if (obj.msgs) {
           if (obj.msgs.length === 0) {
-            commit('setNoMoreHistoryMsgs')
+            window.dispatch({ type: 'chat/setNoMoreHistoryMsgsExt' })
           } else {
             let msgs = obj.msgs.map(msg => {
               return formatMsg(msg)
             })
-            commit('updateCurrSessionMsgs', {
-              type: 'concat',
-              msgs: msgs
+            window.dispatch({
+              type: 'chat/updateCurrSessionMsgs',
+              method: 'concat',
+              msgs
             })
           }
         }
@@ -310,11 +297,11 @@ export function getHistoryMsgs({ state, commit }, obj) {
   }
 }
 
-export function resetNoMoreHistoryMsgs({ commit }) {
-  commit('resetNoMoreHistoryMsgs')
+export function* resetNoMoreHistoryMsgs(action, { put }) {
+  yield put({ type: 'resetNoMoreHistoryMsgs' });
 }
 
 // 继续与机器人会话交互
-export function continueRobotMsg({ commit }, robotAccid) {
-  commit('continueRobotMsg', robotAccid)
+export function* continueRobotMsg({robotAccid}, { put }) {
+  yield put({ type: 'resetNoMoreHistoryMsgs', robotAccid });
 }

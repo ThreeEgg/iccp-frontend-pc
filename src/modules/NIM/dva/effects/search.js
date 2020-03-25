@@ -1,39 +1,52 @@
-import {formatUserInfo} from './userInfo'
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-24 17:11:26
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-25 18:14:54
+ * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\search.js
+ */
+import { formatUserInfo } from './userInfo'
 
-export function resetSearchResult ({state, commit}) {
-  commit('updateSearchlist', {
+export function* resetSearchResult(action, { put }) {
+  yield put({
+    type: 'setNoMoreHistoryMsgs',
     type: 'user',
     list: []
   })
-  commit('updateSearchlist', {
+  yield put({
+    type: 'setNoMoreHistoryMsgs',
     type: 'team',
     list: []
   })
 }
 
-export function searchUsers ({state, commit}, obj) {
-  let {accounts, done} = obj
-  const nim = state.nim
+export function* searchUsers({ accounts, done }, { put, select }) {
+  const nim = yield select(state => state.chat.nim);
+  const userUID = yield select(state => state.chat.userUID);
+  const userInfos = yield select(state => state.chat.userInfos);
   if (!Array.isArray(accounts)) {
     accounts = [accounts]
   }
   nim.getUsers({
     accounts,
-    done: function searchUsersDone (error, users) {
+    done: function searchUsersDone(error, users) {
       if (error) {
         alert(error)
         return
       }
-      commit('updateSearchlist', {
-        type: 'user',
+      window.dispatch({
+        type: 'chat/updateSearchlistExt',
+        method: 'user',
         list: users
       })
       let updateUsers = users.filter(item => {
         let account = item.account
-        if (item.account === state.userUID) {
+        if (item.account === userUID) {
           return false
         }
-        let userInfo = state.userInfos[account] || {}
+        let userInfo = userInfos[account] || {}
         if (userInfo.isFriend) {
           return false
         }
@@ -42,7 +55,7 @@ export function searchUsers ({state, commit}, obj) {
       updateUsers = updateUsers.map(item => {
         return formatUserInfo(item)
       })
-      commit('updateUserInfo', updateUsers)
+      window.dispatch({ type: 'updateUserInfoExt', users: updateUsers })
       if (done instanceof Function) {
         done(users)
       }
@@ -50,12 +63,11 @@ export function searchUsers ({state, commit}, obj) {
   })
 }
 
-export function searchTeam ({ state, commit }, obj) {
-  let { teamId, done } = obj
-  const nim = state.nim
+export function* searchTeam({ teamId, done }, { put, select }) {
+  const nim = yield select(state => state.chat.nim);
   nim.getTeam({
     teamId: teamId,
-    done: function searchTeamDone (error, teams) {
+    done: function searchTeamDone(error, teams) {
       if (error) {
         if (error.code === 803) {
           // 群不存在或未发生变化
@@ -73,8 +85,9 @@ export function searchTeam ({ state, commit }, obj) {
           team.avatar = team.avatar + '?imageView&thumbnail=300y300'
         }
       })
-      commit('updateSearchlist', {
-        type: 'team',
+      window.dispatch({
+        type: 'chat/updateSearchlistExt',
+        method: 'team',
         list: teams
       })
       if (done instanceof Function) {

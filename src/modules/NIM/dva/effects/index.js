@@ -1,6 +1,5 @@
 // Action 提交的是 mutation，而不是直接变更状态。
 // Action 可以包含任意异步操作。
-import cookie from '../../utils/cookie';
 import pageUtil from '../../utils/page';
 import { updateBlack } from './blacks';
 import { clearChatroomMembers, getChatroomInfo, getChatroomMembers, initChatroomInfos } from './chatroomInfos';
@@ -19,7 +18,6 @@ import { hideFullscreenImg, showFullscreenImg } from './widgetUi';
 import { message } from 'antd';
 export default {
   *updateRefreshState(action, { put }) {
-    debugger
     yield put({ type: 'updateRefreshState' });
   },
 
@@ -33,12 +31,13 @@ export default {
     // 操作为内容页刷新页面，此时无nim实例
     if (!nim || force) {
       let loginInfo = {
-        uid: cookie.readCookie('uid'),
-        sdktoken: cookie.readCookie('sdktoken'),
+        uid: localStorage.uid,
+        sdktoken: localStorage.sdktoken,
       };
       if (!loginInfo.uid) {
-        // 无cookie，直接跳转登录页
-        pageUtil.turnPage('无历史登录记录，请重新登录', 'login');
+        // 无localStorage，直接跳转登录页
+        yield put({ type: 'updateLogin', isLogin:false });
+        message.warning('无历史登录记录，请重新登录')
       } else {
         // 有cookie，重新登录
         yield put({ type: 'initNimSDK', loginInfo });
@@ -78,14 +77,12 @@ export default {
   },
 
   // 用户触发的登出逻辑
-  *logout(action, { select }) {
-    cookie.delCookie('uid');
-    cookie.delCookie('sdktoken');
-    const nim = yield select(state => state.chat.nim);
-    if (nim) {
-      nim.disconnect();
-    }
-    pageUtil.turnPage('', 'login');
+  *logout(action, { put, select }) {
+    localStorage.uid = ''
+    localStorage.sdktoken = ''
+    yield put({ type: 'disconnect' });
+    yield put({ type: 'updateLogin', isLogin:false });
+    // pageUtil.turnPage('', 'login');
   },
 
   // 解决SDK无法调用外部dispatch的映射方法集合start

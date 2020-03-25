@@ -4,14 +4,13 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-24 16:51:03
+ * @LastEditTime: 2020-03-25 18:37:11
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
 // put({ type: 'caculate', delta });
 
 import store from '..'
-import cookie from '../../utils/cookie'
 import util from '../../utils'
 import config from '../../configs'
 
@@ -19,7 +18,18 @@ export default {
   updateLogin(state, { isLogin }) {
     return { ...state, isLogin };
   },
+  updateLogin(state, { isLogin }) {
+    return { ...state, isLogin };
+  },
   updateNim(state, { nim }) {
+    return { ...state, nim };
+  },
+  disconnect(state) {
+    let { nim } = state;
+    if (nim) {
+      nim.disconnect();
+    }
+    nim = window.nim = null;
     return { ...state, nim };
   },
   updateCurrSession(state, { currSessionId }) {
@@ -40,8 +50,8 @@ export default {
   },
   updateUserUID(state, payload) {
     const { loginInfo } = payload;
-    cookie.setCookie('uid', loginInfo.uid)
-    cookie.setCookie('sdktoken', loginInfo.sdktoken)
+    localStorage.uid = loginInfo.uid
+    localStorage.sdktoken = loginInfo.sdktoken
     return {
       ...state,
       userUID: loginInfo.uid,
@@ -119,23 +129,22 @@ export default {
     blacklist = nim.cutFriends(blacklist, remBlacks)
     return { ...state, blacklist };
   },
-  updateSearchlist(state, obj) {
-    const type = obj.type
-    switch (type) {
+  updateSearchlist(state, { method, list}) {
+    const { searchedUsers,searchedTeams } = state;
+    method = method || "";
+    switch (method) {
       case 'user':
-        if (obj.list.length !== 0 || state.searchedUsers.length !== 0) {
-          state.searchedUsers = obj.list
+        if (list.length !== 0 || searchedUsers.length !== 0) {
+          return { ...state, searchedUsers: list };
         } else {
-          state.searchedUsers = []
+          return { ...state, searchedUsers: [] };
         }
-        break
       case 'team':
-        if (obj.list.length !== 0 || state.searchedTeams.length !== 0) {
-          state.searchedTeams = obj.list
+        if (list.length !== 0 || searchedTeams.length !== 0) {
+          return { ...state, searchedTeams: list };
         } else {
-          state.searchedTeams = []
+          return { ...state, searchedTeams: [] };
         }
-        break
     }
   },
   updateSessions(state, { sessions }) {
@@ -170,13 +179,14 @@ export default {
     return { ...state, msgs: msgsNew };
   },
   // 更新追加消息，追加一条消息
-  putMsg(state, msg) {
+  putMsg(state, { msg }) {
     let sessionId = msg.sessionId
-    if (!state.msgs[sessionId]) {
-      state.msgs[sessionId] = []
+    const { nim, msgs: msgsOld } = state;
+    let msgsNew = { ...msgsOld };
+    if (!msgsNew[sessionId]) {
+      msgsNew[sessionId] = []
     }
-    //store.commit('updateMsgByIdClient', msg)
-    let tempMsgs = state.msgs[sessionId]
+    let tempMsgs = msgsNew[sessionId]
     let lastMsgIndex = tempMsgs.length - 1
     if (tempMsgs.length === 0 || msg.time >= tempMsgs[lastMsgIndex].time) {
       tempMsgs.push(msg)
@@ -184,11 +194,12 @@ export default {
       for (let i = lastMsgIndex; i >= 0; i--) {
         let currMsg = tempMsgs[i]
         if (msg.time >= currMsg.time) {
-          state.msgs[sessionId].splice(i, 0, msg)
+          msgsNew[sessionId].splice(i, 0, msg)
           break
         }
       }
     }
+    return { ...state, msgs: msgsNew };
   },
   // 删除消息列表消息
   deleteMsg(state, msg) {
@@ -207,8 +218,7 @@ export default {
     }
   },
   // 替换消息列表消息，如消息撤回
-  replaceMsg(state, obj) {
-    let { sessionId, idClient, msg } = obj
+  replaceMsg(state, { sessionId, idClient, msg }) {
     let tempMsgs = state.msgs[sessionId]
     if (!tempMsgs || tempMsgs.length === 0) {
       return
@@ -225,11 +235,8 @@ export default {
   },
   // 用idClient 更新消息，目前用于消息撤回
   updateMsgByIdClient(state, { msgs }) {
-    const { msgsMap:msgsMapOld } = state;
-    let msgsMap = {...msgsMapOld}
-    if (!Array.isArray(msgs)) {
-      msgs = [msgs]
-    }
+    const { msgsMap: msgsMapOld } = state;
+    let msgsMap = { ...msgsMapOld }
     let tempTime = (new Date()).getTime()
     msgs.forEach(msg => {
       // 有idClient 且 5分钟以内的消息
@@ -240,108 +247,105 @@ export default {
     return { ...state, msgsMap };
   },
   // 更新当前会话id，用于唯一判定是否在current session状态
-  updateCurrSessionId(state, obj) {
-    let type = obj.type || ''
-    if (type === 'destroy') {
-      state.currSessionId = null
-    } else if (type === 'init') {
-      if (obj.sessionId && (obj.sessionId !== state.currSessionId)) {
-        state.currSessionId = obj.sessionId
+  updateCurrSessionId(state, { method, sessionId }) {
+    const { currSessionId } = state;
+
+    if (method === 'destroy') {
+      return { ...state, currSessionId: null };
+    } else if (method === 'init') {
+      if (sessionId && (sessionId !== currSessionId)) {
+        return { ...state, currSessionId: sessionId };
       }
     }
   },
-  // 更新当前会话列表的聊天记录，包括历史消息、单聊消息等，不包括聊天室消息
-  // replace: 替换idClient的消息
-  updateCurrSessionMsgs(state, payload) {
-    let { methodtype } = payload
-    if (method === 'destroy') { // 清空会话消息
-      state.currSessionMsgs = []
-      state.currSessionLastMsg = null
-      // store.commit('updateCurrSessionId', {
-      //   method: 'destroy'
-      // })
-    } else if (method === 'init') { // 初始化会话消息列表
-      if (state.currSessionId) {
-        let sessionId = state.currSessionId
-        let currSessionMsgs = [].concat(state.msgs[sessionId] || [])
-        // 做消息截断
-        let limit = config.localMsglimit
-        let msgLen = currSessionMsgs.length
-        if (msgLen - limit > 0) {
-          state.currSessionLastMsg = currSessionMsgs[msgLen - limit]
-          currSessionMsgs = currSessionMsgs.slice(msgLen - limit, msgLen)
-        } else if (msgLen > 0) {
-          state.currSessionLastMsg = currSessionMsgs[0]
-        } else {
-          state.currSessionLastMsg = null
-        }
-        state.currSessionMsgs = []
-        let lastMsgTime = 0
-        currSessionMsgs.forEach(msg => {
-          if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
-            lastMsgTime = msg.time
-            state.currSessionMsgs.push({
-              method: 'timeTag',
-              text: util.formatDate(msg.time, false)
-            })
-          }
-          state.currSessionMsgs.push(msg)
-        })
-        store.dispatch('checkTeamMsgReceipt', state.currSessionMsgs)
+  destroyCurrSessionMsgs(state) { // 清空会话消息
+    return { ...state, currSessionMsgs: [], currSessionLastMsg: null }
+  },
+  initCurrSessionMsgs(state) { // 初始化会话消息列表
+    const { currSessionId, msgs } = state
+    if (currSessionId) {
+      let currSessionLastMsg = null;
+      let currSessionMsgs = [].concat(msgs[currSessionId] || [])
+      // 做消息截断
+      let limit = config.localMsglimit
+      let msgLen = currSessionMsgs.length
+      if (msgLen - limit > 0) {
+        currSessionLastMsg = currSessionMsgs[msgLen - limit]
+        currSessionMsgs = currSessionMsgs.slice(msgLen - limit, msgLen)
+      } else if (msgLen > 0) {
+        currSessionLastMsg = currSessionMsgs[0]
       }
-    } else if (method === 'put') { // 追加一条消息
-      let { msg: newMsg } = payload
+      let currSessionMsgsNew = []
       let lastMsgTime = 0
-      let lenCurrMsgs = state.currSessionMsgs.length
-      if (lenCurrMsgs > 0) {
-        lastMsgTime = state.currSessionMsgs[lenCurrMsgs - 1].time
-      }
-      if (newMsg) {
-        if ((newMsg.time - lastMsgTime) > 1000 * 60 * 5) {
-          state.currSessionMsgs.push({
-            method: 'timeTag',
-            text: util.formatDate(newMsg.time, false)
-          })
-        }
-        state.currSessionMsgs.push(newMsg)
-        store.dispatch('checkTeamMsgReceipt', [newMsg])
-      }
-    } else if (method === 'concat') {
-      // 一般用于历史消息拼接
-      let currSessionMsgs = []
-      let lastMsgTime = 0
-      let { msgs, idClient, msg } = payload
-      msgs.forEach(msg => {
+      currSessionMsgs.forEach(msg => {
         if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
           lastMsgTime = msg.time
-          currSessionMsgs.push({
+          currSessionMsgsNew.push({
             method: 'timeTag',
             text: util.formatDate(msg.time, false)
           })
         }
-        currSessionMsgs.push(msg)
+        currSessionMsgsNew.push(msg)
       })
-      currSessionMsgs.reverse()
-      currSessionMsgs.forEach(msg => {
-        state.currSessionMsgs.unshift(msg)
+      return { ...state, currSessionMsgs: currSessionMsgsNew, currSessionLastMsg }
+    }
+  },
+  putCurrSessionMsgs(state, { msg }) { // 追加一条消息
+    const { currSessionMsgsOld } = state
+    let currSessionMsgs = { ...currSessionMsgsOld }
+    let lastMsgTime = 0
+    let lenCurrMsgs = currSessionMsgs.length
+    if (lenCurrMsgs > 0) {
+      lastMsgTime = currSessionMsgs[lenCurrMsgs - 1].time
+    }
+    if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
+      currSessionMsgs.push({
+        method: 'timeTag',
+        text: util.formatDate(msg.time, false)
       })
-      if (msgs[0]) {
-        state.currSessionLastMsg = msgs[0]
+    }
+    currSessionMsgs.push(msg)
+    return { ...state, currSessionMsgs }
+  },
+  concatCurrSessionMsgs(state, { msgs }) { // 一般用于历史消息拼接
+    const { currSessionMsgsOld } = state
+    let currSessionMsgs = { ...currSessionMsgsOld }
+    let temp = []
+    let lastMsgTime = 0
+    msgs.forEach(msg => {
+      if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
+        lastMsgTime = msg.time
+        temp.push({
+          method: 'timeTag',
+          text: util.formatDate(msg.time, false)
+        })
       }
-      store.dispatch('checkTeamMsgReceipt', currSessionMsgs)
-    } else if (method === 'replace') {
-      let { idClient, msg } = payload
-      let msgLen = state.currSessionMsgs.length
-      let lastMsgIndex = msgLen - 1
-      if (msgLen > 0) {
-        for (let i = lastMsgIndex; i >= 0; i--) {
-          if (state.currSessionMsgs[i].idClient === idClient) {
-            state.currSessionMsgs.splice(i, 1, msg)
-            break
-          }
+      temp.push(msg)
+    })
+    temp.reverse()
+    temp.forEach(msg => {
+      currSessionMsgs.unshift(msg)
+    })
+    if (msgs[0]) {
+      return { ...state, currSessionMsgs, currSessionLastMsg: msgs[0] }
+    } else {
+      return { ...state, currSessionMsgs }
+    }
+  },
+  replaceCurrSessionMsgs(state, { msg, idClient }) { // 替换idClient的消息
+    const { currSessionMsgsOld } = state
+    let currSessionMsgs = { ...currSessionMsgsOld }
+    let msgLen = currSessionMsgs.length
+    let lastMsgIndex = msgLen - 1
+    if (msgLen > 0) {
+      for (let i = lastMsgIndex; i >= 0; i--) {
+        if (currSessionMsgs[i].idClient === idClient) {
+          currSessionMsgs.splice(i, 1, msg)
+          break
         }
       }
     }
+    return { ...state, currSessionMsgs }
   },
   updateSysMsgs(state, sysMsgs) {
     const { nim } = state;
@@ -420,10 +424,10 @@ export default {
     Vue.set(state, 'sysMsgs', arr)
   },
   setNoMoreHistoryMsgs(state) {
-    state.noMoreHistoryMsgs = true
+    return { ...state, noMoreHistoryMsgs: true }
   },
   resetNoMoreHistoryMsgs(state) {
-    state.noMoreHistoryMsgs = false
+    return { ...state, noMoreHistoryMsgs: false }
   },
   // 继续与机器人会话交互
   continueRobotMsg(state, robotAccid) {

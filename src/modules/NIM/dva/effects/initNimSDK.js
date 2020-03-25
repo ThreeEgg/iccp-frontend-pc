@@ -32,10 +32,7 @@ let SDK = null;
 
 // 重新初始化 NIM SDK
 export function* initNimSDK({ loginInfo }, { put, select }, ) {
-  const nim = yield select(state => state.chat.nim);
-  if (nim) {
-    nim.disconnect();
-  }
+  yield put({ type: 'disconnect' });
   if (!SDK) {
     SDK = require('../../sdk/' + config.sdk);
   }
@@ -147,7 +144,7 @@ export function* initNimSDK({ loginInfo }, { put, select }, ) {
       // 说明在聊天列表页
       const currSessionId = select(state => state.chat.currSessionId);
       if (currSessionId) {
-        window.dispatch({ type: 'chat/updateCurrSessionExt', currSessionId });
+        window.dispatch({ type: 'chat/setCurrSession', currSessionId });
       }
     },
   });

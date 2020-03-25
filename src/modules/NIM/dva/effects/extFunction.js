@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-24 16:34:18
+ * @LastEditTime: 2020-03-25 18:32:24
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\extFunction.js
  */
 
@@ -14,14 +14,11 @@ export function* updateLoginExt({ isLogin }, { put }) {
 export function* updateUserUIDExt({ loginInfo }, { put }) {
   yield put({ type: 'updateUserUID', loginInfo });
 }
-export function* updateCurrSessionExt({ currSessionId }, { put }) {
-  yield put({ type: 'updateCurrSession', currSessionId });
-}
 export function* updateBlacklistExt({ blacks }, { put }) {
   yield put({ type: 'updateBlacklist', blacks });
 }
-export function* updateFriendsExt({ friends }, { put }) {
-  yield put({ type: 'updateFriends', friends });
+export function* updateFriendsExt({ friends, cutFriends }, { put }) {
+  yield put({ type: 'updateFriends', friends, cutFriends });
 }
 export function* updateUserInfoExt({ users }, { put }) {
   yield put({ type: 'updateUserInfo', users });
@@ -35,7 +32,29 @@ export function* updateSessionsExt({ sessions }, { put }) {
 export function* onRobotsExt({ robots }, { put }) {
   yield put({ type: 'updateRobots', robots });
 }
-export function* updateMsgsExt({ msgs }, { put,select }) {
+export function* replaceMsgExt({ sessionId, idClient, msg }, { put }) {
+  yield put({ type: 'replaceMsg', sessionId, idClient, msg });
+}
+export function* setNoMoreHistoryMsgsExt(action, { put }) {
+  yield put({ type: 'setNoMoreHistoryMsgs' });
+}
+export function* updateSearchlistExt({ method, list }, { put }) {
+  yield put({ type: 'updateSearchlist', method, list });
+}
+export function* onMsgExt({ msg }, { put }) {
+  yield put({ type: 'updateMsgByIdClient', msgs: [msg] });
+  yield put({ type: 'putMsg', msg });
+  const currSessionId = yield select(state => state.chat.currSessionId);
+  if (msg.sessionId === currSessionId) {
+    yield put({ type: 'updateCurrSessionMsgs', method: 'put', msg })
+    // 发送已读回执
+    yield put({ type: 'sendMsgReceipt' })
+  }
+  if (msg.scene === 'team' && msg.type === 'notification') {
+    yield put({ type: 'onTeamNotificationMsg', msg })
+  }
+}
+export function* updateMsgsExt({ msgs }, { put, select }) {
   yield put({ type: 'updateMsgs', msgs });
   yield put({ type: 'updateMsgByIdClient', msgs });
   let tempSessionMap = {}
@@ -44,8 +63,6 @@ export function* updateMsgsExt({ msgs }, { put,select }) {
   })
   let msgsNew = yield select(state => state.chat.msgs);
   const currSessionId = yield select(state => state.chat.currSessionId);
-  console.log(msgsNew);
-  console.log(currSessionId);
   for (let sessionId in tempSessionMap) {
     msgsNew[sessionId].sort((a, b) => {
       if (a.time === b.time) {
@@ -62,7 +79,56 @@ export function* updateMsgsExt({ msgs }, { put,select }) {
       return a.time - b.time
     })
     if (sessionId === currSessionId) {
-      yield put({ type: 'updateCurrSessionMsgs', method: 'init'});
+      yield put({ type: 'updateCurrSessionMsgs', method: 'init' });
     }
   }
+}
+export function* sendTipMsgDoneExt({ msg, tipMsg }, { put }) {
+  let idClient = msg.deletedIdClient || msg.idClient
+  yield put({
+    type: 'replaceMsg',
+    sessionId: msg.sessionId,
+    idClient,
+    msg: tipMsg
+  })
+  const currSessionId = yield select(state => state.chat.currSessionId);
+  if (msg.sessionId === currSessionId) {
+    yield put({
+      type: 'updateCurrSessionMsgs',
+      method: 'replace',
+      idClient,
+      msg: tipMsg
+    })
+  }
+}
+// 更新当前会话列表的聊天记录，包括历史消息、单聊消息等，不包括聊天室消息
+export function* updateCurrSessionMsgs(paylord, { put, select }) {
+  let { method, msg, msgs, idClient } = paylord
+  if (method === 'destroy') { // 清空会话消息
+    yield put({ type: 'destroyCurrSessionMsgs' });
+  } else if (method === 'init') { // 初始化会话消息列表
+    yield put({ type: 'initCurrSessionMsgs' });
+    const currSessionMsgs = yield select(state => state.chat.currSessionMsgs);
+    yield put({ type: 'checkTeamMsgReceipt', msgs: currSessionMsgs });
+  } else if (method === 'put') { // 追加一条消息
+    if (msg) {
+      yield put({ type: 'putCurrSessionMsgs', msg });
+      yield put({ type: 'checkTeamMsgReceipt', msgs: [msg] });
+    }
+  } else if (method === 'concat') { // 一般用于历史消息拼接
+    yield put({ type: 'concatCurrSessionMsgs', msgs });
+    const currSessionMsgs = yield select(state => state.chat.currSessionMsgs);
+    yield put({ type: 'checkTeamMsgReceipt', msgs: currSessionMsgs });
+  } else if (method === 'replace') { // 替换idClient的消息
+    yield put({ type: 'replaceCurrSessionMsgs', msg, idClient });
+  }
+}
+export function* onUpdateFriend({ friends }, { put, select }) {
+  const nim = yield select(state => state.chat.nim);
+  const users = yield select(state => state.chat.users);
+  friends = nim.mergeFriends(friends, users).map(formatUserInfo)
+  // 更新好友列表
+  yield put({ type: 'updateFriends', friends });
+  // 更新好友资料
+  yield put({ type: 'updateUserInfo', users: friends });
 }

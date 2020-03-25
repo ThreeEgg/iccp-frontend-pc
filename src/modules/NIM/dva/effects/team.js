@@ -45,7 +45,7 @@ export function onUpdateTeam(team) {
   onTeams(team)
 }
 
-export function onTeamNotificationMsg({state, commit}, msg) {
+export function* onTeamNotificationMsg({msg},{ put }) {
   if (msg.attach.type === 'updateTeam' && msg.attach.team) {
     // //store.commit('updateTeamInfo', msg.attach.team)
   }
@@ -165,14 +165,16 @@ export function getTeamMembers({ state }, teamId) {
   })
 }
 
-export function checkTeamMsgReceipt({state}, msgs) {
-  var result = /team-(\d+)/.exec(state.currSessionId)
+export function* checkTeamMsgReceipt({msgs}, { put, select }) {
+  const currSessionId = yield select(state => state.chat.currSessionId);
+  const sentReceipedMap = yield select(state => state.chat.currSessionId);
+  const myInfo = yield select(state => state.chat.currSessionId);
+  var result = /team-(\d+)/.exec(currSessionId)
   if (!result) {
     return null
   }
   var teamId = result[1]
-
-  var needToPeceiptList= getMsgNeedToReceipt(state, teamId, msgs)
+  var needToPeceiptList= getMsgNeedToReceipt(sentReceipedMap, myInfo, teamId, msgs)
   if (needToPeceiptList && needToPeceiptList.length>0) {
     nim.sendTeamMsgReceipt({
       teamMsgReceipts: needToPeceiptList,
@@ -192,11 +194,11 @@ export function checkTeamMsgReceipt({state}, msgs) {
 }
 
 // 查询需要发送回执的消息
-function getMsgNeedToReceipt(state, teamId, msgs) {
-  var sentReceipedList = state.sentReceipedMap[teamId] || []
+function getMsgNeedToReceipt(sentReceipedMap, myInfo, teamId, msgs) {
+  var sentReceipedList = sentReceipedMap[teamId] || []
   var needToReceipt = msgs.filter(msg => {
     // 需要回执，且未发送过
-    return msg.needMsgReceipt && msg.from !== state.myInfo.account &&  !sentReceipedList.find(id => id === msg.idServer)     
+    return msg.needMsgReceipt && msg.from !== myInfo.account &&  !sentReceipedList.find(id => id === msg.idServer)     
   }).map(msg => {
     return {
       teamId: teamId,

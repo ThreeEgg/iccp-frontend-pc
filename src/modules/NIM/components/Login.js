@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-24 09:44:06
+ * @LastEditTime: 2020-03-25 16:21:52
  * @FilePath: \PC端-前端\src\modules\NIM\components\Login.js
  */
 import React from 'react';
@@ -14,8 +14,24 @@ import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
 import md5 from '../utils/md5';
-import cookie from '../utils/cookie';
 import config from '../configs';
+
+function LoginButton(props) {
+  const { isLogin, clickLogin, clickLogout } = props;
+  if (isLogin) {
+    return (
+      <Button type="primary" danger onClick={clickLogout}>
+        登出NIM
+      </Button>
+    )
+  } else {
+    return (
+      <Button type="primary" onClick={clickLogin}>
+        登录NIM
+      </Button>
+    )
+  }
+}
 
 class Login extends React.Component {
   state = {
@@ -36,6 +52,10 @@ class Login extends React.Component {
     this.setState({
       visible: true,
     });
+  };
+
+  logout = () => {
+    this.props.dispatch({ type: 'chat/logout' })
   };
   login = e => {
     if (this.state.account === '') {
@@ -61,10 +81,15 @@ class Login extends React.Component {
     // 真实场景应在此向服务器发起ajax请求
     let sdktoken = md5(this.state.password);
     // 服务端帐号均为小写
-    cookie.setCookie('uid', this.state.account.toLowerCase());
-    cookie.setCookie('sdktoken', sdktoken);
+    localStorage.uid = this.state.account.toLowerCase();
+    localStorage.sdktoken = sdktoken;
     // 提交sdk连接请求
     this.props.dispatch({ type: 'chat/connect' })
+      .then((result) => {
+        this.setState({
+          visible: !this.props.isLogin,
+        });
+      })
   };
   handleCancel = e => {
     this.setState({
@@ -73,31 +98,29 @@ class Login extends React.Component {
   };
 
   componentDidMount = () => {
-    if (!localStorage.imAccount || !localStorage.imToken) {
-      this.setState({
-        visible: true,
-      });
-    }
+    // 提交sdk连接请求
+    this.props.dispatch({ type: 'chat/connect' })
   };
 
-  componentDidUpdate = (prevProps, prevState) =>  {
+  componentDidUpdate = (prevProps, prevState) => {
     if (prevProps.isLogin !== this.props.isLogin) {
       this.setState({
-        visible: !prevProps.isLogin,
+        visible: !this.props.isLogin,
       });
     }
   };
 
   render() {
+    const { chat } = this.props;
+    const { isLogin } = chat;
     return (
       <div>
-        <Button type="primary" onClick={this.showLogin}>
-          登录NIM
-        </Button>
+        <LoginButton isLogin={isLogin} clickLogout={this.logout} clickLogin={this.showLogin} />
         <Modal
           title="登录NIM"
           visible={this.state.visible}
           okText="登录"
+          cancelText="取消"
           closable={false}
           maskClosable={false}
           onOk={this.login}

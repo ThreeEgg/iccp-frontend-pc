@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-24 16:26:16
+ * @LastEditTime: 2020-03-25 15:19:08
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\sysMsgs.js
  */
 import store from '..'
@@ -16,7 +16,6 @@ export function onSysMsgs (sysMsgs) {
 }
 
 export function onSysMsg (sysMsg) {
-  debugger
   switch (sysMsg.type) {
     // 在其他端添加或删除好友
     case 'addFriend':
