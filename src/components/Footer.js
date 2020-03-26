@@ -48,8 +48,8 @@ export default class Footer extends React.Component {
           </div>
         </div>
         <div className="ft-r flex flex-justifyCenter">
-          <img src="/images/ic_footer_phone.png" />
-          <img src="/images/ic_footer_phone.png" />
+          <img src="/images/qrcode.png" />
+          <img src="/images/qrcode.png" />
         </div>
       </div>
     );
