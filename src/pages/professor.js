@@ -1,15 +1,16 @@
 import React from 'react';
 import ContentLayout from '../layouts/ContentLayout';
-import { Button, Calendar, Rate } from 'antd';
+import { Button, Calendar, Rate, Modal, Tabs } from 'antd';
 import Router from 'next/router';
 import { Pagination } from 'antd';
-import { Tabs } from 'antd';
-const { TabPane } = Tabs;
+import ScheduleTable from '../components/ScheduleTable';
 import './professor.less';
+const { TabPane } = Tabs;
 
 export default class Platform extends React.Component {
   state = {
     current: 1,
+    scheduleVisible: true,
   };
 
   onChange = page => {
@@ -22,8 +23,11 @@ export default class Platform extends React.Component {
   goToCommunication = () => {
     Router.push('');
   };
-  timeList = () => {
-    Router.push('');
+
+  showSchedule = () => {
+    this.setState({
+      scheduleVisible: true,
+    });
   };
 
   render() {
@@ -51,7 +55,7 @@ export default class Platform extends React.Component {
           </div>
           <div
             className="con-pro-r-list flex flex-align flex-justifyBetween"
-            onClick={this.timeList}
+            onClick={this.showSchedule}
           >
             查看专家时间表
             <img src="/images/ic_date.png" />
@@ -131,9 +135,9 @@ export default class Platform extends React.Component {
                       dolor sit amet lacus accumsan et viverra justo commodo
                     </p>
                     <div className="flex">
-                      <img src="/images/card1.png" />
-                      <img src="/images/card2.png" />
-                      <img src="/images/card2.png" />
+                      <img src="/images/case/card1.png" />
+                      <img src="/images/case/card2.png" />
+                      <img src="/images/case/card2.png" />
                     </div>
                   </div>
                   <div className="pro-info-item">
@@ -143,8 +147,8 @@ export default class Platform extends React.Component {
                       dolor sit amet lacus accumsan et viverra justo commodo
                     </p>
                     <div className="flex">
-                      <img src="/images/card1.png" />
-                      <img src="/images/card2.png" />
+                      <img src="/images/case/card1.png" />
+                      <img src="/images/case/card2.png" />
                     </div>
                   </div>
                 </div>
@@ -210,6 +214,11 @@ export default class Platform extends React.Component {
             </div>
           </div>
         </div>
+
+        {/* 时间表 */}
+        <Modal visible={this.state.scheduleVisible}>
+          <ScheduleTable />
+        </Modal>
       </ContentLayout>
     );
   }
