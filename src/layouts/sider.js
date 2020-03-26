@@ -3,7 +3,7 @@ import Router from 'next/router';
 import { Menu } from 'antd';
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import { withRouter } from 'next/router';
-import './sider.less';
+import './Sider.less';
 
 const { SubMenu } = Menu;
 
@@ -64,41 +64,43 @@ class Sider extends React.Component {
 
   render() {
     return (
-      <Menu
-        mode="inline"
-        onClick={this.onClick}
-        openKeys={this.state.openKeys}
-        onOpenChange={this.onOpenChange}
-        selectedKeys={[this.state.activeKey]}
-        style={{ width: 240 }}
-      >
-        <SubMenu
-          key="sub1"
-          title={
-            <span>
-              <MailOutlined />
-              <span>关于我们</span>
-            </span>
-          }
+      <div class="sider-component">
+        <Menu
+          mode="inline"
+          onClick={this.onClick}
+          openKeys={this.state.openKeys}
+          onOpenChange={this.onOpenChange}
+          selectedKeys={[this.state.activeKey]}
+          style={{ width: 240 }}
         >
-          <Menu.Item key="1">平台介绍</Menu.Item>
-          <Menu.Item key="2">业务介绍</Menu.Item>
-          <Menu.Item key="3">常见问题</Menu.Item>
-          <Menu.Item key="4">合作伙伴</Menu.Item>
-        </SubMenu>
-        <SubMenu
-          key="sub2"
-          title={
-            <span>
-              <AppstoreOutlined />
-              <span>平台资讯</span>
-            </span>
-          }
-        >
-          <Menu.Item key="5">经典案例</Menu.Item>
-          <Menu.Item key="6">条款规定</Menu.Item>
-        </SubMenu>
-      </Menu>
+          <SubMenu
+            key="sub1"
+            title={
+              <span>
+                <MailOutlined />
+                <span>关于我们</span>
+              </span>
+            }
+          >
+            <Menu.Item key="1">平台介绍</Menu.Item>
+            <Menu.Item key="2">业务介绍</Menu.Item>
+            <Menu.Item key="3">常见问题</Menu.Item>
+            <Menu.Item key="4">合作伙伴</Menu.Item>
+          </SubMenu>
+          <SubMenu
+            key="sub2"
+            title={
+              <span>
+                <AppstoreOutlined />
+                <span>平台资讯</span>
+              </span>
+            }
+          >
+            <Menu.Item key="5">经典案例</Menu.Item>
+            <Menu.Item key="6">条款规定</Menu.Item>
+          </SubMenu>
+        </Menu>
+      </div>
     );
   }
 }

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import classNames from 'classnames';
 import Head from './Head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -8,7 +9,7 @@ import './ContentLayout.less';
 export default class ContentLayout extends React.Component {
   render() {
     return (
-      <div className="content-layout">
+      <div className={classNames('content-layout', this.props.className)}>
         <Head />
         <Header />
         <div className="banner">
@@ -28,8 +29,14 @@ export default class ContentLayout extends React.Component {
         </div>
         <div className="content">
           <div className="content-plat-c commonWidth flex">
-            <Sider />
-            <div className="content-c-r">{this.props.children}</div>
+            {!this.props.hideSider ? (
+              <Fragment>
+                <Sider />
+                <div className="content-c-r">{this.props.children}</div>
+              </Fragment>
+            ) : (
+              this.props.children
+            )}
           </div>
         </div>
         <Footer />
