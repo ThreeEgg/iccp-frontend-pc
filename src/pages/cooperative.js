@@ -1,5 +1,5 @@
 import React from 'react';
-import Platform from '../layouts/platformIndex';
+import ContentLayout from '../layouts/ContentLayout';
 import router from 'next/router';
 import api from '../services/api';
 import { platformContentType } from '../common/enum';
@@ -32,7 +32,7 @@ export default class Cooperative extends React.Component {
   render() {
     const { pageNum, pageInfo } = this.props;
     return (
-      <Platform title="problems" url="/images/ic_header_problems.png">
+      <ContentLayout title="problems" url="/images/ic_header_problems.png">
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">
@@ -46,7 +46,7 @@ export default class Cooperative extends React.Component {
             <img key={item.id} src={item.image} />
           ))}
         </div>
-      </Platform>
+      </ContentLayout>
     );
   }
 }

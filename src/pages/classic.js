@@ -4,11 +4,11 @@ import api from '../services/api';
 import { platformContentType } from '../common/enum';
 import { Button } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import Platform from '../layouts/platformIndex';
+import ContentLayout from '../layouts/ContentLayout';
 import { Pagination } from 'antd';
 import './classic.less';
 
-export default class RetrievePWD extends React.Component {
+export default class Classic extends React.Component {
   static async getInitialProps({ req, query }) {
     const { pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
@@ -39,7 +39,7 @@ export default class RetrievePWD extends React.Component {
     const { classicCases, pageNum, pageInfo } = this.props;
 
     return (
-      <Platform title="Classic Case" url="/images/ic_header_classcase.png">
+      <ContentLayout title="Classic Case" url="/images/ic_header_classcase.png">
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">
@@ -76,7 +76,7 @@ export default class RetrievePWD extends React.Component {
             total={pageInfo.totalResults}
           />
         </div>
-      </Platform>
+      </ContentLayout>
     );
   }
 }

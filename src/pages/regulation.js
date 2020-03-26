@@ -1,5 +1,5 @@
 import React from 'react';
-import Platform from '../layouts/platformIndex';
+import ContentLayout from '../layouts/ContentLayout';
 import router from 'next/router';
 import api from '../services/api';
 import { platformContentType } from '../common/enum';

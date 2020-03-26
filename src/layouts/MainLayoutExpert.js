@@ -1,13 +1,15 @@
 import React from 'react';
+import Head from './Head';
 import Header from '../components/Header';
 import SimpleFooter from '../components/SimpleFooter';
 import Sider from './SiderExpert';
-import './platformIndex.less';
+import './ContentLayout.less';
 
 export default class MainLayoutExpert extends React.Component {
   render() {
     return (
       <div className="platformIndex">
+        <Head />
         <Header />
         <div className="banner">
           <img src="/images/img_header_bg.png" />

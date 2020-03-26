@@ -22,7 +22,7 @@ export default class Footer extends React.Component {
             <h1 />
           </div>
           <div className="flex flex-justifyAround">
-            <a className="fz-qingke" href="/platform">
+            <a className="fz-qingke" href="/aboutUs">
               平台介绍
             </a>
             <a className="fz-qingke" href="/problems">

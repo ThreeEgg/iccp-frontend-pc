@@ -1,12 +1,12 @@
 import React from 'react';
 import Router from 'next/router';
 import LoginLayout from '../layouts/LoginLayout';
-import Platform from '../layouts/platformIndex';
+import ContentLayout from '../layouts/ContentLayout';
 
 export default class RetrievePWD extends React.Component {
   render() {
     return (
-      <Platform title="Article Title" url="/images/ic_header_classcase.png">
+      <ContentLayout title="Article Title" url="/images/ic_header_classcase.png">
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">
@@ -41,7 +41,7 @@ export default class RetrievePWD extends React.Component {
           </p>
         </div>
         <div className="platformCommonContent-b">页脚信息</div>
-      </Platform>
+      </ContentLayout>
     );
   }
 }

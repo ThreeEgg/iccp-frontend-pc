@@ -1,7 +1,7 @@
 import React from 'react';
 import api from '../services/api';
 import { platformContentType } from '../common/enum';
-import Platform from '../layouts/platformIndex';
+import ContentLayout from '../layouts/ContentLayout';
 import { Pagination } from 'antd';
 import router from 'next/router';
 import ContentListItem from '../components/ListItem/ContentListItem';

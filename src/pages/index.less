@@ -102,25 +102,34 @@
           position: absolute;
           top: 0;
           left: 0;
-          width: 380px;
-          height: 280px;
-          padding: 8px 24px;
+          width: 100%;
+          height: 100%;
           color: #fff;
           background: url('/images/case/card1.png') center no-repeat;
           background-size: cover !important;
           border-radius: 10px;
           transition: all 0.3s;
-          // overflow: hidden;
+          .item-content-container {
+            width: 100%;
+            height: 100%;
+            padding: 8px 24px;
+            overflow: hidden;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+          }
           &:hover {
-            top: -20px;
-            left: -10px;
-            width: 400px;
-            height: 320px;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
             p {
               margin-top: 30px;
             }
-            div {
+            .item-content-info {
               height: auto;
+            }
+            .item-content-container {
+              background-color: rgba(0, 0, 0, 0.1);
             }
           }
           &::after {
@@ -147,7 +156,7 @@
             font-size: 20px;
             transition: all 0.3s;
           }
-          div {
+          .item-content-info {
             height: 22px;
             overflow: hidden;
             color: rgba(255, 255, 255, 0.8);

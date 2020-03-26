@@ -8,7 +8,7 @@ import './sider.less';
 const { SubMenu } = Menu;
 
 const routerMap = {
-  1: 'platform',
+  1: 'aboutUs',
   2: 'business',
   3: 'problems',
   4: 'cooperative',

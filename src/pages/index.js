@@ -1,13 +1,10 @@
 import React from 'react';
-import Head from '../components/Head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { Form, Input, Button, Switch } from 'antd';
+import { Button } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import Router from 'next/router';
 import Link from 'next/link';
 import Map from '../components/Map';
-import * as platformService from '../services/platform';
 import * as expertService from '../services/expert';
 import * as commonService from '../services/common';
 import api from '../services/api';
@@ -141,7 +138,7 @@ export default class extends React.Component {
             </div>
             <div className="content-c">{aboutUs}</div>
             <div className="content-b">
-              <Link href="/platform">
+              <Link href="/aboutUs">
                 <Button>
                   More
                   <RightOutlined style={{ fontSize: '12px', position: 'absolute', top: '10px' }} />
@@ -174,13 +171,15 @@ export default class extends React.Component {
                         background: `url(/images/case/card${index + 1}.png) center no-repeat`,
                       }}
                     >
-                      <h1>0{index + 1}</h1>
-                      <p>BBC亚太地区业务案例分享</p>
-                      <div>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod
-                        bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra
-                        justo commodo Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Aenean euismod bibendum laoreet.
+                      <div className="item-content-container">
+                        <h1>0{index + 1}</h1>
+                        <p>BBC亚太地区业务案例分享</p>
+                        <div className="item-content-info">
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod
+                          bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra
+                          justo commodo Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                          Aenean euismod bibendum laoreet.
+                        </div>
                       </div>
                     </div>
                   </div>

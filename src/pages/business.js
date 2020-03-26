@@ -1,7 +1,7 @@
 import React from 'react';
 import api from '../services/api';
 import { platformContentType } from '../common/enum';
-import Platform from '../layouts/platformIndex';
+import ContentLayout from '../layouts/ContentLayout';
 
 export default class Business extends React.Component {
   static async getInitialProps({ req, query }) {
@@ -22,7 +22,7 @@ export default class Business extends React.Component {
 
   render() {
     return (
-      <Platform title="Platform Introduce" url="/images/ic_header_introduce.png">
+      <ContentLayout title="Platform Introduce" url="/images/ic_header_introduce.png">
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">
@@ -36,7 +36,7 @@ export default class Business extends React.Component {
           dangerouslySetInnerHTML={{ __html: this.props.Business }}
         />
         <div className="platformCommonContent-b">页脚信息</div>
-      </Platform>
+      </ContentLayout>
     );
   }
 }

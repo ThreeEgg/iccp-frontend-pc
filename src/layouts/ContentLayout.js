@@ -1,13 +1,15 @@
 import React from 'react';
+import Head from './Head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Sider from './sider';
-import './platformIndex.less';
+import Sider from './Sider';
+import './ContentLayout.less';
 
-export default class Platform extends React.Component {
+export default class ContentLayout extends React.Component {
   render() {
     return (
-      <div className="platformIndex">
+      <div className="content-layout">
+        <Head />
         <Header />
         <div className="banner">
           <img src="/images/img_header_bg.png" />
