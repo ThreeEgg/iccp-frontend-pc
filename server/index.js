@@ -11,7 +11,7 @@ const devProxy = {
     // pathRewrite: {
     //     '^/api': '/'
     // },
-    changeOrigin: true,
+    changeOrigin: false,
   },
 };
 
