@@ -8,6 +8,8 @@ import Router from 'next/router';
 import Link from 'next/link';
 import Map from '../components/Map';
 import * as platformService from '../services/platform';
+import * as expertService from '../services/expert';
+import * as commonService from '../services/common';
 import api from '../services/api';
 import { platformContentType } from '../common/enum';
 import './index.less';
@@ -18,7 +20,7 @@ export default class extends React.Component {
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
-    //
+
     const aboutUsContentRes = await fetch(
       `${requestUrl}?pageNum=1&pageSize=1&languageId=0&type=${platformContentType.PLATFORMINTRO}`,
     );
@@ -37,6 +39,10 @@ export default class extends React.Component {
     const classicCaseContent = await classicCaseRes.json();
     const classicCase = classicCaseContent.data.items;
 
+    const continentListRes = await fetch(`http://221.215.57.110:9090/api${api.getContinentList}`);
+    const continentListContent = await continentListRes.json();
+    const continentList = continentListContent.data;
+
     return {
       // 关于我们
       aboutUs,
@@ -44,29 +50,79 @@ export default class extends React.Component {
       businessIntro,
       // 案例介绍
       classicCase,
+      continentList,
     };
   }
 
+  state = {
+    countryList: [],
+    serviceList: [],
+  };
+
+  mapRef = React.createRef();
+
+  getCountryList = async continentId => {
+    const res = await expertService.getCountryList({ id: continentId });
+
+    if (res.code === '0') {
+      this.setState({
+        countryList: res.data,
+      });
+    }
+  };
+
+  getServiceList = async () => {
+    const res = await commonService.getServiceList();
+
+    if (res.code === '0') {
+      this.setState({
+        serviceList: res.data,
+      });
+    }
+  };
+
+  onAreaChange = areaData => {
+    const { continent, country } = areaData;
+
+    if (!this.continent || continent.id !== this.continent.id) {
+      this.getCountryList(continent.id);
+
+      this.continent = continent;
+    }
+
+    if (!this.country || country.id !== this.country.id) {
+      this.mapRef.current.updateArea(country);
+    }
+  };
+
+  componentDidMount = () => {
+    this.getServiceList();
+  };
+
   render() {
     const { aboutUs, classicCase, businessIntro } = this.props;
+    const { continentList } = this.props;
+    const { countryList, serviceList } = this.state;
 
     return (
       <div className="map">
         <Header />
         <div className="mapT">
-          <Map />
+          <Map ref={this.mapRef} />
           <div className="map-selector">
-            <AreaSelector />
+            <AreaSelector
+              continentList={continentList}
+              countryList={countryList}
+              serviceList={serviceList}
+              onChange={this.onAreaChange}
+            />
           </div>
           <div className="business-intro">
-            {businessIntro.map(item => {
+            {businessIntro.map((item, index) => {
               return (
-                <div className="business-info">
-                  <h1>业务介绍</h1>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-                    laoreet.{' '}
-                  </p>
+                <div className="business-info" key={index}>
+                  <h1>{item.title}</h1>
+                  <p>{item.content}</p>
                 </div>
               );
             })}

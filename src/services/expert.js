@@ -1,11 +1,17 @@
 import api from './api';
 import request from './request';
 
+export const getCountryList = async ({ id }) => {
+  return request(api.getCountryList, {
+    params: { id },
+  });
+};
+
 export const getExpertList = async ({ countryCode, serviceTagIdList = [] }) => {
   return request(api.getExpertList, {
     params: {
       countryCode,
-      password,
+      serviceTagIdList,
     },
   });
 };

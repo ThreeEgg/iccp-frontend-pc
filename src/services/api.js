@@ -50,5 +50,8 @@ export default {
   updatePlatformContent: '/platform/update',
 
   // 其他
+  getServiceList: '/service/list',
   fileUpload: '/support/upload',
+  getContinentList: '/system/continent/list',
+  getCountryList: '/system/country/list',
 };

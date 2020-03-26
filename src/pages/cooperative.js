@@ -1,23 +1,36 @@
 import React from 'react';
-import Router from 'next/router';
-import LoginLayout from '../layouts/LoginLayout';
 import Platform from '../layouts/platformIndex';
-import { Pagination } from 'antd';
+import router from 'next/router';
+import api from '../services/api';
+import { platformContentType } from '../common/enum';
 import './cooperative.less';
 
-export default class RetrievePWD extends React.Component {
-  state = {
-    current: 1,
-  };
+export default class Cooperative extends React.Component {
+  static async getInitialProps({ req, query }) {
+    const { pageNum = 1 } = query;
+    const fetch = require('isomorphic-unfetch');
+
+    const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
+    //
+    const cooperativeContentRes = await fetch(
+      `${requestUrl}?languageId=0&pageNum=${pageNum}&pageSize=10&type=${
+        platformContentType.PARTNER
+      }`,
+    );
+    const cooperativeContent = await cooperativeContentRes.json();
+    const list = cooperativeContent.data.items;
+
+    return {
+      list,
+    };
+  }
 
   onChange = page => {
-    console.log(page);
-    this.setState({
-      current: page,
-    });
+    router.push('/cooperative?pageNum=' + page);
   };
 
   render() {
+    const { pageNum, pageInfo } = this.props;
     return (
       <Platform title="problems" url="/images/ic_header_problems.png">
         <div className="content-t flex flex-align">
@@ -29,36 +42,9 @@ export default class RetrievePWD extends React.Component {
           <p />
         </div>
         <div className="problemsContent-m">
-          <div className="coo-item">
-            <h1>《国际贸易法》解释</h1>
-            <div className="coo-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-              laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin
-              sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et
-              viverra justo commodo. Proin sodales pulvinar sic tempor.
-            </div>
-            <div className="coo-more">More</div>
-          </div>
-          <div className="coo-item">
-            <h1>《国际贸易法》解释</h1>
-            <div className="coo-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-              laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin
-              sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et
-              viverra justo commodo. Proin sodales pulvinar sic tempor.
-            </div>
-            <div className="coo-more">More</div>
-          </div>
-        </div>
-        <div className="common-pagination">
-          <Pagination
-            current={this.state.current}
-            onChange={this.onChange}
-            size="small"
-            total={50}
-          />
+          {this.props.list.map(item => (
+            <img key={item.id} src={item.image} />
+          ))}
         </div>
       </Platform>
     );

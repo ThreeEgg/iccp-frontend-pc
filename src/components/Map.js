@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
 import echarts from 'echarts/lib/echarts';
 // 引入柱状图（这里放你需要使用的echarts类型 很重要）
 import 'echarts/lib/chart/bar';
@@ -11,21 +10,27 @@ import 'echarts/lib/chart/scatter';
 import 'echarts/lib/chart/map';
 import 'echarts/map/js/world';
 import 'echarts/extension/bmap/bmap';
-
 import './Map.less';
-
-import Head from 'next/head';
 
 var defaultZoomScale = 3;
 
 export default class extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+    this.initMap();
+  }
+
   id = 'map_';
   myChart = null;
   zoomScale = defaultZoomScale;
   option = {
     animationDurationUpdate: 150,
     bmap: {
-      center: [120.13066322374, 30.240018034923],
       zoom: defaultZoomScale,
       roam: 'move',
       mapStyle: {
@@ -180,8 +185,25 @@ export default class extends Component {
     document.body.appendChild(script);
   };
 
+  getUserGeolocation = () => {
+    //判断是否支持 获取本地位置
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(res => {
+        if (res.coords) {
+          this.option.bmap.center = [res.coords.longitude, res.coords.latitude];
+          this.updateMap();
+        }
+      });
+    } else {
+      // 这里可以上报数据
+      console.log('该浏览器不支持定位');
+    }
+  };
+
   updateMap = () => {
     if (!this.myChart) {
+      // 第一次获取用户地址
+      this.getUserGeolocation();
       this.myChart = echarts.init(document.getElementById(this.id));
     }
     // 绘制图表
@@ -199,23 +221,10 @@ export default class extends Component {
     this.updateMap();
   };
 
-  componentWillMount = () => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    this.initMap();
-  };
-
   render() {
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <div id={this.id} style={{ width: '100%', height: '100%' }} />
-
-        {/* 测试那妞 */}
-        <div style={{ position: 'absolute', right: 20, top: 100 }}>
-          <Button onClick={this.updateArea}>选中随机区域</Button>
-          <Button onClick={this.blurArea}>取消选中</Button>
-        </div>
       </div>
     );
   }

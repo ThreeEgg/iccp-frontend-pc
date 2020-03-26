@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Button, Switch } from 'antd';
 import Link from 'next/link';
 import { connect } from 'react-redux';
@@ -15,12 +15,12 @@ class Header extends React.Component {
     const { isLogin, userInfo } = this.props;
     return (
       <div className="header">
-        <img className="logo" src="/logo.svg" alt="" />
+        <img className="logo" src="/logo-full.svg" alt="" />
         <div className="line" />
         <div className="platName">国际风险管理平台</div>
         <div className="type">
           {!isLogin ? (
-            <>
+            <Fragment>
               <Button className="login-btn">
                 <Link href="/login">
                   <a>登录</a>
@@ -31,7 +31,7 @@ class Header extends React.Component {
                   <a>注册</a>
                 </Link>
               </Button>
-            </>
+            </Fragment>
           ) : (
             <>
               <span>你好, {userInfo.name}</span>

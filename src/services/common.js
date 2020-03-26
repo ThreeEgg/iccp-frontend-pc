@@ -11,3 +11,7 @@ export const fileUpload = async ({ clientUserId, expertUserId, file, type }) => 
     },
   });
 };
+
+export const getServiceList = async () => {
+  return request(api.getServiceList);
+};

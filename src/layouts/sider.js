@@ -17,7 +17,9 @@ const routerMap = {
 };
 
 class Sider extends React.Component {
-  componentWillMount = () => {
+  constructor(props) {
+    super(props);
+
     let activeKey;
     Object.entries(routerMap).find(([key, router]) => {
       if (this.props.router.pathname.match(router)) {
@@ -33,18 +35,15 @@ class Sider extends React.Component {
     if (activeKey > 4) {
       openKeys.push('sub2');
     }
-    this.setState({
-      activeKey,
+
+    this.state = {
       openKeys,
-    });
-  };
+      activeKey,
+    };
+  }
+
   // submenu keys of first level
   rootSubmenuKeys = ['sub1', 'sub2'];
-
-  state = {
-    openKeys: [],
-    activeKey: null,
-  };
 
   routerMap = routerMap;
 

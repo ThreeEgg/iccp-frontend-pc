@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import classNames from 'classnames';
 import Link from 'next/link';
+import * as expertService from '../services/expert';
 import './AreaSelector.less';
 
 const { Panel } = Collapse;
@@ -23,16 +24,19 @@ export default class extends Component {
     expand: true,
     infoExpand: false,
 
+    activeKey: ['continent'],
+
     // 大洲
-    continent: null,
+    continent: {},
     // 国家
-    countryCode: null,
+    country: {},
     // 服务
-    serviceId: null,
+    service: {},
 
     // 专家列表
-    expertList: [1, 2, 3, 4, 5, 6],
+    expertList: [],
 
+    // 选中的专家
     currentExpertIndex: 0,
 
     // 专家详情
@@ -45,27 +49,72 @@ export default class extends Component {
     });
   };
 
-  toggleInfoExpand = () => {
+  showInfoExpand = async () => {
     this.setState({
-      infoExpand: !this.state.infoExpand,
+      infoExpand: true,
     });
+
+    this.getExpertList();
+  };
+
+  getExpertList = async () => {
+    const { country, service } = this.state;
+
+    const res = await expertService.getExpertList({
+      countryCode: country['country_code'],
+      serviceTagIdList: [service.id],
+    });
+
+    if (res.code === '0') {
+      this.setState({
+        expertList: [1, 2, 3, 4, 5, 6, 7] || res.data,
+      });
+    }
+  };
+
+  selectContinent = continent => {
+    this.setState(
+      {
+        continent,
+        activeKey: ['country'],
+      },
+      this.notifyAreaChange,
+    );
+  };
+
+  selectCountry = country => {
+    this.setState(
+      {
+        country,
+        activeKey: ['service'],
+      },
+      this.notifyAreaChange,
+    );
+  };
+
+  notifyAreaChange = () => {
+    const { country, continent, service } = this.state;
+    if (this.props.onChange) {
+      this.props.onChange({
+        country,
+        continent,
+        service,
+      });
+    }
   };
 
   render() {
     const {
       expand,
+      activeKey,
       infoExpand,
       continent,
-      countryCode,
-      serviceId,
+      country,
+      service,
       expertList,
       currentExpertIndex,
     } = this.state;
-    const continentList = ['北美', '南美', '亚洲', '欧洲', '非洲', '大洋洲', '南极洲'];
-
-    const countryList = ['北美', '墨西哥', '日本'];
-
-    const serviceList = ['航运法务', '民事诉讼', '交通法规'];
+    const { continentList, countryList, serviceList } = this.props;
 
     return (
       <div className={classNames(['as-container flex', { expand }])}>
@@ -88,8 +137,8 @@ export default class extends Component {
             <Button
               type="primary"
               size="small"
-              disabled={!continent || !countryCode || !serviceId}
-              onClick={this.toggleInfoExpand}
+              disabled={!continent.id || !country.id || !service.id}
+              onClick={this.showInfoExpand}
             >
               Go!
             </Button>
@@ -99,7 +148,7 @@ export default class extends Component {
           <Collapse
             accordion
             bordered={false}
-            defaultActiveKey={['1']}
+            activeKey={activeKey}
             expandIconPosition="right"
             expandIcon={props => {
               if (props.isActive) {
@@ -107,63 +156,67 @@ export default class extends Component {
               }
               return <CaretRightOutlined />;
             }}
+            onChange={activeKey => this.setState({ activeKey })}
           >
             <Panel
+              key="continent"
               header={
                 <div className="flex flex-justifyBetween expand-title" style={{ paddingRight: 20 }}>
                   <span>选择大洲</span>
-                  <span>{continent}</span>
+                  <span>{continent['cn_name']}</span>
                 </div>
               }
-              key="1"
             >
               <div className="expand-content">
                 {continentList.map(item => (
                   <span
-                    className={classNames({ active: continent == item })}
-                    onClick={() => this.setState({ continent: item })}
+                    key={item.id}
+                    className={classNames({ active: continent.id == item.id })}
+                    onClick={() => this.selectContinent(item)}
                   >
-                    {item}
+                    {item['cn_name']}
                   </span>
                 ))}
               </div>
             </Panel>
             <Panel
+              key="country"
               header={
                 <div className="flex flex-justifyBetween expand-title" style={{ paddingRight: 20 }}>
                   <span>选择国家</span>
-                  <span>{countryCode}</span>
+                  <span>{country['cname']}</span>
                 </div>
               }
-              key="2"
             >
               <div className="expand-content">
                 {countryList.map(item => (
                   <span
-                    className={classNames({ active: countryCode == item })}
-                    onClick={() => this.setState({ countryCode: item })}
+                    key={item.id}
+                    className={classNames({ active: country.id == item.id })}
+                    onClick={() => this.selectCountry(item)}
                   >
-                    {item}
+                    {item['cname']}
                   </span>
                 ))}
               </div>
             </Panel>
             <Panel
+              key="service"
               header={
                 <div className="flex flex-justifyBetween expand-title" style={{ paddingRight: 20 }}>
                   <span>选择服务</span>
-                  <span>{serviceId}</span>
+                  <span>{service.chineseContent}</span>
                 </div>
               }
-              key="3"
             >
               <div className="expand-content">
                 {serviceList.map(item => (
                   <span
-                    className={classNames({ active: serviceId == item })}
-                    onClick={() => this.setState({ serviceId: item })}
+                    key={item.id}
+                    className={classNames({ active: service.id == item.id })}
+                    onClick={() => this.setState({ service: item })}
                   >
-                    {item}
+                    {item.chineseContent}
                   </span>
                 ))}
               </div>
@@ -174,15 +227,17 @@ export default class extends Component {
           <div className={classNames(['expert-info flex flex-column', { active: infoExpand }])}>
             <div className="expert-select flex flex-justifyBetween flex-align">
               <span>选择专家</span>
-              <div>
+              {/* TODO: 20200326 专家分页器 */}
+              {/* <div>
                 <LeftOutlined style={{ fontSize: 16, color: 'rgba(255, 255, 255, .3)' }} />
                 <RightOutlined style={{ fontSize: 16 }} />
-              </div>
+              </div> */}
             </div>
 
             <div className="expert-list flex">
               {expertList.map((item, index) => (
                 <div
+                  key={index}
                   className={classNames('expert-list-item flex flex-column flex-align', {
                     active: currentExpertIndex == index,
                   })}

@@ -4,6 +4,7 @@ import { platformContentType } from '../common/enum';
 import Platform from '../layouts/platformIndex';
 import { Pagination } from 'antd';
 import router from 'next/router';
+import ContentListItem from '../components/ListItem/ContentListItem';
 import './problems.less';
 
 export default class Problems extends React.Component {
@@ -14,7 +15,9 @@ export default class Problems extends React.Component {
     const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
     //
     const problemContentRes = await fetch(
-      `${requestUrl}?pageNum=${pageNum}&pageSize=10&type=${platformContentType.COMMONQUESTION}`,
+      `${requestUrl}?languageId=0&pageNum=${pageNum}&pageSize=10&type=${
+        platformContentType.COMMONQUESTION
+      }`,
     );
     const problemContent = await problemContentRes.json();
     const problems = problemContent.data.items;
@@ -27,15 +30,12 @@ export default class Problems extends React.Component {
     };
   }
 
-  state = {
-    current: 1,
-  };
-
   onChange = page => {
     router.push('/problems?pageNum=' + page);
   };
 
   render() {
+    const { pageNum, pageInfo } = this.props;
     return (
       <Platform title="problems" url="/images/ic_header_problems.png">
         <div className="content-t flex flex-align">
@@ -48,26 +48,16 @@ export default class Problems extends React.Component {
         </div>
         <div className="problemsContent-m">
           {this.props.problems.map(item => (
-            <div className="coo-item" key={item.id}>
-              <h1>《国际贸易法》解释</h1>
-              <div className="coo-text">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-                laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin
-                sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur adipiscing
-                elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan
-                et viverra justo commodo. Proin sodales pulvinar sic tempor.
-              </div>
-              <div className="coo-more">More</div>
-            </div>
+            <ContentListItem key={item.id} title={item.title} content={item.content} />
           ))}
         </div>
         <div className="common-pagination">
           <Pagination
-            current={this.props.pageNum}
+            current={pageNum}
             onChange={this.onChange}
             size="small"
             pageSize={10}
-            total={this.props.pageInfo.totalResults}
+            total={pageInfo.totalResults}
           />
         </div>
       </Platform>
