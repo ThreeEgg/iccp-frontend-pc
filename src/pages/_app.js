@@ -4,6 +4,7 @@ import intl from 'react-intl-universal';
 import { Provider } from 'react-redux';
 import { Badge, ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
+import 'normalize.css';
 import AuthorityLayout from '../layouts/AuthorityLayout';
 import withDva from '../utils/withDva';
 import './_app.less';

@@ -21,8 +21,14 @@ export class Schedule extends Component {
       .startOf('week')
       .hours(8)
       .format();
-    console.log(startTime);
-
+    // 行、列，行数*24+列数+8
+    const scheduleString = Array(2 * 7 * 24)
+      .fill(0)
+      .join('');
+    matrixData.forEach(key => {
+      const [rowIndex, colIndex] = key.split('_');
+      console.log(startTime);
+    });
     // 从矩阵算出相应的日程字符串
   };
 
