@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 10:45:52
+ * @LastEditTime: 2020-03-27 15:25:38
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\extFunction.js
  */
 
@@ -42,10 +42,8 @@ export function* updateSearchlistExt({ method, list }, { put }) {
   yield put({ type: 'updateSearchlist', method, list });
 }
 export function* onMsgExt({ msg }, { put, select }) {
-  yield put({ type: 'initMsg', sessionId: msg.sessionId });
   yield put({ type: 'updateMsgByIdClient', msgs: [msg]});
-  yield put({ type: 'putMsg', msg });
-  debugger
+  yield put({ type: 'updateMsg', msg });
   const currSessionId = yield select(state => state.chat.currSessionId);
   if (msg.sessionId === currSessionId) {
     yield put({ type: 'updateCurrSessionMsgs', method: 'put', msg })

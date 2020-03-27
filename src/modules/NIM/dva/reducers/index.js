@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 11:20:16
+ * @LastEditTime: 2020-03-27 16:49:01
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -178,21 +178,12 @@ export default {
     })
     return { ...state, msgs: msgsNew };
   },
-  // 初始化消息数组
-  initMsg(state, { sessionId }) {
-    const { msgs: msgsOld } = state;
-    let msgsNew = { ...msgsOld };
-    if (!msgsNew[sessionId]) {
-      msgsNew[sessionId] = []
-    }
-    return { ...state, msgs: msgsNew };
-  },
   // 更新追加消息，追加一条消息
-  putMsg(state, { msg }) {
-    let sessionId = msg.sessionId
+  updateMsg(state, { msg }) {
     const { msgs } = state;
+    let sessionId = msg.sessionId
     let msgsNew = { ...msgs };
-    let msgNew = msgsNew[sessionId]
+    let msgNew = [...msgsNew[sessionId]] || []
     let lastMsgIndex = msgNew.length - 1
     if (msgNew.length === 0 || msg.time >= msgNew[lastMsgIndex].time) {
       msgNew.push(msg)
@@ -205,8 +196,8 @@ export default {
         }
       }
     }
-    debugger
-    return { ...state, 'msgs["sessionId"]': msgNew };
+    msgsNew[sessionId] = msgNew
+    return { ...state, msgs: msgsNew };
   },
   // 删除消息列表消息
   deleteMsg(state, msg) {
@@ -288,7 +279,7 @@ export default {
         if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
           lastMsgTime = msg.time
           currSessionMsgsNew.push({
-            method: 'timeTag',
+            type: 'timeTag',
             text: util.formatDate(msg.time, false)
           })
         }
@@ -298,7 +289,7 @@ export default {
     }
   },
   putCurrSessionMsgs(state, { msg }) { // 追加一条消息
-    const { currSessionMsgsOld } = state
+    const { currSessionMsgs: currSessionMsgsOld } = state
     let currSessionMsgs = [...currSessionMsgsOld]
     let lastMsgTime = 0
     let lenCurrMsgs = currSessionMsgs.length
@@ -307,7 +298,7 @@ export default {
     }
     if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
       currSessionMsgs.push({
-        method: 'timeTag',
+        type: 'timeTag',
         text: util.formatDate(msg.time, false)
       })
     }
@@ -323,7 +314,7 @@ export default {
       if ((msg.time - lastMsgTime) > 1000 * 60 * 5) {
         lastMsgTime = msg.time
         temp.push({
-          method: 'timeTag',
+          type: 'timeTag',
           text: util.formatDate(msg.time, false)
         })
       }

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 10:06:57
+ * @LastEditTime: 2020-03-27 17:07:15
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -33,7 +33,6 @@ class ChatItem extends React.Component {
     rawMsg: PropTypes.object,
     userInfos: PropTypes.object,
     myInfo: PropTypes.object,
-    isRobot: PropTypes.bool,
     isHistory: PropTypes.bool,
   };
   //如果没有传值，可以给一个默认值
@@ -41,7 +40,6 @@ class ChatItem extends React.Component {
     rawMsg: {},
     userInfos: {},
     myInfo: {},
-    isRobot: false,
     isHistory: false,
   };
   state = {
@@ -211,43 +209,6 @@ class ChatItem extends React.Component {
     } else if (item.type === 'tip') {
       //对于系统通知，更新下用户信息的状态
       item.showText = item.tip
-    } else if (item.type === 'robot') {
-      let content = item.content || {}
-      let message = content.message || []
-      if (!content.msgOut) {
-        // 机器人上行消息
-        item.robotFlow = 'out'
-        item.showText = item.text
-      } else if (content.flag === 'bot') {
-        item.subType = 'bot'
-        message = message.map(item => {
-          if (item.type === 'template') {
-            // 在vuex(store/actions/msgs.js)中已调用sdk方法做了转换
-            return item.content.json
-          } else if (item.type === 'text' || item.type === 'answer') {
-            // 保持跟template结构一致
-            return [{
-              type: 'text',
-              text: item.content
-            }]
-          } else if (item.type === 'image') {
-            // 保持跟template结构一致
-            return [{
-              type: 'image',
-              url: item.content
-            }]
-          }
-        })
-        item.message = message
-      } else if (item.content.flag === 'faq') {
-        item.subType = 'faq'
-        item.query = message.query
-        let match = message.match.sort((a, b) => {
-          // 返回最匹配的答案
-          return b.score - a.score
-        })
-        item.message = match[0]
-      }
     } else {
       item.showText = `[${util.mapMsgType(item)}],请到手机或电脑客户端查看`
     }
@@ -296,13 +257,7 @@ class ChatItem extends React.Component {
     return (
       /* 信息类型*/
       <li className={
-        `u-msg  
-        ${msg.flow === 'out' && 'item-me'}
-        ${msg.flow === 'in' && 'item-you'}
-        ${msg.flow === 'timeTag' && 'item-time'}
-        ${msg.flow === 'tip' && 'item-tip'}
-        ${type === 'session' && 'session-chat'}
-        `}>
+        `u-msg ${msg.flow === 'out' ? 'item-me':''} ${msg.flow === 'in' ? 'item-you':''} ${msg.flow === 'timeTag' ? 'item-time':''} ${msg.flow === 'tip' ? 'item-tip':''} ${type === 'session' ? 'session-chat':''} `}>
         {/* 信息头信息 */}
         <div className={
           `${msg.type === 'tip' && 'tip'}
@@ -351,6 +306,10 @@ class ChatItem extends React.Component {
             }
             {!['text', 'custom-type1', 'custom-type3', 'video', 'image', 'audio', 'file', 'robot', 'notification'].includes(msg.type) &&
               <span className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></span>
+            }
+            {/* 翻译按钮 */}
+            {msg.type === 'text' && msg.flow === 'in' &&
+              <button className="msg-failed">翻译</button>
             }
             {/* 发送失败 */}
             {msg.status === 'fail' &&

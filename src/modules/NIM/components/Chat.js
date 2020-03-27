@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-26 17:06:02
+ * @LastEditTime: 2020-03-27 16:12:26
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -14,7 +14,7 @@ import ChatEditor from './ChatEditor';
 import { Layout } from 'antd';
 
 import util from '../utils';
-import pageUtil from '../utils/page';
+import page from '../utils/page';
 function InvalidHint(props) {
   const { teamInfo, scene, teamInvalid } = props;
   if (scene === 'team' && teamInvalid) {
@@ -29,7 +29,6 @@ class Chat extends React.Component {
     scene: null,
     to: null,
     teamInfo: null,
-    isRobot: false,
     teamInvalid: false,
     muteInTeam: false,
     sendInvalidHint: '',
@@ -39,7 +38,10 @@ class Chat extends React.Component {
 
   }
   async componentDidUpdate(prevProps, prevState) {
-
+    // 监听会话改变
+    if (prevProps.currSessionId !== this.props.currSessionId) {
+      this.initSession()
+    }
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {
@@ -53,8 +55,6 @@ class Chat extends React.Component {
       user = sessionId.replace(/^p2p-/, '');
       if (user === this.props.userUID) {
         return '我的手机';
-      } else if (this.isRobot()) {
-        return this.props.robotInfos[user].nick;
       } else {
         let userInfo = this.props.userInfos[user] || {};
         return util.getFriendAlias(userInfo);
@@ -70,16 +70,9 @@ class Chat extends React.Component {
       }
     }
   };
-  // 判断是否是机器人
-  isRobot = () => {
-    if (/^p2p-/.test(this.props.currSessionId)) {
-      let user = this.props.currSessionId.replace(/^p2p-/, '') || null;
-      isRobot = this.props.robotInfos[user]
-    }
-  };
-  muteInTeam = () => {
+  muteInTeam = (teamInfo) => {
     var teamMembers = this.props.teamMembers;
-    var Members = teamMembers && teamMembers[this.teamInfo().teamId];
+    var Members = teamMembers && teamMembers[teamInfo.teamId];
     var selfInTeam =
       Members &&
       Members.find(item => {
@@ -102,9 +95,10 @@ class Chat extends React.Component {
     if (this.props.currSessionId) {
       let scene = util.parseSession(this.props.currSessionId).scene
       let to = util.parseSession(this.props.currSessionId).to
+      console.log(scene);
+      console.log(to);
       let teamInfo = undefined
       let teamInvalid = this.state.teamInvalid
-      let isRobot = this.isRobot();
       let muteInTeam = this.state.muteInTeam
       if (scene === 'team') {
         var teamId = this.props.currSessionId.replace('team-', '');
@@ -116,8 +110,8 @@ class Chat extends React.Component {
         if (teamMembers === undefined || teamMembers.length < teamInfo.memberNum) {
           this.props.dispatch({ type: 'chat/getTeamMembers', to });
         }
-        teamInvalid = !(this.state.teamInfo && this.state.teamInfo.validToCurrentUser)
-        muteInTeam = this.muteInTeam();
+        teamInvalid = !(teamInfo && teamInfo.validToCurrentUser)
+        muteInTeam = this.muteInTeam(teamInfo);
       }
       let sessionName = this.sessionName(teamInfo);
       let sendInvalidHint = this.sessionName(scene, teamInvalid, teamInfo, muteInTeam);
@@ -125,7 +119,6 @@ class Chat extends React.Component {
         scene,
         to,
         teamInfo,
-        isRobot,
         sessionName,
         teamInvalid,
         muteInTeam,
@@ -139,7 +132,7 @@ class Chat extends React.Component {
     window.history.go(-1);
   };
   msgsLoaded = () => {
-    pageUtil.scrollChatListDown();
+    page.scrollChatListDown();
   };
   enterNameCard = () => {
     if (/^p2p-/.test(this.props.currSessionId)) {
@@ -159,38 +152,37 @@ class Chat extends React.Component {
     }
   };
   onHistoryClick = () => {
-    if (this.scene !== 'team' || (this.teamInfo() && this.teamInfo().validToCurrentUser)) {
+    if (this.state.scene !== 'team' || (this.teamInfo() && this.teamInfo().validToCurrentUser)) {
       location.href = `#/chathistory/${this.props.currSessionId}`;
     } else {
       this.$toast('您已退出该群');
     }
   };
   render() {
+    const { teamInfo, scene, to, teamInvalid, muteInTeam, sendInvalidHint } = this.state;
     const { chat } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
     return (
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
         <InvalidHint
-          teamInfo={this.state.teamInfo}
-          scene={this.state.scene}
-          teamInvalid={this.state.teamInvalid}
+          teamInfo={teamInfo}
+          scene={scene}
+          teamInvalid={teamInvalid}
         />
         <ChatList
           type="session"
           msglist={currSessionMsgs}
           userInfos={userInfos}
           myInfo={myInfo}
-          isRobot={this.state.isRobot}
           msgsLoaded={this.msgsLoaded}
         />
         <ChatEditor
           type="session"
-          scene={this.state.scene}
-          to={this.state.to}
-          isRobot={this.state.isRobot}
-          invalid={this.state.teamInvalid || this.state.muteInTeam}
-          invalidHint={this.state.sendInvalidHint}
-          advancedTeam={this.state.teamInfo && this.state.teamInfo.type === 'advanced'}
+          scene={scene}
+          to={to}
+          invalid={teamInvalid || muteInTeam}
+          invalidHint={sendInvalidHint}
+          advancedTeam={teamInfo && teamInfo.type === 'advanced'}
         />
       </Layout>
     );
@@ -200,12 +192,12 @@ class Chat extends React.Component {
 // export default Chat;
 export default connect(({ chat }) => ({
   chat,
+  currSessionId: chat.currSessionId,
   userUID: chat.userUID,
   sessionId: chat.sessionId,
   teamMembers: chat.teamMembers,
   myInfo: chat.myInfo,
   userInfos: chat.userInfos,
-  robotInfos: chat.robotInfos,
   currSessionMsgs: chat.currSessionMsgs,
   teamlist: chat.teamlist,
 }))(Chat);

@@ -25,22 +25,22 @@ function onSendMsgDone (error, msg) {
   }
   onChatroomMsgs([msg])
 }
-
-export function sendChatroomMsg ({state, commit}, obj) {
-  const chatroom = state.currChatroom
-  obj = obj || {}
-  let type = obj.type || ''
-  switch (type) {
+// 发送普通消息
+export function* sendChatroomMsg(paylord, { put, select }) {
+  const chatroom = yield select(state => state.chat.currChatroom);
+  let { method, pushContent, content, text } = paylord
+  method = method || ''
+  switch (method) {
     case 'text':
       chatroom.sendText({
-        text: obj.text,
+        text,
         done: onSendMsgDone
       })
       break
     case 'custom':
       chatroom.sendCustomMsg({
-        content: JSON.stringify(obj.content),
-        pushContent: obj.pushContent,
+        content: JSON.stringify(content),
+        pushContent: pushContent,
         done: onSendMsgDone
       })
   }

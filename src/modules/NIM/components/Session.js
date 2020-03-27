@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 10:15:37
+ * @LastEditTime: 2020-03-27 16:52:32
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
@@ -79,6 +79,8 @@ class Session extends React.Component {
           item.name = `群${item.to}`;
           item.avatar = item.avatar || this.myGroupIcon;
         }
+        // 去掉群聊
+        return
       }
       let lastMsg = item.lastMsg || {};
       if (lastMsg.type === 'text') {
@@ -111,7 +113,7 @@ class Session extends React.Component {
   };
   enterChat = ({ item, key, keyPath, domEvent }) => {
     // 此时设置当前会话
-    let session = this.state.sessionlist[key - 3]
+    let session = this.state.sessionlist[key]
     if (session && session.id) {
       this.props.dispatch({ type: 'chat/setCurrSession', sessionId: session.id });
     }
@@ -124,15 +126,9 @@ class Session extends React.Component {
     const { chat } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
     return (
-      <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-        <Menu.Item key="1">
-          <span className="nav-text">消息中心</span>
-        </Menu.Item>
-        <Menu.Item key="2">
-          <span className="nav-text">我的手机</span>
-        </Menu.Item>
+      <Menu theme="dark" mode="inline" defaultSelectedKeys={['0']}>
         {this.state.sessionlist.map((session, index) => (
-          <Menu.Item key={index + 3} onClick={this.enterChat} >
+          <Menu.Item key={index} onClick={this.enterChat} >
             {/* sessionId={session.id} inlineDesc={session.lastMsgShow} */}
             <span className="nav-text" >
               {session.name}

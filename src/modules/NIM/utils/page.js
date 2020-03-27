@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-24 17:11:26
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-27 11:55:05
+ * @FilePath: \PC端-前端\src\modules\NIM\utils\page.js
+ */
 import config from '../configs'
 
 const pageMap = {
@@ -7,7 +16,7 @@ const pageMap = {
 
 var scrollTimer = null
 
-var page = {
+const page = {
   // 切换页面，并错误提示
   turnPage: (message, url) => {
     if (message) {

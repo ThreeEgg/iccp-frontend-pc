@@ -17,7 +17,6 @@ export default class ChatList extends React.Component {
   static propTypes = {
     type: PropTypes.string,
     canLoadMore: PropTypes.bool,
-    isRobot: PropTypes.bool,
     msglist: PropTypes.array,
     userInfos: PropTypes.object,
     myInfo: PropTypes.object,
@@ -25,7 +24,6 @@ export default class ChatList extends React.Component {
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
-    isRobot: false,
     msglist: [],
     userInfos: {},
     myInfo: {},
@@ -48,7 +46,7 @@ export default class ChatList extends React.Component {
     }, 20);
   };
   render() {
-    const { type, msglist, isRobot, userInfos, myInfo, isHistory, canLoadMore } = this.props;
+    const { type, msglist, userInfos, myInfo, isHistory, canLoadMore } = this.props;
 
     return (
       <ul id="chat-list" className="m-chat-list p-chat-list">
@@ -60,7 +58,6 @@ export default class ChatList extends React.Component {
             <ChatItem
               type={type}
               rawMsg={msg}
-              isRobot={isRobot}
               userInfos={userInfos}
               myInfo={myInfo}
               key={msg.idClient || index}

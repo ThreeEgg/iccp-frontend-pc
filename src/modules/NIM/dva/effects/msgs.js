@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import store from '..'
 import config from '../../configs'
 import util from '../../utils'
@@ -49,9 +50,9 @@ function onSendMsgDone(error, msg) {
     // 被拉黑
     if (error.code === 7101) {
       msg.status = 'success'
-      alert(error.message)
+      message.error(error.message)
     } else {
-      alert(error.message)
+      message.error(error.message)
     }
   }
   onMsg(msg)
@@ -132,7 +133,7 @@ export function* sendMsg(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
   let { method, scene, to, pushContent, content, text, needMsgReceipt } = paylord
   method = method || ''
-  needMsgReceipt = needMsgReceipt || false
+  needMsgReceipt = needMsgReceipt || true
   switch (method) {
     case 'text':
       nim.sendText({
@@ -158,16 +159,16 @@ export function* sendMsg(paylord, { put, select }) {
 export function* sendFileMsg(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
   let { method: type, fileInput } = paylord
+  debugger
   if (!type && fileInput) {
-    type = 'file'
+    paylord.type = 'file'
     if (/\.(png|jpg|bmp|jpeg|gif)$/i.test(fileInput.value)) {
-      type = 'image'
+      paylord.type = 'image'
     } else if (/\.(mov|mp4|ogg|webm)$/i.test(fileInput.value)) {
-      type = 'video'
+      paylord.type = 'video'
     }
   }
   const data = Object.assign({
-    type,
     uploadprogress: function (data) {
       // console.log(data.percentageText)
     },
