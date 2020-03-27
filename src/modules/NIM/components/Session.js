@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-25 18:36:25
+ * @LastEditTime: 2020-03-27 10:15:37
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
@@ -21,32 +21,20 @@ class Session extends React.Component {
     myPhoneIcon: config.myPhoneIcon,
     myGroupIcon: config.defaultGroupIcon,
     myAdvancedIcon: config.defaultAdvancedIcon,
-    sessionlist:[],
+    sessionlist: [],
   };
   // 进入该页面，文档被挂载
   async componentDidMount() {
-    // 此时设置当前会话
-    this.props.dispatch({ type: 'chat/setCurrSession', sessionId: this.sessionId() });
     this.computedSessionlist()
-    // 获取群成员
-    if (this.scene === 'team') {
-      var teamMembers = this.props.teamMembers[this.to];
-      if (teamMembers === undefined || teamMembers.length < this.teamInfo().memberNum) {
-        this.props.dispatch({ type: 'chat/getTeamMembers', to: this.to });
-      }
-    }
   }
   async componentDidUpdate(prevProps, prevState) {
-    if(prevProps.sessionlist !== this.props.sessionlist){
+    if (prevProps.sessionlist !== this.props.sessionlist) {
       this.computedSessionlist()
     }
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {
-    this.props.dispatch({ type: 'chat/resetCurrSession' });
-  }
-  static async getInitialProps(props) {
-    return {};
+    // this.props.dispatch({ type: 'chat/resetCurrSession' });
   }
   // computed
   sysMsgUnread = () => {
@@ -55,9 +43,6 @@ class Session extends React.Component {
     sysMsgUnread += temp.team || 0;
     let customSysMsgUnread = this.props.customSysMsgUnread;
     return sysMsgUnread + customSysMsgUnread;
-  };
-  sessionId = () => {
-    return 'p2p-123' || this.props.match.params.sessionId;
   };
   myPhoneId = () => {
     return `${this.props.userUID}`;
@@ -114,18 +99,26 @@ class Session extends React.Component {
     });
     this.setState({
       sessionlist,
-    });
+    }, () => {
+      if (!this.props.currSessionId) {
+        this.props.dispatch({ type: 'chat/setCurrSession', sessionId: `p2p-${this.myPhoneId()}` });
+      }
+    })
   };
   // methods
   enterSysMsgs = () => {
     location.href = '#/sysmsgs';
   };
-  enterChat = session => {
-    if (session && session.id) location.href = `#/chat/${session.id}`;
+  enterChat = ({ item, key, keyPath, domEvent }) => {
+    // 此时设置当前会话
+    let session = this.state.sessionlist[key - 3]
+    if (session && session.id) {
+      this.props.dispatch({ type: 'chat/setCurrSession', sessionId: session.id });
+    }
   };
   enterMyChat = () => {
     // 我的手机页面
-    location.href = `#/chat/p2p-${this.myPhoneId}`;
+    this.props.dispatch({ type: 'chat/setCurrSession', sessionId: `p2p-${this.myPhoneId}` });
   };
   render() {
     const { chat } = this.props;
@@ -139,9 +132,9 @@ class Session extends React.Component {
           <span className="nav-text">我的手机</span>
         </Menu.Item>
         {this.state.sessionlist.map((session, index) => (
-          <Menu.Item key={index + 3} >
+          <Menu.Item key={index + 3} onClick={this.enterChat} >
             {/* sessionId={session.id} inlineDesc={session.lastMsgShow} */}
-            <span className="nav-text" onClick={this.enterChat(session)}>
+            <span className="nav-text" >
               {session.name}
             </span>
           </Menu.Item>
@@ -154,6 +147,7 @@ class Session extends React.Component {
 // export default Chat;
 export default connect(({ chat }) => ({
   chat,
+  currSessionId: chat.currSessionId,
   userUID: chat.userUID,
   sessionlist: chat.sessionlist,
   myInfo: chat.myInfo,

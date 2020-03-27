@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-25 17:25:09
+ * @LastEditTime: 2020-03-26 11:19:01
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -59,7 +59,7 @@ class Index extends React.Component {
           <Login />
           <Session />
         </Sider>
-        {/* <Chat/> */}
+        <Chat/>
       </Layout>
     );
   }

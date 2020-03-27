@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-20 09:04:49
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 10:06:01
+ * @LastEditTime: 2020-03-26 10:59:51
  * @FilePath: \PC端-前端\src\pages\chat.js
  */
 import React from 'react';
@@ -16,9 +16,6 @@ const NIMChat = dynamic(import('../modules/NIM'), {
 });
 
 class Chat extends React.Component {
-  static async getInitialProps(props) {
-    return {};
-  }
 
   async componentDidMount() {
     await this.props.dispatch({ type: 'index/init' });

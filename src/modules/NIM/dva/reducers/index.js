@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-25 18:37:11
+ * @LastEditTime: 2020-03-27 11:20:16
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -38,12 +38,12 @@ export default {
   updateRefreshState(state) {
     return { ...state, isRefresh: false };
   },
-  updateFullscreenImage(state, obj) {
-    obj = obj || {}
-    if (obj.src && obj.type === 'show') {
-      state.fullscreenImgSrc = obj.src
+  updateFullscreenImage(state, payload) {
+    const { src, method } = payload;
+    if (src && method === 'show') {
+      state.fullscreenImgSrc = src
       state.isFullscreenImgShow = true
-    } else if (obj.type === 'hide') {
+    } else if (method === 'hide') {
       state.fullscreenImgSrc = ' '
       state.isFullscreenImgShow = false
     }
@@ -129,8 +129,8 @@ export default {
     blacklist = nim.cutFriends(blacklist, remBlacks)
     return { ...state, blacklist };
   },
-  updateSearchlist(state, { method, list}) {
-    const { searchedUsers,searchedTeams } = state;
+  updateSearchlist(state, { method, list }) {
+    const { searchedUsers, searchedTeams } = state;
     method = method || "";
     switch (method) {
       case 'user':
@@ -178,28 +178,35 @@ export default {
     })
     return { ...state, msgs: msgsNew };
   },
-  // 更新追加消息，追加一条消息
-  putMsg(state, { msg }) {
-    let sessionId = msg.sessionId
-    const { nim, msgs: msgsOld } = state;
+  // 初始化消息数组
+  initMsg(state, { sessionId }) {
+    const { msgs: msgsOld } = state;
     let msgsNew = { ...msgsOld };
     if (!msgsNew[sessionId]) {
       msgsNew[sessionId] = []
     }
-    let tempMsgs = msgsNew[sessionId]
-    let lastMsgIndex = tempMsgs.length - 1
-    if (tempMsgs.length === 0 || msg.time >= tempMsgs[lastMsgIndex].time) {
-      tempMsgs.push(msg)
+    return { ...state, msgs: msgsNew };
+  },
+  // 更新追加消息，追加一条消息
+  putMsg(state, { msg }) {
+    let sessionId = msg.sessionId
+    const { msgs } = state;
+    let msgsNew = { ...msgs };
+    let msgNew = msgsNew[sessionId]
+    let lastMsgIndex = msgNew.length - 1
+    if (msgNew.length === 0 || msg.time >= msgNew[lastMsgIndex].time) {
+      msgNew.push(msg)
     } else {
       for (let i = lastMsgIndex; i >= 0; i--) {
-        let currMsg = tempMsgs[i]
+        let currMsg = msgNew[i]
         if (msg.time >= currMsg.time) {
-          msgsNew[sessionId].splice(i, 0, msg)
+          msgNew.splice(i, 0, msg)
           break
         }
       }
     }
-    return { ...state, msgs: msgsNew };
+    debugger
+    return { ...state, 'msgs["sessionId"]': msgNew };
   },
   // 删除消息列表消息
   deleteMsg(state, msg) {
@@ -292,7 +299,7 @@ export default {
   },
   putCurrSessionMsgs(state, { msg }) { // 追加一条消息
     const { currSessionMsgsOld } = state
-    let currSessionMsgs = { ...currSessionMsgsOld }
+    let currSessionMsgs = [...currSessionMsgsOld]
     let lastMsgTime = 0
     let lenCurrMsgs = currSessionMsgs.length
     if (lenCurrMsgs > 0) {

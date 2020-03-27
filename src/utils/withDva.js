@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-06 15:43:36
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-26 11:00:26
+ * @FilePath: \PC端-前端\src\utils\withDva.js
+ */
 import React from 'react';
 import createLoading from 'dva-loading';
 import dva from 'dva-no-router';

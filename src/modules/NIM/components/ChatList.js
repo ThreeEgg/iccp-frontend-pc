@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-20 10:18:01
+ * @LastEditTime: 2020-03-27 09:13:21
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatList.js
  */
 import React from 'react';
@@ -42,9 +42,9 @@ export default class ChatList extends React.Component {
     });
   };
   msgLoaded = () => {
-    clearTimeout(msgLoadedTimer);
-    msgLoadedTimer = setTimeout(() => {
-      this.emit('msgs-loaded');
+    clearTimeout(this.state.msgLoadedTimer);
+    this.state.msgLoadedTimer = setTimeout(() => {
+      this.props.msgsLoaded();
     }, 20);
   };
   render() {
