@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 17:07:15
+ * @LastEditTime: 2020-03-27 18:37:03
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -44,6 +44,7 @@ class ChatItem extends React.Component {
   };
   state = {
     msg: '',
+    translate:'',
     isFullImgShow: false,
     msgUnRead: false,
   };
@@ -250,9 +251,33 @@ class ChatItem extends React.Component {
       src
     })
   }
+  getTranslate = (idClient) => {
+    this.props.dispatch({
+      type: 'chat/getTranslate',
+      // idClient,
+      idClient:'63570c14312f3a3366b61a74d0ac4ab5',
+      callback: (res) => {
+        if(res.code==='0'){
+          if(res.data.flag===0){
+            this.setState({
+              translate: res.data.translate,
+            });
+          }else{
+            this.setState({
+              translate: res.data.msg,
+            });
+          }
+        }else{
+          this.setState({
+            translate: '网络错误',
+          });
+        }
+      },
+    })
+  }
 
   render() {
-    const { msg, msgUnRead } = this.state;
+    const { msg, msgUnRead, translate } = this.state;
     const { type } = this.props;
     return (
       /* 信息类型*/
@@ -307,9 +332,12 @@ class ChatItem extends React.Component {
             {!['text', 'custom-type1', 'custom-type3', 'video', 'image', 'audio', 'file', 'robot', 'notification'].includes(msg.type) &&
               <span className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></span>
             }
-            {/* 翻译按钮 */}
+            {/* 翻译 */}
+            {translate &&
+              <span className="msg-text-translate" dangerouslySetInnerHTML={{ __html: translate }}></span>
+            }
             {msg.type === 'text' && msg.flow === 'in' &&
-              <button className="msg-failed">翻译</button>
+              <button className="msg-translate" onClick={this.getTranslate.bind(this, msg.idClient)}>翻译</button>
             }
             {/* 发送失败 */}
             {msg.status === 'fail' &&

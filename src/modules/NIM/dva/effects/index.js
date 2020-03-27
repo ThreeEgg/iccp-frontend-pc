@@ -13,6 +13,7 @@ import { deleteSession, resetCurrSession, setCurrSession } from './session';
 import { deleteSysMsgs, markCustomSysMsgRead, markSysMsgRead, resetSysMsgs } from './sysMsgs';
 import { checkTeamMsgReceipt, delegateTeamFunction, enterSettingPage, getTeamMembers, getTeamMsgReads, onTeamNotificationMsg } from './team';
 import * as extFunction from './extFunction';
+import * as customFunction from './customFunction';
 /* 导出actions方法 */
 import { hideFullscreenImg, showFullscreenImg } from './widgetUi';
 import { message } from 'antd';
@@ -85,6 +86,8 @@ export default {
     // pageUtil.turnPage('', 'login');
   },
 
+  // 平台自定义函数
+  ...customFunction,
   // 解决SDK无法调用外部dispatch的映射方法集合start
   ...extFunction,
   // 解决SDK无法调用外部dispatch的映射方法集合end

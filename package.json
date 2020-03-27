@@ -5,7 +5,7 @@
   "description": "iccp frontend for pc platform",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env GIT_VERSION=`git rev-list HEAD --count` node server/index.js",
+    "dev": "cross-env  node server/index.js",
     "build": "cross-env GIT_VERSION=`git rev-list HEAD --count` next build",
     "start": "cross-env NODE_ENV=production GIT_VERSION=`git rev-list HEAD --count` node server/index.js",
     "export": "npm run build && next export",
