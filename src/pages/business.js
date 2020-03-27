@@ -1,51 +1,42 @@
 import React from 'react';
-import Router from 'next/router';
-import LoginLayout from '../layouts/LoginLayout';
-import Platform from './platformIndex';
-import './platformIndex.less';
+import api from '../services/api';
+import { platformContentType } from '../common/enum';
+import ContentLayout from '../layouts/ContentLayout';
 
-export default class RetrievePWD extends React.Component{
-    render () {
-        return (
-            <Platform title="Business Introduce" url="/images/ic_header_business.png">
-                <div className="content-t flex flex-align">
-                    <p></p>
-                    <div className="flex flex-align">
-                        <img src="/images/ic_header_business_black.png"></img>
-                        <div>Business Introduce</div>
-                    </div>
-                    <p></p>
-                </div>
-                <div className="platformCommonContent-m">
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod 
-                        bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra 
-                        justo commodo. Proin sodales pulvinar sic tempor.
-                    </p>
-                    <p>
-                        Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan 
-                        et viverra justo commodo. Proin sodales pulvinar sic tempor。Lorem ipsum dolor 
-                        sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin 
-                        gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales 
-                        pulvinar sic tempor. 
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    </p>
-                    <img src="/images/img_header_bg.png"></img>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod 
-                        bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra 
-                        justo commodo. Proin sodales pulvinar sic tempor.
-                    </p>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod 
-                        bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra 
-                        justo commodo. Proin sodales pulvinar sic tempor.
-                    </p>
-                </div>
-                <div className="platformCommonContent-b">页脚信息</div>
-            </Platform>
-        )
-    }
+export default class Business extends React.Component {
+  static async getInitialProps({ req, query }) {
+    const fetch = require('isomorphic-unfetch');
+
+    const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
+    //
+    const BusinessContentRes = await fetch(
+      `${requestUrl}?pageNum=1&pageSize=1&type=${platformContentType.BUSINESSINTRO}`,
+    );
+    const BusinessContent = await BusinessContentRes.json();
+    const Business = BusinessContent.data.items[0].content;
+
+    return {
+      Business,
+    };
+  }
+
+  render() {
+    return (
+      <ContentLayout title="Platform Introduce" url="/images/ic_header_introduce.png">
+        <div className="content-t flex flex-align">
+          <p />
+          <div className="flex flex-align">
+            <img src="/images/ic_header_business_black.png" />
+            <div>Business Introduce</div>
+          </div>
+          <p />
+        </div>
+        <div
+          className="platformCommonContent-m"
+          dangerouslySetInnerHTML={{ __html: this.props.Business }}
+        />
+        <div className="platformCommonContent-b">页脚信息</div>
+      </ContentLayout>
+    );
+  }
 }

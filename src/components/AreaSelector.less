@@ -31,7 +31,10 @@
     background-color: transparent;
   }
   .ant-collapse-content-box {
-    padding: 12px !important;
+    box-sizing: border-box;
+    height: 227px;
+    padding: 4px 12px 12px 12px !important;
+    overflow-y: auto;
   }
   .ant-collapse-header {
     padding: 10px 12px !important;
@@ -53,10 +56,15 @@
     .expand-content {
       color: rgba(255, 255, 255, 0.8);
       font-size: 12px;
+      line-height: 24px;
       span {
         display: inline-block;
         margin-right: 10px;
-        &.active {
+        cursor: pointer;
+        transition: color 0.3s;
+        user-select: none;
+        &.active,
+        &:hover {
           color: white;
         }
       }
@@ -84,16 +92,18 @@
       flex-shrink: 0;
       overflow: auto;
       .expert-list-item {
-        margin: 0 12px;
+        flex-shrink: 0;
+        width: 70px;
+        height: 70px;
+        cursor: pointer;
         &.active {
           img {
             width: 64px;
             height: 64px;
             border: 2px solid #ff7d16;
-            transition: opacity 0.3s;
           }
           span {
-            position: absolute;
+            height: 0;
             opacity: 0;
           }
         }
@@ -102,9 +112,12 @@
           height: 40px;
           margin-bottom: 4px;
           border-radius: 50%;
+          transition: all 0.3s;
         }
         span {
+          display: inline-block;
           font-size: 11px;
+          transition: all 0.3s;
         }
       }
     }

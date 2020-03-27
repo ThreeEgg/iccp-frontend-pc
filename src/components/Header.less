@@ -14,8 +14,7 @@ div {
   padding-left: 30px;
   background: linear-gradient(180deg, rgba(34, 44, 62, 1) 0%, rgba(34, 44, 62, 0) 100%);
   .logo {
-    width: 100px;
-    height: 48px;
+    width: 150px;
   }
   .line {
     width: 1px;
@@ -32,15 +31,23 @@ div {
     right: 26px;
     color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
-    .ant-btn {
-      color: #fff;
-      background: transparent;
-      border: none;
+    a {
+      color: white;
+      &:hover {
+        color: #337aff;
+      }
     }
-    .ant-btn:focus,
-    .ant-btn.active {
-      color: #fff;
-      background-color: #337aff;
+    .login-btn {
+      &.ant-btn {
+        color: #fff;
+        background: transparent;
+        border: none;
+        &:focus,
+        &.active {
+          color: #fff;
+          background-color: #337aff;
+        }
+      }
     }
     .line {
       display: inline-block;
@@ -57,8 +64,8 @@ div {
     .ant-switch-small {
       margin: 0 10px;
     }
-    .ant-switch-checked {
-      background-color: #337aff;
-    }
+    // .ant-switch-checked {
+    //   background-color: #337aff;
+    // }
   }
 }

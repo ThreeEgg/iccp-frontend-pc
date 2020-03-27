@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
 import echarts from 'echarts/lib/echarts';
 // 引入柱状图（这里放你需要使用的echarts类型 很重要）
 import 'echarts/lib/chart/bar';
@@ -11,37 +10,43 @@ import 'echarts/lib/chart/scatter';
 import 'echarts/lib/chart/map';
 import 'echarts/map/js/world';
 import 'echarts/extension/bmap/bmap';
-
 import './Map.less';
-
-import Head from 'next/head';
 
 var defaultZoomScale = 3;
 
 export default class extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+    this.initMap();
+  }
+
   id = 'map_';
   myChart = null;
   zoomScale = defaultZoomScale;
   option = {
     animationDurationUpdate: 150,
     bmap: {
-      center: [120.13066322374, 30.240018034923],
       zoom: defaultZoomScale,
-      roam: false,
+      roam: 'move',
       mapStyle: {
         styleJson: [
           {
             featureType: 'water',
             elementType: 'all',
             stylers: {
-              color: '#d1d1d1',
+              color: '#b5c8cc',
             },
           },
           {
             featureType: 'land',
             elementType: 'all',
             stylers: {
-              color: '#f3f3f3',
+              color: '#e0ebf0',
             },
           },
           {
@@ -90,7 +95,7 @@ export default class extends Component {
             featureType: 'green',
             elementType: 'all',
             stylers: {
-              visibility: 'off',
+              color: '#cdd9dd',
             },
           },
           {
@@ -149,9 +154,12 @@ export default class extends Component {
       {
         type: 'scatter',
         coordinateSystem: 'bmap',
-        data: [[120, 30, 10], [125, 39, 3], [120, 30, 1], [53, 6, 1]],
+        data: [[120, 30, 3], [125, 39, 3], [110, 25, 2], [53, 6, 2]],
         symbolSize(val) {
           return val[2] * 10;
+        },
+        symbol: (value, params) => {
+          return 'image://data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTg1MTU2MDAxOTE2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE1OTIiIGRhdGEtc3BtLWFuY2hvci1pZD0iYTMxM3guNzc4MTA2OS4wLmk0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgd2lkdGg9IjgxIiBoZWlnaHQ9IjgxIj48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwvc3R5bGU+PC9kZWZzPjxwYXRoIGQ9Ik01MTIgMTUzLjZjLTE1NS4yNjQgMC0yODEuNiAxMjMuMjg5Ni0yODEuNiAyNzQuODE2YTI2OS45NTIgMjY5Ljk1MiAwIDAgMCA0MS4wNDk2IDE0Mi44NDhMNDkyLjU0NCA4ODUuNTI5NmM0LjM2NDggNi41NjY0IDExLjY2MDggMTAuNDgzMiAxOS40NTYgMTAuNDgzMiA3LjgwOCAwIDE1LjEwNC0zLjk0MjQgMTkuNDU2LTEwLjQ4MzJsMjIxLjY0NDgtMzE1LjA3MkEyNjkuMzg4OCAyNjkuMzg4OCAwIDAgMCA3OTMuNiA0MjguNDI4OEM3OTMuNiAyNzYuODY0IDY2Ny4yNzY4IDE1My42IDUxMiAxNTMuNnogbTAgNDI4LjMxMzZjLTc3Ljc2IDAtMTQwLjgtNjMuOTIzMi0xNDAuOC0xNDIuNzcxMnM2My4wNC0xNDIuNzcxMiAxNDAuOC0xNDIuNzcxMiAxNDAuOCA2My45MTA0IDE0MC44IDE0Mi43NzEyYzAgNzguODQ4LTYzLjA0IDE0Mi43NzEyLTE0MC44IDE0Mi43NzEyeiIgZmlsbD0iIzMzN0FGRiIgcC1pZD0iMTU5MyIgZGF0YS1zcG0tYW5jaG9yLWlkPSJhMzEzeC43NzgxMDY5LjAuaTMiIGNsYXNzPSJzZWxlY3RlZCI+PC9wYXRoPjwvc3ZnPg==';
         },
         itemStyle: {
           normal: {
@@ -162,8 +170,40 @@ export default class extends Component {
     ],
   };
 
+  /**
+   * 手动加载百度地图API
+   */
+  initMap = () => {
+    window.initMap = () => {
+      this.updateMap();
+    };
+
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src =
+      'http://api.map.baidu.com/api?v=2.0&ak=RsyPXj9APuxPHxDTR5nPQkz6no2C4Rv2&callback=initMap'; //<-注意 callback回调，同步加载没有&callback
+    document.body.appendChild(script);
+  };
+
+  getUserGeolocation = () => {
+    //判断是否支持 获取本地位置
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(res => {
+        if (res.coords) {
+          this.option.bmap.center = [res.coords.longitude, res.coords.latitude];
+          this.updateMap();
+        }
+      });
+    } else {
+      // 这里可以上报数据
+      console.log('该浏览器不支持定位');
+    }
+  };
+
   updateMap = () => {
     if (!this.myChart) {
+      // 第一次获取用户地址
+      this.getUserGeolocation();
       this.myChart = echarts.init(document.getElementById(this.id));
     }
     // 绘制图表
@@ -181,29 +221,10 @@ export default class extends Component {
     this.updateMap();
   };
 
-  componentDidMount = () => {
-    if (!window) {
-      return;
-    }
-    this.updateMap();
-  };
-
   render() {
     return (
       <div style={{ width: '100%', height: '100%' }}>
-        <Head>
-          <script
-            type="text/javascript"
-            src="http://api.map.baidu.com/api?v=2.0&ak=RsyPXj9APuxPHxDTR5nPQkz6no2C4Rv2"
-          />
-        </Head>
         <div id={this.id} style={{ width: '100%', height: '100%' }} />
-
-        {/* 测试那妞 */}
-        <div style={{ position: 'absolute', right: 20, top: 100 }}>
-          <Button onClick={this.updateArea}>选中随机区域</Button>
-          <Button onClick={this.blurArea}>取消选中</Button>
-        </div>
       </div>
     );
   }

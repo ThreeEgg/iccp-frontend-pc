@@ -4,6 +4,8 @@ const lessToJS = require('less-vars-to-js');
 const withPlugins = require('next-compose-plugins');
 const path = require('path');
 const fs = require('fs');
+const generateBuildId = require('./generateBuildId');
+const buildId = generateBuildId();
 
 const themeVariables = lessToJS(
   fs.readFileSync(path.resolve(__dirname, './src/antd-custom-theme.less'), 'utf8'),
@@ -20,11 +22,8 @@ module.exports = withPlugins([withLess, withCss], {
     javascriptEnabled: true,
     modifyVars: themeVariables,
   },
-  // distDir: 'build',
+  // 需要nginx配置过etag，这里可以关闭
   generateEtags: false,
-  generateBuildId: async () => {
-    return 'build-' + Date.now();
-  },
   webpack(config) {
     if (config.externals) {
       const includes = [/antd/];
@@ -40,5 +39,20 @@ module.exports = withPlugins([withLess, withCss], {
       });
     }
     return config;
+  },
+
+  // 其余构建配置
+  distDir: 'build',
+
+  // 支持各种后缀
+  pageExtensions: ['jsx', 'js'],
+
+  generateBuildId: async () => {
+    return buildId;
+  },
+
+  // 环境变量配置
+  env: {
+    BUILD_ID: buildId,
   },
 });

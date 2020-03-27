@@ -1,76 +1,177 @@
-@font-size: 20px;
-div {
-  font-size: @font-size;
-}
-.login {
+@import '../components/common.less';
+.map {
   width: 100%;
   height: 100%;
-  background-image: url('/images/ic_login_bg.png');
-  background-size: cover;
-  .content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 320px;
-    transform: translate(-50%, -50%);
-    // tabs
-    .ant-tabs {
-      color: #fff;
+  .mapT {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    // background-image: url('/images/map.png');
+    background-size: cover;
+    .map-selector {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
     }
-    .ant-tabs-bar {
-      margin: 0;
-      border: none;
-    }
-    .ant-tabs-nav .ant-tabs-tab {
-      font-size: 18px;
-    }
-    .ant-tabs-nav .ant-tabs-tab-active {
-      color: #fff;
-      font-weight: 600;
-      font-size: 24px;
-    }
-    .ant-tabs-ink-bar {
-      display: none !important;
-    }
-    // form表单
-    .ant-input-affix-wrapper {
-      padding: 5px 11px;
-      color: #aaa;
-      font-size: 24px;
-    }
-    .ant-btn-primary {
-      width: 100%;
-      height: 40px;
-    }
-    .ant-input-prefix {
-      margin-right: 10px;
-    }
-    .login-form-forgot {
-      display: block;
-      color: #fff;
-      font-size: 14px;
-      text-align: center;
-    }
-    // 注册 昵称
-    .userName {
-      padding: 12px 11px;
-    }
-    // 修改密码
-    .retrieve {
-      color: #fff;
-      font-size: 24px;
+    .business-intro {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      z-index: 1;
+      width: 300px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      .business-info {
+        padding: 16px;
+        background: rgba(67, 73, 94, 0.5);
+        transition: background 0.3s;
+        &:hover {
+          background: rgba(67, 73, 94, 0.7);
+        }
+        h1 {
+          color: white;
+          font-weight: bold;
+          font-size: 18px;
+        }
+        p {
+          color: white;
+          font-size: 14px;
+          line-height: 20px;
+        }
+      }
     }
   }
-  .footer {
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .content {
     width: 100%;
-    height: 90px;
-    color: #fff;
-    font-size: 14px;
-    background: #25272b;
+    padding: 70px 0 20px;
+    background: #f6f6f6;
+    .content-t {
+      justify-content: space-between;
+      height: 40px;
+      color: #1b2857;
+      p {
+        width: 470px;
+        height: 1px;
+        margin: 0;
+        background: #ddd;
+      }
+      div {
+        div {
+          margin-right: 7px;
+          margin-left: 15px;
+          font-weight: 800;
+          font-size: 28px;
+        }
+      }
+      sup {
+        top: -6px;
+        font-size: 16px;
+      }
+    }
+    .content-b {
+      text-align: center;
+      button {
+        position: relative;
+        padding: 4px 24px;
+        color: #ccc;
+        font-size: 18px;
+        line-height: 12px;
+        background: transparent;
+        border: 1px solid rgba(204, 204, 204, 1);
+        border-radius: 19px;
+      }
+    }
+    .content-c {
+      margin: 46px 0 40px;
+      line-height: 28px;
+    }
+    .content-caseC {
+      margin: 55px 0 40px;
+      .item {
+        position: relative;
+        z-index: 1;
+        width: 380px;
+        height: 280px;
+        cursor: pointer;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+        .item-content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          color: #fff;
+          background: url('/images/case/card1.png') center no-repeat;
+          background-size: cover !important;
+          border-radius: 10px;
+          transition: all 0.3s;
+          .item-content-container {
+            width: 100%;
+            height: 100%;
+            padding: 8px 24px;
+            overflow: hidden;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+          }
+          &:hover {
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            p {
+              margin-top: 30px;
+            }
+            .item-content-info {
+              height: auto;
+            }
+            .item-content-container {
+              background-color: rgba(0, 0, 0, 0.1);
+            }
+          }
+          &::after {
+            position: absolute;
+            top: 22%;
+            left: 10%;
+            z-index: -1;
+            width: 80%;
+            height: 80%;
+            background: inherit;
+            opacity: 0.8;
+            filter: blur(1rem);
+            content: '';
+          }
+          h1 {
+            color: #fff;
+            font-weight: 600;
+            font-size: 24px;
+          }
+          p {
+            margin-top: 130px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 20px;
+            transition: all 0.3s;
+          }
+          .item-content-info {
+            height: 22px;
+            overflow: hidden;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 22px;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+  }
+  .mapImg {
+    background: #f6f6f6;
+    img {
+      width: 100%;
+    }
   }
 }

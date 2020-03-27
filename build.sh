@@ -19,6 +19,8 @@ if [ "$1" == "--env" ]; then
   fi
 fi
 
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+
 #使用淘宝镜像安装依赖包
 npm install --registry=http://registry.npm.taobao.org
 

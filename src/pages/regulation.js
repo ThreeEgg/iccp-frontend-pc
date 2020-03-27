@@ -1,62 +1,67 @@
 import React from 'react';
-import Router from 'next/router';
-import LoginLayout from '../layouts/LoginLayout';
-import Platform from './platformIndex';
+import ContentLayout from '../layouts/ContentLayout';
+import router from 'next/router';
+import api from '../services/api';
+import { platformContentType } from '../common/enum';
 import { Pagination } from 'antd';
-import './platformIndex.less';
+import ContentListItem from '../components/ListItem/ContentListItem';
 import './regulation.less';
 
-export default class RetrievePWD extends React.Component{
-    state = {
-        current: 1,
-    };
-    
-    onChange = page => {
-        console.log(page);
-        this.setState({
-          current: page,
-        });
-    };
+export default class Regulation extends React.Component {
+  static async getInitialProps({ req, query }) {
+    const { pageNum = 1 } = query;
+    const fetch = require('isomorphic-unfetch');
 
-    render () {
-        return (
-            <Platform title="Regulation" url="/images/ic_header_regulation.png">
-                <div className="content-t flex flex-align">
-                    <p></p>
-                    <div className="flex flex-align">
-                        <img src="/images/ic_header_regulation_black.png"></img>
-                        <div>Regulation</div>
-                    </div>
-                    <p></p>
-                </div>
-                <div className="regulationContent-m">
-                    <div className="coo-item">
-                        <h1>《国际贸易法》解释</h1>
-                        <div className="coo-text">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum 
-                            laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. 
-                            Proin sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur 
-                            adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet 
-                            lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. 
-                        </div>
-                        <div className="coo-more">More</div>
-                    </div>
-                    <div className="coo-item">
-                        <h1>《国际贸易法》解释</h1>
-                        <div className="coo-text">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum 
-                            laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. 
-                            Proin sodales pulvinar sic tempor. Lorem ipsum dolor sit amet, consectetur 
-                            adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet 
-                            lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. 
-                        </div>
-                        <div className="coo-more">More</div>
-                    </div>
-                </div>
-                <div className="common-pagination">
-                    <Pagination current={this.state.current} onChange={this.onChange} size="small" total={50} />      
-                </div>
-            </Platform>
-        )
-    }
+    const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
+    //
+    const regulationContentRes = await fetch(
+      `${requestUrl}?languageId=0&pageNum=${pageNum}&pageSize=10&type=${
+        platformContentType.CLAUSE
+      }`,
+    );
+    const regulationContent = await regulationContentRes.json();
+    const regulations = regulationContent.data.items;
+    const pageInfo = regulationContent.data.pageInfo;
+
+    return {
+      regulations,
+      pageInfo,
+      pageNum: pageNum * 1,
+    };
+  }
+
+  onChange = page => {
+    router.push('/regulation?pageNum=' + page);
+  };
+
+  render() {
+    const { pageNum, pageInfo } = this.props;
+
+    return (
+      <Platform title="Regulation" url="/images/ic_header_regulation.png">
+        <div className="content-t flex flex-align">
+          <p />
+          <div className="flex flex-align">
+            <img src="/images/ic_header_regulation_black.png" />
+            <div>Regulation</div>
+          </div>
+          <p />
+        </div>
+        <div className="regulationContent-m">
+          {this.props.regulations.map(item => (
+            <ContentListItem key={item.id} title={item.title} content={item.content} />
+          ))}
+        </div>
+        <div className="common-pagination">
+          <Pagination
+            current={pageNum}
+            onChange={this.onChange}
+            size="small"
+            pageSize={10}
+            total={pageInfo.totalResults}
+          />
+        </div>
+      </Platform>
+    );
+  }
 }
