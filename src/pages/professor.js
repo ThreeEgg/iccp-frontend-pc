@@ -3,7 +3,7 @@ import ContentLayout from '../layouts/ContentLayout';
 import { Button, Calendar, Rate, Modal, Tabs } from 'antd';
 import Router from 'next/router';
 import { Pagination } from 'antd';
-import ScheduleTable from '../components/ScheduleTable';
+import Schedule from '../components/Schedule';
 import './professor.less';
 const { TabPane } = Tabs;
 
@@ -217,7 +217,7 @@ export default class Platform extends React.Component {
 
         {/* 时间表 */}
         <Modal visible={this.state.scheduleVisible}>
-          <ScheduleTable />
+          <Schedule />
         </Modal>
       </ContentLayout>
     );

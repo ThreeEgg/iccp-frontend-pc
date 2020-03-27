@@ -9,6 +9,22 @@
     }
   }
 
+  .row-header {
+    display: inline-block;
+    color: rgba(27, 40, 87, 0.3);
+    font-size: 13px;
+    line-height: 16px;
+    transition: color 0.3s;
+    &.active {
+      color: #1b2857;
+    }
+  }
+
+  .col-header {
+    color: #787d93;
+    font-size: 12px;
+  }
+
   .grid {
     position: relative;
     flex: 1;
@@ -23,6 +39,7 @@
       height: 0;
       padding-bottom: 100%;
       overflow: hidden;
+      text-align: center;
       background: rgba(0, 0, 0, 0.03);
       cursor: pointer;
       transition: all 0.3s;
