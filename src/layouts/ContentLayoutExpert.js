@@ -1,13 +1,15 @@
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import Head from './Head';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
+import SimpleFooter from '../components/SimpleFooter';
 import SiderExpert from './SiderExpert';
 import './ContentLayoutExpert.less';
 
-export default class ContentLayout extends React.Component {
+class ContentLayoutExpert extends React.Component {
   render() {
+    const { url, title, hideSider, removeContentStyle, children } = this.props;
     return (
       <div className={classNames('content-layout', this.props.className)}>
         <Head />
@@ -17,30 +19,54 @@ export default class ContentLayout extends React.Component {
           <div className="bannerTitle">
             <div className="bannerText commonWidth flex flex-align flex-justifyBetween">
               <div>
-                <img src={this.props.url} />
-                {this.props.title}
+                {url ? <img src={url} /> : ''}
+                {title}
               </div>
               <div>
                 {/* <span className="iconfont ic_header_leadback"></span> */}
-                <a href="/">返回首页</a>
+                <a href="/expert/home">返回首页</a>
               </div>
             </div>
           </div>
         </div>
         <div className="content">
-          <div className="content-plat-c commonWidth flex">
-            {!this.props.hideSider ? (
+          <div
+            className={classNames('content-plat-c commonWidth flex', {
+              'no-style': removeContentStyle,
+            })}
+          >
+            {!hideSider ? (
               <Fragment>
                 <SiderExpert />
                 <div className="content-c-r">{this.props.children}</div>
               </Fragment>
             ) : (
-              this.props.children
+              children
             )}
           </div>
         </div>
-        <Footer />
+        <SimpleFooter />
       </div>
     );
   }
 }
+
+ContentLayoutExpert.propTypes = {
+  // 标题
+  title: PropTypes.string,
+  // 前缀图片地址
+  url: PropTypes.string,
+  // 隐藏侧边栏
+  hideSider: PropTypes.bool,
+  // 清楚内容容器样式
+  removeContentStyle: PropTypes.bool,
+};
+
+ContentLayoutExpert.defaultProps = {
+  title: '',
+  url: '',
+  hideSider: false,
+  removeContentStyle: false,
+};
+
+export default ContentLayoutExpert;

@@ -1,10 +1,11 @@
 import React from 'react';
 import ContentLayout from '../layouts/ContentLayout';
-import { Button, Calendar, Rate, Modal, Tabs } from 'antd';
+import { Button, Calendar, Modal, Tabs } from 'antd';
 import Router from 'next/router';
 import { Pagination } from 'antd';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
+import Rate from '../components/Rate';
 import './professor.less';
 const { TabPane } = Tabs;
 
@@ -61,9 +62,9 @@ export default class Platform extends React.Component {
     const { schedule, startTime } = expertSchedule;
 
     // 专家评分
-    // const rateRes = await fetch(`${api.baseUrl}/api${api.getExpertUserRating}?timeZone=${8}&userId=${id}`);
-    // const expertScheduleContent = await expertScheduleRes.json();
-    // const expertSchedule = expertScheduleContent.data;
+    const rateRes = await fetch(`${api.baseUrl}/api${api.getExpertRating}?userId=${id}`);
+    const rateContent = await rateRes.json();
+    const rate = rateContent.data;
 
     return {
       startTime,
@@ -73,6 +74,7 @@ export default class Platform extends React.Component {
       article,
       activity,
       introduction,
+      rate,
       // info,
     };
   }
@@ -108,7 +110,18 @@ export default class Platform extends React.Component {
       article,
       activity,
       introduction,
+      rate,
     } = this.props;
+
+    const { attitudeRateAVG, skillRateAVG, responseSpeed } = rate;
+    let responseRateAVG = 1;
+    // 1h以内为3分，24h以内为2分，24h以上为1分
+    if (responseSpeed <= 3600) {
+      responseRateAVG = 3;
+    } else if (responseSpeed <= 86400) {
+      responseRateAVG = 2;
+    }
+    const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
 
     return (
       <ContentLayout
@@ -265,20 +278,20 @@ export default class Platform extends React.Component {
           </div>
           <div className="con-pro-r-rate">
             <div>
-              综合评分
-              <Rate disabled defaultValue={1} count={3} />
+              综合评分 &nbsp;&nbsp;
+              <Rate value={averageRate} max={3} />
             </div>
             <div>
-              服务态度
-              <Rate disabled defaultValue={2} count={3} />
+              服务态度 &nbsp;&nbsp;
+              <Rate value={attitudeRateAVG} max={3} />
             </div>
             <div>
-              专业能力
-              <Rate disabled defaultValue={1} count={3} />
+              专业能力 &nbsp;&nbsp;
+              <Rate value={skillRateAVG} max={3} />
             </div>
             <div>
-              回复速度
-              <Rate disabled defaultValue={3} count={3} />
+              回复速度 &nbsp;&nbsp;
+              <Rate value={responseRateAVG} max={3} />
             </div>
           </div>
         </div>
