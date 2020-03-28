@@ -7,7 +7,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const devProxy = {
   '/api': {
-    target: 'http://221.215.57.110:9090', // 端口自己配置合适的
+    // target: 'http://221.215.57.110:9090', // 端口自己配置合适的
+    target: 'http://172.16.1.161:8080', // 端口自己配置合适的
     // pathRewrite: {
     //     '^/api': '/'
     // },

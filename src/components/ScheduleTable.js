@@ -52,7 +52,7 @@ export class ScheduleTable extends Component {
     );
   };
 
-  setActiveGrid = activeGrids => {
+  setActiveGrid = (activeGrids = []) => {
     this.setState({
       activeGrids,
     });

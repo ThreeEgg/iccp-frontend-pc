@@ -131,12 +131,15 @@ export const getExpertScheduleByGreenwich = async ({ timeZone, userId }) => {
   });
 };
 
-export const saveExpertSchedule = async ({ isBusyStr, timeZone, userId }) => {
+export const saveExpertSchedule = async ({ schedule, startTime, timeZone, userId }) => {
   return request.post(api.saveExpertSchedule, {
     params: {
-      isBusyStr,
+      // 日程表字符串
+      schedule,
       userId,
       timeZone,
+      // 开始时间，单位为秒
+      startTime,
     },
   });
 };

@@ -1,13 +1,15 @@
-import React, { Component, createRef } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import { Button } from 'antd';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import ScheduleTable from './ScheduleTable';
 
 export class Schedule extends Component {
   sche1 = createRef();
   sche2 = createRef();
 
-  scheduleMatrixData = [];
+  scheduleMatrixData1 = [];
+  scheduleMatrixData2 = [];
 
   state = {};
 
@@ -32,20 +34,22 @@ export class Schedule extends Component {
     return parseScheduleData;
   };
 
-  importSchedule = () => {
-    console.log(this.parseSchedule(this.scheduleString));
-    this.sche1.current.setActiveGrid(this.parseSchedule(this.scheduleString)[0]);
-    this.sche2.current.setActiveGrid(this.parseSchedule(this.scheduleString)[1]);
+  importSchedule = scheduleString => {
+    this.sche1.current.setActiveGrid(this.parseSchedule(scheduleString)[0]);
+    this.sche2.current.setActiveGrid(this.parseSchedule(scheduleString)[1]);
   };
 
   // 设置日程表
   exportSchedule = () => {
     const { scheduleMatrixData1, scheduleMatrixData2 } = this;
     // 当地本周第一天的8小时，为开始时间
-    const startTime = moment()
-      .startOf('week')
-      .hours(8)
-      .format();
+    const startTime =
+      Date.parse(
+        moment()
+          .startOf('week')
+          .hours(8)
+          .toDate(),
+      ) / 1000;
 
     // 从矩阵算出相应的日程字符串
     // 行、列，行数*24+列数+8
@@ -68,6 +72,7 @@ export class Schedule extends Component {
     return {
       startTime,
       schedule: scheduleArray.join(''),
+      timeZone: moment().utcOffset() / 60,
     };
   };
 
@@ -89,11 +94,12 @@ export class Schedule extends Component {
   };
 
   render() {
+    const { mode } = this.props;
     return (
       <div>
         {/* 编辑模式 */}
         <Button onClick={this.exportSchedule}>导出</Button>
-        <Button onClick={this.importSchedule}>导入</Button>
+        <Button onClick={() => this.importSchedule(this.scheduleString)}>导入</Button>
         <Button
           onClick={() => {
             this.sche1.current.clear();
@@ -102,11 +108,29 @@ export class Schedule extends Component {
         >
           清空
         </Button>
-        <ScheduleTable ref={this.sche1} onChange={this.onCurrentWeekChange} />
-        <ScheduleTable ref={this.sche2} onChange={this.onNextWeekChange} />
+        {mode === 'edit' ? (
+          <Fragment>
+            <ScheduleTable ref={this.sche1} onChange={this.onCurrentWeekChange} />
+            <ScheduleTable ref={this.sche2} onChange={this.onNextWeekChange} />
+          </Fragment>
+        ) : (
+          <Fragment>
+            <ScheduleTable ref={this.sche1} onChange={this.onCurrentWeekChange} />
+            <ScheduleTable ref={this.sche2} onChange={this.onNextWeekChange} />
+          </Fragment>
+        )}
       </div>
     );
   }
 }
+
+Schedule.propTypes = {
+  // 显示模式，
+  mode: PropTypes.oneOf(['edit', 'show']),
+};
+
+Schedule.defaultProps = {
+  mode: 'edit',
+};
 
 export default Schedule;
