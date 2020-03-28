@@ -210,9 +210,9 @@ export default class extends Component {
     this.myChart.setOption(this.option);
   };
 
-  updateArea = () => {
+  updateArea = (longitude, latitude) => {
     this.option.bmap.zoom = 6;
-    this.option.bmap.center = [Math.random() * 180, Math.random() * 90];
+    this.option.bmap.center = [longitude, latitude];
     this.updateMap();
   };
 

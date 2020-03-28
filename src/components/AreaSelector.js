@@ -73,13 +73,15 @@ export default class extends Component {
   };
 
   selectContinent = continent => {
-    this.setState(
-      {
-        continent,
-        activeKey: ['country'],
-      },
-      this.notifyAreaChange,
-    );
+    const modifyState = {
+      continent,
+      activeKey: ['country'],
+    };
+    // 如果已经有国家，则清空选中的国家
+    if (this.state.country) {
+      modifyState.country = {};
+    }
+    this.setState(modifyState, this.notifyAreaChange);
   };
 
   selectCountry = country => {

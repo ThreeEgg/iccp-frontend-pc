@@ -1,4 +1,7 @@
+import config from '../config';
+
 export default {
+  baseUrl: config.baseUrl,
   //用户管理
   registry: '/user/registry',
   getRegistryAgreement: '/user/registry-agreement',

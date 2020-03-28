@@ -170,12 +170,14 @@ export class Schedule extends Component {
               onChange={this.onCurrentWeekChange}
               rowCount={7}
               colCount={24}
+              readOnly
             />
             <ScheduleTable
               ref={this.sche2}
               onChange={this.onNextWeekChange}
               rowCount={7}
               colCount={24}
+              readOnly
             />
           </Fragment>
         )}
@@ -186,7 +188,7 @@ export class Schedule extends Component {
 
 Schedule.propTypes = {
   // 显示模式，
-  mode: PropTypes.oneOf(['edit', 'show']),
+  mode: PropTypes.oneOf(['edit', 'read']),
 };
 
 Schedule.defaultProps = {

@@ -133,7 +133,7 @@ export const getExpertScheduleByGreenwich = async ({ timeZone, userId }) => {
 
 export const saveExpertSchedule = async ({ schedule, startTime, timeZone, userId }) => {
   return request.post(api.saveExpertSchedule, {
-    params: {
+    data: {
       // 日程表字符串
       schedule,
       userId,

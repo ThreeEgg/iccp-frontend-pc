@@ -63,10 +63,10 @@ export class ScheduleTable extends Component {
   render() {
     const { rowHeader, colHeader } = this;
     const { activeGrids } = this.state;
-    const { rowCount, colCount, renderLeftTop } = this.props;
+    const { rowCount, colCount, renderLeftTop, readOnly = false } = this.props;
 
     return (
-      <div className="schedule-table">
+      <div className={classNames('schedule-table', { 'read-only': readOnly })}>
         {Array(rowCount + 1)
           .fill(0)
           .map((item, rowIndex) => (

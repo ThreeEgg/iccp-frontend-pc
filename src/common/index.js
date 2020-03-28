@@ -3,7 +3,7 @@ import { getAuthorityToken } from './authority';
 export const getCommonHeader = () => {
   const header = {
     platform: 'pcweb',
-    language: 'Chinese',
+    language: 'zh-CN',
     ua: window.navigator.userAgent,
     ip: '0.0.0.0',
     timezone: new Date().getTimezoneOffset() / 60,

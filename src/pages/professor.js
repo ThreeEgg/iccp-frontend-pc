@@ -3,11 +3,30 @@ import ContentLayout from '../layouts/ContentLayout';
 import { Button, Calendar, Rate, Modal, Tabs } from 'antd';
 import Router from 'next/router';
 import { Pagination } from 'antd';
+import api from '../services/api';
 import Schedule from '../components/Schedule';
 import './professor.less';
 const { TabPane } = Tabs;
 
 export default class Platform extends React.Component {
+  static async getInitialProps({ req, query }) {
+    const { id } = query;
+    const fetch = require('isomorphic-unfetch');
+
+    const requestUrl = `${api.baseUrl}/api${api.getExpertScheduleByGreenwich}`;
+
+    const expertScheduleRes = await fetch(`${requestUrl}?timeZone=${8}&userId=${id}`);
+    const expertScheduleContent = await expertScheduleRes.json();
+    const expertSchedule = expertScheduleContent.data;
+
+    const { schedule, startTime } = expertSchedule;
+
+    return {
+      schedule,
+      startTime,
+    };
+  }
+
   state = {
     current: 1,
     scheduleVisible: true,
@@ -31,6 +50,8 @@ export default class Platform extends React.Component {
   };
 
   render() {
+    const { schedule } = this.props;
+
     return (
       <ContentLayout
         hideSider
@@ -216,8 +237,8 @@ export default class Platform extends React.Component {
         </div>
 
         {/* 时间表 */}
-        <Modal visible={this.state.scheduleVisible}>
-          <Schedule />
+        <Modal visible={this.state.scheduleVisible} width={720}>
+          <Schedule mode="read" schedule={schedule} />
         </Modal>
       </ContentLayout>
     );

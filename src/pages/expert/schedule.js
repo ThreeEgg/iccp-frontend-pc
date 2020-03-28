@@ -1,5 +1,5 @@
 import React, { Component, createRef } from 'react';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { connect } from 'react-redux';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import ScheduleComponent from '../../components/Schedule';
@@ -12,7 +12,7 @@ export class Schedule extends Component {
   static async getInitialProps({ req, query }) {
     const fetch = require('isomorphic-unfetch');
 
-    const requestUrl = 'http://172.16.1.161:8080/api' + api.getExpertScheduleByGreenwich;
+    const requestUrl = `${api.baseUrl}/api${api.getExpertScheduleByGreenwich}`;
 
     const expertScheduleRes = await fetch(`${requestUrl}?timeZone=${8}&userId=${'A000001'}`);
     const expertScheduleContent = await expertScheduleRes.json();
@@ -34,14 +34,22 @@ export class Schedule extends Component {
     console.log(scheduleData);
     const { schedule, startTime, timeZone } = scheduleData;
     const { userInfo } = this.props;
-    const res = expertService.saveExpertSchedule({
+
+    message.loading('保存中...');
+
+    const res = await expertService.saveExpertSchedule({
       schedule,
       startTime,
       timeZone,
       userId: userInfo.userId,
     });
 
-    console.log(res);
+    message.destroy();
+    if (res.code === '0') {
+      message.success('保存成功!');
+    } else {
+      message.error(res.msg);
+    }
   };
 
   componentDidMount = () => {

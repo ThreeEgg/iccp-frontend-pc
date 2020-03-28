@@ -13,7 +13,7 @@ export default class Classic extends React.Component {
     const { pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
 
-    const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
+    const requestUrl = `${api.baseUrl}/api${api.listPlatformContent}`;
     //
     const classicCaseContentRes = await fetch(
       `${requestUrl}?languageId=0&pageNum=${pageNum}&pageSize=10&type=${

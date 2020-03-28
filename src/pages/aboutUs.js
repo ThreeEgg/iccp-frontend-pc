@@ -7,7 +7,7 @@ export default class AboutUs extends React.Component {
   static async getInitialProps({ req, query }) {
     const fetch = require('isomorphic-unfetch');
 
-    const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
+    const requestUrl = `${api.baseUrl}/api${api.listPlatformContent}`;
     //
     const platformIntroContentRes = await fetch(
       `${requestUrl}?languageId=0&pageNum=1&pageSize=1&type=${platformContentType.PLATFORMINTRO}`,
