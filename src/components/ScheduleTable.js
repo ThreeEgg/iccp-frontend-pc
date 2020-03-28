@@ -9,28 +9,24 @@ export class ScheduleTable extends Component {
     activeGrids: [],
   };
 
-  row = 7;
-  col = 12;
-
+  // 行头
   rowHeader = (rowIndex, colIndex) => {
-    const start = 24;
-    const hasActive = this.state.activeGrids.find(gridKey => gridKey.split('_')[0] == rowIndex - 1);
+    const { renderRowHeader } = this.props;
+    const hasActive = this.state.activeGrids.find(gridKey => gridKey.split('_')[0] == rowIndex);
     return (
       <span className={classNames('row-header', { active: hasActive })}>
-        2.{start + rowIndex - 1}
-        <br />
-        周三
+        {renderRowHeader && renderRowHeader(rowIndex, colIndex, hasActive)}
       </span>
     );
   };
 
+  // 表头
   colHeader = (rowIndex, colIndex) => {
-    const start = 8;
+    const start = this.props.rowCount + 1;
     return <span className="col-header">{`${start + colIndex}:00`}</span>;
   };
 
   handleGridClick = (rowIndex, colIndex) => {
-    // console.log(rowIndex, colIndex)
     const gridKey = getGridKey(rowIndex, colIndex);
     const activeGrids = new Set(this.state.activeGrids);
 
@@ -54,7 +50,7 @@ export class ScheduleTable extends Component {
 
   setActiveGrid = (activeGrids = []) => {
     this.setState({
-      activeGrids,
+      activeGrids: Array.from(activeGrids),
     });
   };
 
@@ -67,14 +63,15 @@ export class ScheduleTable extends Component {
   render() {
     const { rowHeader, colHeader } = this;
     const { activeGrids } = this.state;
+    const { rowCount, colCount, renderLeftTop } = this.props;
 
     return (
       <div className="schedule-table">
-        {Array(this.row + 1)
+        {Array(rowCount + 1)
           .fill(0)
           .map((item, rowIndex) => (
             <div className="row" key={rowIndex}>
-              {Array(this.col)
+              {Array(colCount)
                 .fill(0)
                 .map((item, colIndex) => {
                   const key = colIndex;
@@ -84,11 +81,11 @@ export class ScheduleTable extends Component {
                       return (
                         <Fragment key={key}>
                           <div className="grid" key={key}>
-                            <div className="body no-style" />
+                            <div className="body no-style">{renderLeftTop && renderLeftTop()}</div>
                           </div>
                           <div className="grid">
                             <div className="body no-style">
-                              {colHeader && colHeader(rowIndex, colIndex)}
+                              {colHeader && colHeader(rowIndex - 1, colIndex)}
                             </div>
                           </div>
                         </Fragment>
@@ -98,7 +95,7 @@ export class ScheduleTable extends Component {
                     return (
                       <div className="grid" key={key}>
                         <div className="body no-style">
-                          {colHeader && colHeader(rowIndex, colIndex)}
+                          {colHeader && colHeader(rowIndex - 1, colIndex)}
                         </div>
                       </div>
                     );
@@ -108,7 +105,7 @@ export class ScheduleTable extends Component {
                       <Fragment key={key}>
                         <div className="grid">
                           <div className="body no-style">
-                            {rowHeader && rowHeader(rowIndex, colIndex)}
+                            {rowHeader && rowHeader(rowIndex - 1, colIndex)}
                           </div>
                         </div>
                         <div

@@ -4,6 +4,16 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import ScheduleTable from './ScheduleTable';
 
+const weekDayNameMap = {
+  1: '周一',
+  2: '周二',
+  3: '周三',
+  4: '周四',
+  5: '周五',
+  6: '周六',
+  7: '周日',
+};
+
 export class Schedule extends Component {
   sche1 = createRef();
   sche2 = createRef();
@@ -35,8 +45,12 @@ export class Schedule extends Component {
   };
 
   importSchedule = scheduleString => {
-    this.sche1.current.setActiveGrid(this.parseSchedule(scheduleString)[0]);
-    this.sche2.current.setActiveGrid(this.parseSchedule(scheduleString)[1]);
+    const scheduleMatrixData1 = this.parseSchedule(scheduleString)[0] || [];
+    const scheduleMatrixData2 = this.parseSchedule(scheduleString)[1] || [];
+    this.scheduleMatrixData1 = scheduleMatrixData1;
+    this.scheduleMatrixData2 = scheduleMatrixData2;
+    this.sche1.current.setActiveGrid(scheduleMatrixData1);
+    this.sche2.current.setActiveGrid(scheduleMatrixData2);
   };
 
   // 设置日程表
@@ -77,15 +91,37 @@ export class Schedule extends Component {
   };
 
   onCurrentWeekChange = (rowIndex, colIndex, matrixData) => {
-    console.log(rowIndex, colIndex, matrixData);
     this.scheduleMatrixData1 = Array.from(matrixData);
-    // this.exportSchedule(matrixData);
   };
 
   onNextWeekChange = (rowIndex, colIndex, matrixData) => {
-    console.log(rowIndex, colIndex, matrixData);
     this.scheduleMatrixData2 = Array.from(matrixData);
-    // this.exportSchedule(matrixData);
+  };
+
+  renderCurrentWeekRowHeader = rowIndex => {
+    const time = moment()
+      .startOf('week')
+      .days(rowIndex);
+    return (
+      <span>
+        {time.format('M月D日')}
+        <br />
+        {weekDayNameMap[time.format('E')]}
+      </span>
+    );
+  };
+
+  renderNextWeekRowHeader = rowIndex => {
+    const time = moment()
+      .startOf('week')
+      .days(rowIndex + 7);
+    return (
+      <span>
+        {time.format('M月D日')}
+        <br />
+        {weekDayNameMap[time.format('E')]}
+      </span>
+    );
   };
 
   componentDidMount = () => {
@@ -97,26 +133,50 @@ export class Schedule extends Component {
     const { mode } = this.props;
     return (
       <div>
-        {/* 编辑模式 */}
-        <Button onClick={this.exportSchedule}>导出</Button>
+        {/* <Button onClick={this.exportSchedule}>导出</Button>
         <Button onClick={() => this.importSchedule(this.scheduleString)}>导入</Button>
         <Button
           onClick={() => {
             this.sche1.current.clear();
             this.sche2.current.clear();
           }}
-        >
+          >
           清空
-        </Button>
+        </Button> */}
+        {/* 编辑模式 */}
         {mode === 'edit' ? (
           <Fragment>
-            <ScheduleTable ref={this.sche1} onChange={this.onCurrentWeekChange} />
-            <ScheduleTable ref={this.sche2} onChange={this.onNextWeekChange} />
+            <ScheduleTable
+              ref={this.sche1}
+              onChange={this.onCurrentWeekChange}
+              rowCount={7}
+              colCount={12}
+              renderRowHeader={this.renderCurrentWeekRowHeader}
+              renderLeftTop={() => '本周'}
+            />
+            <ScheduleTable
+              ref={this.sche2}
+              onChange={this.onNextWeekChange}
+              rowCount={7}
+              colCount={12}
+              renderRowHeader={this.renderNextWeekRowHeader}
+              renderLeftTop={() => '下周'}
+            />
           </Fragment>
         ) : (
           <Fragment>
-            <ScheduleTable ref={this.sche1} onChange={this.onCurrentWeekChange} />
-            <ScheduleTable ref={this.sche2} onChange={this.onNextWeekChange} />
+            <ScheduleTable
+              ref={this.sche1}
+              onChange={this.onCurrentWeekChange}
+              rowCount={7}
+              colCount={24}
+            />
+            <ScheduleTable
+              ref={this.sche2}
+              onChange={this.onNextWeekChange}
+              rowCount={7}
+              colCount={24}
+            />
           </Fragment>
         )}
       </div>
