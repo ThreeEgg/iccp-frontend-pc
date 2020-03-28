@@ -24,11 +24,10 @@ export class Schedule extends Component {
   state = {};
 
   parseSchedule = scheduleString => {
-    // 算出当地本周的0点
-    // 从矩阵算出相应的日程字符串
-    // 行、列，行数*24+列数+8
+    // 从字符串中计算出表格的情况
     const parseScheduleData = [];
     scheduleString.split('').forEach((item, index) => {
+      // 没有选中的直接跳过，0代表没有选中，1代表选中
       if (item !== '1') {
         return;
       }
@@ -44,6 +43,7 @@ export class Schedule extends Component {
     return parseScheduleData;
   };
 
+  // 导入日程表用于编辑
   importSchedule = scheduleString => {
     const scheduleMatrixData1 = this.parseSchedule(scheduleString)[0] || [];
     const scheduleMatrixData2 = this.parseSchedule(scheduleString)[1] || [];
@@ -53,7 +53,7 @@ export class Schedule extends Component {
     this.sche2.current.setActiveGrid(scheduleMatrixData2);
   };
 
-  // 设置日程表
+  // 导出日程表
   exportSchedule = () => {
     const { scheduleMatrixData1, scheduleMatrixData2 } = this;
     // 当地本周第一天的8小时，为开始时间
@@ -98,7 +98,16 @@ export class Schedule extends Component {
     this.scheduleMatrixData2 = Array.from(matrixData);
   };
 
-  renderCurrentWeekRowHeader = rowIndex => {
+  // 查看日程表
+  readSchedule = schedule => {
+    this.importSchedule(schedule);
+  };
+
+  /**
+   * rowIndex 当周第几天
+   * offset 偏移几天
+   */
+  renderWeekRowHeader = (rowIndex, offset = 0) => {
     const time = moment()
       .startOf('week')
       .days(rowIndex);
@@ -111,22 +120,11 @@ export class Schedule extends Component {
     );
   };
 
-  renderNextWeekRowHeader = rowIndex => {
-    const time = moment()
-      .startOf('week')
-      .days(rowIndex + 7);
-    return (
-      <span>
-        {time.format('M月D日')}
-        <br />
-        {weekDayNameMap[time.format('E')]}
-      </span>
-    );
-  };
-
   componentDidMount = () => {
-    // this.parseSchedule();
-    // window.moment = moment;
+    // 查看模式，直接调用
+    if (this.props.mode === 'read') {
+      this.readSchedule(this.props.schedule);
+    }
   };
 
   render() {
@@ -143,15 +141,15 @@ export class Schedule extends Component {
           >
           清空
         </Button> */}
-        {/* 编辑模式 */}
         {mode === 'edit' ? (
+          // 编辑模式
           <Fragment>
             <ScheduleTable
               ref={this.sche1}
               onChange={this.onCurrentWeekChange}
               rowCount={7}
               colCount={12}
-              renderRowHeader={this.renderCurrentWeekRowHeader}
+              renderRowHeader={rowIndex => this.renderWeekRowHeader(rowIndex)}
               renderLeftTop={() => '本周'}
             />
             <ScheduleTable
@@ -159,24 +157,25 @@ export class Schedule extends Component {
               onChange={this.onNextWeekChange}
               rowCount={7}
               colCount={12}
-              renderRowHeader={this.renderNextWeekRowHeader}
+              renderRowHeader={rowIndex => this.renderWeekRowHeader(rowIndex, 7)}
               renderLeftTop={() => '下周'}
             />
           </Fragment>
         ) : (
+          // 查看模式
           <Fragment>
             <ScheduleTable
               ref={this.sche1}
               onChange={this.onCurrentWeekChange}
               rowCount={7}
-              colCount={24}
+              colCount={12}
               readOnly
             />
             <ScheduleTable
               ref={this.sche2}
               onChange={this.onNextWeekChange}
               rowCount={7}
-              colCount={24}
+              colCount={12}
               readOnly
             />
           </Fragment>

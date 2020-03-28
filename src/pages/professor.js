@@ -13,23 +13,73 @@ export default class Platform extends React.Component {
     const { id } = query;
     const fetch = require('isomorphic-unfetch');
 
-    const requestUrl = `${api.baseUrl}/api${api.getExpertScheduleByGreenwich}`;
+    // 专家信息
+    const expertInfoRes = await fetch(`${api.baseUrl}/api${api.getExpertInformation}?`);
+    // 专家简介
 
-    const expertScheduleRes = await fetch(`${requestUrl}?timeZone=${8}&userId=${id}`);
+    const introductionRes = await fetch(
+      `${api.baseUrl}/api${api.getExpertIndividualIntroduce}?userId=${id}`,
+    );
+    const introductionContent = await introductionRes.json();
+    const introduction = introductionContent.data;
+
+    // 专家动态
+    const activityRes = await fetch(
+      `${api.baseUrl}/api${api.getExpertActivityList}?userId=${id}&pageSize=1&pageNum=10`,
+    );
+    const activityContent = await activityRes.json();
+    const activity = activityContent.data.items;
+
+    // 专家文章
+    const articleRes = await fetch(
+      `${api.baseUrl}/api${api.getExpertArticleList}?userId=${id}&pageSize=1&pageNum=10`,
+    );
+    const articleContent = await articleRes.json();
+    const article = articleContent.data.items;
+
+    // 专家详情
+    const informationRes = await fetch(
+      `${api.baseUrl}/api${api.getExpertInformation}?userId=${id}`,
+    );
+    const informationContent = await informationRes.json();
+    // 结构参考专家端上传的结构
+    const information = informationContent.data.content
+      ? JSON.parse(informationContent.data.content)
+      : [];
+
+    // 专家服务
+    const serviceTagRes = await fetch(`${api.baseUrl}/api${api.getServiceTagList}?userId=${id}`);
+    const serviceTagContent = await serviceTagRes.json();
+    const serviceTag = serviceTagContent.data;
+
+    // 专家时间表
+    const expertScheduleRes = await fetch(
+      `${api.baseUrl}/api${api.getExpertScheduleByGreenwich}?timeZone=${8}&userId=${id}`,
+    );
     const expertScheduleContent = await expertScheduleRes.json();
     const expertSchedule = expertScheduleContent.data;
-
     const { schedule, startTime } = expertSchedule;
 
+    // 专家评分
+    // const rateRes = await fetch(`${api.baseUrl}/api${api.getExpertUserRating}?timeZone=${8}&userId=${id}`);
+    // const expertScheduleContent = await expertScheduleRes.json();
+    // const expertSchedule = expertScheduleContent.data;
+
     return {
-      schedule,
       startTime,
+      schedule,
+      serviceTag,
+      information,
+      article,
+      activity,
+      introduction,
+      // info,
     };
   }
 
   state = {
     current: 1,
-    scheduleVisible: true,
+    scheduleVisible: false,
   };
 
   onChange = page => {
@@ -43,14 +93,22 @@ export default class Platform extends React.Component {
     Router.push('');
   };
 
-  showSchedule = () => {
+  showSchedule = (scheduleVisible = true) => {
     this.setState({
-      scheduleVisible: true,
+      scheduleVisible,
     });
   };
 
   render() {
-    const { schedule } = this.props;
+    const {
+      startTime,
+      schedule,
+      serviceTag,
+      information,
+      article,
+      activity,
+      introduction,
+    } = this.props;
 
     return (
       <ContentLayout
@@ -132,46 +190,35 @@ export default class Platform extends React.Component {
                 </div>
               </TabPane>
               <TabPane tab="专家文章" key="2">
-                <div className="pro-essay-item">
-                  <h1>国际征信业务通论</h1>
-                  <p>
-                    Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida
-                    dolor sit amet lacus accumsan et viverra justo commodo
-                  </p>
-                </div>
-                <div className="pro-essay-item">
-                  <h1>国际征信业务通论</h1>
-                  <p>
-                    Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida
-                    dolor sit amet lacus accumsan et viverra justo commodo
-                  </p>
-                </div>
+                {article.map(item => {
+                  return (
+                    <div className="pro-essay-item" key={item.id}>
+                      <h1>国际征信业务通论</h1>
+                      <p>
+                        Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida
+                        dolor sit amet lacus accumsan et viverra justo commodo
+                      </p>
+                    </div>
+                  );
+                })}
               </TabPane>
               <TabPane tab="专家详情" key="3">
                 <div className="pro-info">
-                  <div className="pro-info-item">
-                    <h1>国际征信业务通论</h1>
-                    <p>
-                      Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida
-                      dolor sit amet lacus accumsan et viverra justo commodo
-                    </p>
-                    <div className="flex">
-                      <img src="/images/case/card1.png" />
-                      <img src="/images/case/card2.png" />
-                      <img src="/images/case/card2.png" />
-                    </div>
-                  </div>
-                  <div className="pro-info-item">
-                    <h1>国际征信业务通论</h1>
-                    <p>
-                      Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida
-                      dolor sit amet lacus accumsan et viverra justo commodo
-                    </p>
-                    <div className="flex">
-                      <img src="/images/case/card1.png" />
-                      <img src="/images/case/card2.png" />
-                    </div>
-                  </div>
+                  {information.map(item => {
+                    return (
+                      <div className="pro-info-item">
+                        <h1>国际征信业务通论</h1>
+                        <p>
+                          Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin
+                          gravida dolor sit amet lacus accumsan et viverra justo commodo
+                        </p>
+                        <div className="flex">
+                          <img src="/images/case/card1.png" />
+                          <img src="/images/case/card2.png" />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </TabPane>
             </Tabs>
@@ -219,25 +266,29 @@ export default class Platform extends React.Component {
           <div className="con-pro-r-rate">
             <div>
               综合评分
-              <Rate disabled defaultValue={4} />
+              <Rate disabled defaultValue={1} count={3} />
             </div>
             <div>
               服务态度
-              <Rate disabled defaultValue={5} />
+              <Rate disabled defaultValue={2} count={3} />
             </div>
             <div>
               专业能力
-              <Rate disabled defaultValue={3} />
+              <Rate disabled defaultValue={1} count={3} />
             </div>
             <div>
               回复速度
-              <Rate disabled defaultValue={2} />
+              <Rate disabled defaultValue={3} count={3} />
             </div>
           </div>
         </div>
 
         {/* 时间表 */}
-        <Modal visible={this.state.scheduleVisible} width={720}>
+        <Modal
+          visible={this.state.scheduleVisible}
+          width={720}
+          onCancel={() => this.showSchedule(false)}
+        >
           <Schedule mode="read" schedule={schedule} />
         </Modal>
       </ContentLayout>

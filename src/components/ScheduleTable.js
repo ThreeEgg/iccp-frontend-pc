@@ -27,6 +27,10 @@ export class ScheduleTable extends Component {
   };
 
   handleGridClick = (rowIndex, colIndex) => {
+    const { readOnly } = this.props;
+    if (readOnly) {
+      return;
+    }
     const gridKey = getGridKey(rowIndex, colIndex);
     const activeGrids = new Set(this.state.activeGrids);
 

@@ -15,6 +15,8 @@ export default {
 
   //专家管理
   getExpertList: '/expert/list',
+  getExpertUserRating: '/expert/user-rating/get',
+  saveExpertUserRating: '/expert/user-rating/update',
   getExpertIndividualIntroduce: '/expert/introduction',
   saveExpertIndividualIntroduce: '/expert/introduction/update',
   getExpertActivityList: '/expert/activity/list',
