@@ -52,6 +52,18 @@ export class ScheduleTable extends Component {
     );
   };
 
+  setActiveGrid = activeGrids => {
+    this.setState({
+      activeGrids,
+    });
+  };
+
+  clear = () => {
+    this.setState({
+      activeGrids: [],
+    });
+  };
+
   render() {
     const { rowHeader, colHeader } = this;
     const { activeGrids } = this.state;
