@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 18:37:03
+ * @LastEditTime: 2020-03-29 18:52:04
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -44,7 +44,7 @@ class ChatItem extends React.Component {
   };
   state = {
     msg: '',
-    translate:'',
+    translate: '',
     isFullImgShow: false,
     msgUnRead: false,
   };
@@ -254,20 +254,20 @@ class ChatItem extends React.Component {
   getTranslate = (idClient) => {
     this.props.dispatch({
       type: 'chat/getTranslate',
-      // idClient,
-      idClient:'63570c14312f3a3366b61a74d0ac4ab5',
+      idClient,
+      // idClient:'63570c14312f3a3366b61a74d0ac4ab5',
       callback: (res) => {
-        if(res.code==='0'){
-          if(res.data.flag===0){
+        if (res.code === '0') {
+          if (res.data.flag === 0) {
             this.setState({
               translate: res.data.translate,
             });
-          }else{
+          } else {
             this.setState({
               translate: res.data.msg,
             });
           }
-        }else{
+        } else {
           this.setState({
             translate: '网络错误',
           });
@@ -282,60 +282,65 @@ class ChatItem extends React.Component {
     return (
       /* 信息类型*/
       <li className={
-        `u-msg ${msg.flow === 'out' ? 'item-me':''} ${msg.flow === 'in' ? 'item-you':''} ${msg.flow === 'timeTag' ? 'item-time':''} ${msg.flow === 'tip' ? 'item-tip':''} ${type === 'session' ? 'session-chat':''} `}>
+        `chat-msg ${msg.flow === 'out' ? 'item-me' : ''} ${msg.flow === 'in' ? 'item-you' : ''} ${msg.type === 'timeTag' ? 'item-time' : ''} ${msg.type === 'tip' ? 'item-tip' : ''} ${type === 'session' ? 'session-chat' : ''} `}>
         {/* 信息头信息 */}
-        <div className={
+        {['timeTag', 'tip', 'notification'].includes(msg.type) && <div className={
           `${msg.type === 'tip' && 'tip'}
           ${msg.type === 'notification' && msg.scene === 'team' && 'notification'}
-          `}>---- {msg.showText} ----</div>
+          `}>---- {msg.showText} ----</div>}
         {(!['timeTag', 'tip', 'notification'].includes(msg.type) && (msg.flow === 'in' || msg.flow === 'out')) &&
-          <div
-          data-idclient={msg.idClient}
-          data-time={msg.time}
-          data-flow={msg.flow}
-          data-type={msg.type}
+          <div className='msg-box'
+            data-idclient={msg.idClient}
+            data-time={msg.time}
+            data-flow={msg.flow}
+            data-type={msg.type}
             onClick={this.revocateMsg}
           >
             {/* 信息来源 */}
             {msg.avatar &&
               <a className="msg-head" href={msg.link}>
-                <img className="icon u-circle" src={msg.avatar} />
+                <img src={msg.avatar} />
               </a>
+            }  
+          {!msg.avatar && msg.type !== 'notification' &&
+              <a className="msg-head" href={msg.link}>
+              <img src={msg.avatar} />
+            </a>
+          }
+            {msg.fromNick &&
+              <span className="msg-name" >{msg.fromNick}</span>
             }
-            {!msg.avatar && msg.type !== 'notification' &&
-              <p className="msg-user">
-                <em>{msg.showTime}</em>{msg.from}
-              </p>
-            }
+
             {/* 信息内容 */}
             {msg.type === 'text' &&
-              <span className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></span>
+              <div className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
             }
             {(msg.type === 'custom-type1' || msg.type === 'custom-type3' || msg.type === 'video') &&
-              <span className="msg-text" ref="mediaMsg"></span>
+              <div className="msg-text" ref="mediaMsg"></div>
             }
             {msg.type === 'image' &&
-              <span className="msg-text" ref="mediaMsg" onClick={this.showFullImg.bind(this, msg.originLink)}></span>
+              <div className="msg-text" ref="mediaMsg" onClick={this.showFullImg.bind(this, msg.originLink)}></div>
             }
             {msg.type === 'audio' &&
-              <span className={`msg-text msg-audio ${msg.unreadAudio && 'unreadAudio'}`} style={{ width: msg.width }} ref="mediaMsg" onClick={this.playAudio.bind(this, msg)} dangerouslySetInnerHTML={{ __html: msg.showText }}></span>
+              <div className={`msg-text msg-audio ${msg.unreadAudio && 'unreadAudio'}`} style={{ width: msg.width }} ref="mediaMsg" onClick={this.playAudio.bind(this, msg)} dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
             }
             {msg.type === 'file' &&
-              <span className="msg-text"><a href={msg.fileLink} target="_blank"><i class="u-icon icon-file"></i>{msg.showText}</a></span>
+              <div className="msg-text"><a href={msg.fileLink} target="_blank"><i class="u-icon icon-file"></i>{msg.showText}</a></div>
             }
             {msg.type === 'robot' &&
-              <span className="msg-text">功能暂未开放</span>
+              <div className="msg-text">功能暂未开放</div>
             }
             {msg.type === 'notification' &&
-              <span className="msg-text notify">{msg.showText}</span>
+              <div className="msg-text notify">{msg.showText}</div>
             }
             {!['text', 'custom-type1', 'custom-type3', 'video', 'image', 'audio', 'file', 'robot', 'notification'].includes(msg.type) &&
-              <span className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></span>
+              <div className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
             }
             {/* 翻译 */}
             {translate &&
-              <span className="msg-text-translate" dangerouslySetInnerHTML={{ __html: translate }}></span>
+              <div className="msg-text-translate" dangerouslySetInnerHTML={{ __html: translate }}></div>
             }
+            <div className='clear'></div>
             {msg.type === 'text' && msg.flow === 'in' &&
               <button className="msg-translate" onClick={this.getTranslate.bind(this, msg.idClient)}>翻译</button>
             }

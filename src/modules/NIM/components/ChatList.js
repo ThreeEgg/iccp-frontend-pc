@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 09:13:21
+ * @LastEditTime: 2020-03-29 16:21:28
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatList.js
  */
 import React from 'react';
@@ -49,8 +49,8 @@ export default class ChatList extends React.Component {
     const { type, msglist, userInfos, myInfo, isHistory, canLoadMore } = this.props;
 
     return (
-      <ul id="chat-list" className="m-chat-list p-chat-list">
-        <li className="u-msg item-time">
+      <ul id="chat-list" className="chat-list">
+        <li className="item-more">
           ---- {canLoadMore ? '上拉加载更多' : '已无更多记录'} ----
         </li>
         {msglist.map((msg, index) => {

@@ -1,0 +1,361 @@
+.ant-layout-sider{
+    position     : relative;
+    .login{
+        position: absolute;
+        bottom: 0;
+    }
+}
+.ant-menu-inline {
+    .ant-menu-item {
+        position     : relative;
+        padding      : 1rem !important;
+        height       : 5rem;
+        line-height  : 5rem;
+        margin       : 0 !important;
+        border-bottom: .125rem solid #F5F5F5;
+
+        &::after {
+            border-right: 0rem solid #337aff;
+        }
+
+        .nav-avatar {
+            position     : absolute;
+            top          : 1rem;
+            left         : 1rem;
+            width        : 3rem;
+            height       : 3rem;
+            border-radius: 50%;
+        }
+
+        .nav-info {
+            position: absolute;
+            top     : 1rem;
+            right   : 1rem;
+            width   : 12rem;
+            height  : 3rem;
+
+            .nav-name {
+                position      : absolute;
+                width         : 8.75rem;
+                height        : 1.5625rem;
+                font-size     : 1.125rem;
+                font-family   : PingFangSC-Medium, PingFang SC;
+                font-weight   : 500;
+                color         : rgba(51, 51, 51, 1);
+                line-height   : 1.5625rem;
+                letter-spacing: .0625rem;
+                text-overflow : ellipsis;
+                overflow: hidden;
+            }
+
+            .nav-time {
+                position   : absolute;
+                top        : .25rem;
+                right      : 0;
+                width      : 2.5rem;
+                height     : 1.125rem;
+                font-size  : .8125rem;
+                font-family: PingFangSC-Regular, PingFang SC;
+                font-weight: 400;
+                color      : rgba(204, 204, 204, 1);
+                line-height: 1.125rem;
+            }
+
+            .nav-text {
+                position     : absolute;
+                bottom       : .125rem;
+                width        : 9.75rem;
+                height       : 1.25rem;
+                font-size    : .875rem;
+                font-family  : PingFangSC-Regular, PingFang SC;
+                font-weight  : 400;
+                color        : rgba(153, 153, 153, 1);
+                line-height  : 1.25rem;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+    }
+
+    .ant-menu-item-selected {
+        // color           : #333333;
+        background-color   : #F9F9F9 !important;
+    }
+}
+
+.chat-box {
+    width           : 100%;
+    height          : 100%;
+    margin-left     : 17.5rem;
+    background-color: #F5F5F5;
+
+    @titleHight : 5rem;
+    @editerHight: 13.5625rem;
+
+    .chat-title {
+        position     : relative;
+        width        : 100%;
+        height       : @titleHight;
+        border-bottom: .0625rem solid rgba(238, 238, 238, 1);
+
+        .chat-expert {
+            position: absolute;
+            top     : 1.0625rem;
+            left    : 1.25rem;
+
+            .expert-name {
+                vertical-align: top;
+                padding-right : 1rem;
+                width         : auto;
+                height        : 1.5625rem;
+                font-size     : 1.125rem;
+                font-family   : PingFangSC-Medium, PingFang SC;
+                font-weight   : 500;
+                color         : rgba(51, 51, 51, 1);
+                line-height   : 1.5625rem;
+                letter-spacing: .0625rem;
+            }
+
+            .expert-like {
+                display         : inline-block;
+                background-color: #000000;
+                width           : 1.5rem;
+                height          : 1.5rem;
+            }
+        }
+
+
+        .expert-info {
+            position   : absolute;
+            top        : 2.625rem;
+            left       : 1.25rem;
+            width      : 3.5rem;
+            height     : 1.25rem;
+            font-size  : .875rem;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color      : rgba(153, 153, 153, 1);
+            line-height: 1.25rem;
+        }
+
+        .expert-case {
+            position       : absolute;
+            top            : 1.8125rem;
+            right          : 2.625rem;
+            width          : 5.3125rem;
+            height         : 1.375rem;
+            font-size      : 1rem;
+            font-family    : PingFangSC-Regular, PingFang SC;
+            font-weight    : 400;
+            color          : rgba(51, 51, 51, 1);
+            line-height    : 1.375rem;
+            text-decoration: underline;
+            cursor         : pointer;
+        }
+    }
+
+    .chat-list {
+        height  : calc(100% - @titleHight - @editerHight);
+        margin  : 0;
+        padding : 0 5.25rem;
+        overflow: auto;
+
+        li {
+            list-style: none;
+        }
+
+        .item-time,
+        .item-more {
+            font-size : 0.8rem;
+            text-align: center;
+            color     : #cccccc;
+
+            div {
+                font-size: 0.8rem;
+            }
+        }
+
+        @headSize: 3rem;
+
+        .item-me {
+            .msg-box {
+                margin-left: 20%;
+
+                .msg-head {
+                    right: -4rem;
+                }
+
+                .msg-name {
+                    right: 0;
+                }
+
+                .msg-text {
+                    float: right;
+                }
+            }
+        }
+
+        .item-you {
+            .msg-box {
+                margin-right: 20%;
+            }
+
+            .msg-head {
+                left: -4rem;
+            }
+        }
+
+        .item-me,
+        .item-you {
+            .msg-box {
+                width      : 80%;
+                position   : relative;
+                padding-top: 3.125rem;
+
+                .clear {
+                    clear: both;
+                }
+
+                .msg-head {
+                    position: absolute;
+                    top     : 1rem;
+
+                    img {
+                        width        : @headSize;
+                        height       : @headSize;
+                        border-radius: 50%;
+                    }
+                }
+
+                .msg-name {
+                    position      : absolute;
+                    top           : 1rem;
+                    width         : auto;
+                    height        : 1.5625rem;
+                    font-size     : 1.125rem;
+                    font-family   : PingFangSC-Medium, PingFang SC;
+                    font-weight   : 500;
+                    color         : rgba(51, 51, 51, 1);
+                    line-height   : 1.5625rem;
+                    letter-spacing: .0625rem;
+                }
+
+                .msg-text {
+                    width        : auto;
+                    max-width    : 100%;
+                    padding      : 1rem;
+                    background   : rgba(255, 255, 255, 1);
+                    border-radius: 10px;
+                }
+
+                .msg-translate {
+                    position: absolute;
+                    right   : 0rem;
+                    bottom  : 0rem;
+                }
+            }
+
+
+        }
+    }
+
+    @toolsHight: 3.5rem;
+
+    .chat-editor {
+        position: relative;
+        height  : @editerHight;
+
+        .editor-tools {
+            width  : 100%;
+            height : @toolsHight;
+            padding: 1rem 1.5rem;
+
+            .editor-tool {
+                position: relative;
+                width   : 1.5rem;
+                height  : 1.5rem;
+
+                .icon-img {
+                    width : inherit;
+                    height: inherit;
+
+                    img {
+                        width         : inherit;
+                        height        : inherit;
+                        vertical-align: top;
+
+                    }
+                }
+
+                .editor-file {
+                    z-index  : 101;
+                    position : absolute;
+                    display  : inline-block;
+                    left     : 0;
+                    top      : 0;
+                    width    : inherit;
+                    height   : inherit;
+                    opacity  : 0;
+                    font-size: 0;
+                    cursor   : pointer;
+                }
+
+            }
+        }
+
+        .editor-input {
+            vertical-align: top;
+            padding       : 0 10rem 1.5rem 1.5rem;
+            font-size     : 1rem;
+            width         : 100%;
+            height        : calc(@editerHight - @toolsHight);
+            // 去掉样式
+            outline         : none;
+            resize          : none;
+            border          : 0;
+            background-color: transparent;
+
+            // 修改提示信息样式
+            &::-webkit-input-placeholder {
+                /* WebKit browsers */
+                color      : #9c9c9c;
+                line-height: 2rem;
+            }
+
+            &:-moz-placeholder {
+                /* Mozilla Firefox 4 to 18 */
+                color      : #9c9c9c;
+                line-height: 2rem;
+            }
+
+            &::-moz-placeholder {
+                /* Mozilla Firefox 19+ */
+                color      : #9c9c9c;
+                line-height: 2rem;
+            }
+
+            &::-ms-input-placeholder {
+                /* Internet Explorer 10+ */
+                color      : #9c9c9c;
+                line-height: 2rem;
+            }
+        }
+
+        .editor-send {
+            position     : absolute;
+            right        : 2rem;
+            bottom       : 1.5rem;
+            width        : 6rem;
+            height       : 2.5rem;
+            background   : rgba(255, 255, 255, 1);
+            border-radius: .25rem;
+            border       : .0625rem solid rgba(221, 221, 221, 1);
+            line-height  : 2.5rem;
+            text-align   : center;
+            font-size    : 1rem;
+            font-family  : PingFangSC-Regular, PingFang SC;
+            font-weight  : 400;
+            color        : rgba(153, 153, 153, 1);
+        }
+    }
+}

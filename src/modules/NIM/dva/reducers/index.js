@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 16:49:01
+ * @LastEditTime: 2020-03-29 18:42:50
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -59,7 +59,7 @@ export default {
       isLogin: true,
     };
   },
-  updateMyInfo(state, myInfo) {
+  updateMyInfo(state, {myInfo}) {
     const { myInfoOld } = state;
     myInfo = util.mergeObject(myInfoOld, myInfo)
     return { ...state, myInfo: myInfo };

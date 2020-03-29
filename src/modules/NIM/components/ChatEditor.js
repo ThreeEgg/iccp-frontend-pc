@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 16:56:38
+ * @LastEditTime: 2020-03-29 17:17:27
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
@@ -126,12 +126,12 @@ class ChatEditor extends React.Component {
   showEmoji = () => {
     debugger
     this.setState({
-      isEmojiShown:true,
+      isEmojiShown: true,
     });
   }
   hideEmoji = () => {
     this.setState({
-      isEmojiShown:false,
+      isEmojiShown: false,
     });
   }
   addEmoji = (emojiName) => {
@@ -142,25 +142,27 @@ class ChatEditor extends React.Component {
   }
   render() {
     return (
-      <div className="m-chat-editor">
-        <div className="m-chat-editor-main">
-          <span className="u-editor-input">
-            <textarea value={this.state.msgToSent}
-              onChange={e => {
-                this.setState({
-                  msgToSent: e.target.value,
-                })
-              }}></textarea>
-          </span >
-          <span className="u-editor-icon" onClick={this.showEmoji} >
-            <i className="u-icon-img"><img src={this.state.icon1} /></i>
-          </span >
-          <span className="u-editor-icon">
-            <i className="u-icon-img"><img src={this.state.icon2} /></i>
-            <input type="file" ref="fileToSent" onChange={this.sendFileMsg} />
+      <div className="chat-editor">
+        <div className="editor-tools">
+          <span className="editor-tool">
+            <i className="icon-img"><img src={this.state.icon2} /></i>
+            <input className='editor-file' type="file" ref="fileToSent" onChange={this.sendFileMsg} />
           </span>
-          <span className="u-editor-send" onClick={this.sendTextMsg}> 发 送 </span >
-        </div >
+        </div>
+        <textarea className="editor-input"
+          value={this.state.msgToSent}
+          onChange={e => {
+            this.setState({
+              msgToSent: e.target.value,
+            })
+          }}
+          placeholder='按如下方式描述更有利于描述清楚您的问题：&#10;公司名称：&#10;情况描述：'
+        />
+        {/* <span className="editor-icon" onClick={this.showEmoji} >
+            <i className="icon-img"><img src={this.state.icon1} /></i>
+          </span > */}
+
+        <span className="editor-send" onClick={this.sendTextMsg}> 发 送 </span >
       </div >
     );
   }

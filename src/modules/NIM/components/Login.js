@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-25 16:21:52
+ * @LastEditTime: 2020-03-29 19:01:50
  * @FilePath: \PC端-前端\src\modules\NIM\components\Login.js
  */
 import React from 'react';
@@ -115,7 +115,7 @@ class Login extends React.Component {
     const { isLogin } = chat;
     return (
       <div>
-        <LoginButton isLogin={isLogin} clickLogout={this.logout} clickLogin={this.showLogin} />
+        {<Button className='login' type="primary" danger={isLogin} onClick={isLogin ? this.logout : this.showLogin}> 登{isLogin ? '出' : '录'}NIM </Button> }
         <Modal
           title="登录NIM"
           visible={this.state.visible}

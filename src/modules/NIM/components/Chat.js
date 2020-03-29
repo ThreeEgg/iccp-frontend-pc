@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 16:12:26
+ * @LastEditTime: 2020-03-29 18:18:05
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -12,22 +12,16 @@ import { connect } from 'react-redux';
 import ChatList from './ChatList';
 import ChatEditor from './ChatEditor';
 import { Layout } from 'antd';
-
+const { Header, Footer, Content } = Layout;
 import util from '../utils';
 import page from '../utils/page';
-function InvalidHint(props) {
-  const { teamInfo, scene, teamInvalid } = props;
-  if (scene === 'team' && teamInvalid) {
-    const name = teamInfo && teamInfo.type === 'normal' ? '讨论组' : '群';
-    return "<div class='invalidHint'>您已退出该" + name + '</div>';
-  }
-  return '';
-}
+
 class Chat extends React.Component {
   state = {
     sessionName: '',
     scene: null,
     to: null,
+    userInfo: null,
     teamInfo: null,
     teamInvalid: false,
     muteInTeam: false,
@@ -97,7 +91,7 @@ class Chat extends React.Component {
       let to = util.parseSession(this.props.currSessionId).to
       console.log(scene);
       console.log(to);
-      let teamInfo = undefined
+      let teamInfo = this.state.teamInfo
       let teamInvalid = this.state.teamInvalid
       let muteInTeam = this.state.muteInTeam
       if (scene === 'team') {
@@ -125,6 +119,8 @@ class Chat extends React.Component {
         sendInvalidHint,
       })
     }
+  };
+  onClickCase = () => {
   };
   onClickBack = () => {
     // location.href = '#/contacts'
@@ -159,16 +155,24 @@ class Chat extends React.Component {
     }
   };
   render() {
-    const { teamInfo, scene, to, teamInvalid, muteInTeam, sendInvalidHint } = this.state;
+    const { teamInfo, scene, to, teamInvalid, muteInTeam, sendInvalidHint, sessionName } = this.state;
     const { chat } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
     return (
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
-        <InvalidHint
-          teamInfo={teamInfo}
-          scene={scene}
-          teamInvalid={teamInvalid}
-        />
+      <div className="chat-box">
+        <div className='chat-title'>
+          <div className='chat-expert'>
+            <span className='expert-name'>
+              {sessionName}
+            </span>
+            <span className="expert-like" />
+            {/* <img className="expert-like" src='/public/im/ic_im_evaluate.svg' alt="" /> */}
+          </div>
+          <span className='expert-info'>
+            专家信息
+          </span>
+          <span className='expert-case' onClick={this.onClickCase}>案件信息表</span>
+        </div>
         <ChatList
           type="session"
           msglist={currSessionMsgs}
@@ -184,7 +188,7 @@ class Chat extends React.Component {
           invalidHint={sendInvalidHint}
           advancedTeam={teamInfo && teamInfo.type === 'advanced'}
         />
-      </Layout>
+      </div>
     );
   }
 }
