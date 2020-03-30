@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 15:31:40
+ * @LastEditTime: 2020-03-30 11:54:41
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
@@ -126,26 +126,31 @@ class Session extends React.Component {
     const { chat } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
     return (
-      <Menu 
-      theme="light" 
-      mode="inline" 
-      defaultSelectedKeys={['-1']}
+      <Menu
+        theme="light"
+        mode="inline"
+        defaultSelectedKeys={['-1']}
       >
         {this.state.sessionlist.map((session, index) => (
           <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
             {/* Id={} inlineDesc={session.lastMsgShow} */}
             <img className='nav-avatar' src={session.avatar} />
-            <div className='nav-info' >
-              <span className='nav-name' >
-                {session.name}
-              </span>
-              <span className='nav-time' >
-                {session.updateTimeShow}
-              </span>
-              <div className='nav-text' >
-                {session.lastMsgShow}
-              </div>
-            </div>
+            <span className='nav-info' >
+                <span className='nav-name' >
+                  {session.name}
+                </span>
+                <span className='nav-time' >
+                  {session.updateTimeShow}
+                </span>
+                <span className='nav-text' >
+                  {session.lastMsgShow}
+                </span>
+                {session.unread > 0 &&
+                  <span className='nav-unread' >
+                    {session.unread}
+                  </span>
+                }
+            </span>
           </Menu.Item>
         ))}
       </Menu>

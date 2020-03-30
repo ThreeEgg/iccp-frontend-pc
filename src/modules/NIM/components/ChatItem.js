@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 18:52:04
+ * @LastEditTime: 2020-03-30 16:34:36
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -47,6 +47,7 @@ class ChatItem extends React.Component {
     translate: '',
     isFullImgShow: false,
     msgUnRead: false,
+    icon1: `/im/ic_im_failed.svg`,
   };
   componentWillMount() {
     this.computedItem()
@@ -301,57 +302,59 @@ class ChatItem extends React.Component {
               <a className="msg-head" href={msg.link}>
                 <img src={msg.avatar} />
               </a>
-            }  
-          {!msg.avatar && msg.type !== 'notification' &&
+            }
+            {!msg.avatar && msg.type !== 'notification' &&
               <a className="msg-head" href={msg.link}>
-              <img src={msg.avatar} />
-            </a>
-          }
+                <img src={msg.avatar} />
+              </a>
+            }
             {msg.fromNick &&
               <span className="msg-name" >{msg.fromNick}</span>
             }
-
-            {/* 信息内容 */}
-            {msg.type === 'text' &&
-              <div className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
-            }
-            {(msg.type === 'custom-type1' || msg.type === 'custom-type3' || msg.type === 'video') &&
-              <div className="msg-text" ref="mediaMsg"></div>
-            }
-            {msg.type === 'image' &&
-              <div className="msg-text" ref="mediaMsg" onClick={this.showFullImg.bind(this, msg.originLink)}></div>
-            }
-            {msg.type === 'audio' &&
-              <div className={`msg-text msg-audio ${msg.unreadAudio && 'unreadAudio'}`} style={{ width: msg.width }} ref="mediaMsg" onClick={this.playAudio.bind(this, msg)} dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
-            }
-            {msg.type === 'file' &&
-              <div className="msg-text"><a href={msg.fileLink} target="_blank"><i class="u-icon icon-file"></i>{msg.showText}</a></div>
-            }
-            {msg.type === 'robot' &&
-              <div className="msg-text">功能暂未开放</div>
-            }
-            {msg.type === 'notification' &&
-              <div className="msg-text notify">{msg.showText}</div>
-            }
-            {!['text', 'custom-type1', 'custom-type3', 'video', 'image', 'audio', 'file', 'robot', 'notification'].includes(msg.type) &&
-              <div className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
-            }
-            {/* 翻译 */}
-            {translate &&
-              <div className="msg-text-translate" dangerouslySetInnerHTML={{ __html: translate }}></div>
-            }
+            {/* 信息主体 */}
+            <div className="msg-content">
+              {/* 信息内容 */}
+              {msg.type === 'text' &&
+                <div className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
+              }
+              {(msg.type === 'custom-type1' || msg.type === 'custom-type3' || msg.type === 'video') &&
+                <div className="msg-text" ref="mediaMsg"></div>
+              }
+              {msg.type === 'image' &&
+                <div className="msg-text" ref="mediaMsg" onClick={this.showFullImg.bind(this, msg.originLink)}></div>
+              }
+              {msg.type === 'audio' &&
+                <div className={`msg-text msg-audio ${msg.unreadAudio && 'unreadAudio'}`} style={{ width: msg.width }} ref="mediaMsg" onClick={this.playAudio.bind(this, msg)} dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
+              }
+              {msg.type === 'file' &&
+                <div className="msg-text"><a href={msg.fileLink} target="_blank"><i class="u-icon icon-file"></i>{msg.showText}</a></div>
+              }
+              {msg.type === 'robot' &&
+                <div className="msg-text">功能暂未开放</div>
+              }
+              {msg.type === 'notification' &&
+                <div className="msg-text notify">{msg.showText}</div>
+              }
+              {!['text', 'custom-type1', 'custom-type3', 'video', 'image', 'audio', 'file', 'robot', 'notification'].includes(msg.type) &&
+                <div className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
+              }
+              {/* 翻译 */}
+              {msg.type === 'text' && msg.flow === 'in' &&
+                <div className="msg-translate" onClick={this.getTranslate.bind(this, msg.idClient)}>{!translate && '翻译'}</div>
+              }
+              {translate &&
+                <div className="msg-text-translate" dangerouslySetInnerHTML={{ __html: translate }}></div>
+              }
+              {/* 发送失败 */}
+              {msg.status === 'fail' &&
+                <span className="msg-failed"><img src={this.state.icon1} /></span>
+              }
+              {/* 回执标志 */}
+              {msg.flow === 'out' && msg.status !== 'fail' &&
+                <span className={`msg-unread ${!msgUnRead && 'read'}`}>{msgUnRead ? '未读' : '已读'}</span>
+              }
+            </div>
             <div className='clear'></div>
-            {msg.type === 'text' && msg.flow === 'in' &&
-              <button className="msg-translate" onClick={this.getTranslate.bind(this, msg.idClient)}>翻译</button>
-            }
-            {/* 发送失败 */}
-            {msg.status === 'fail' &&
-              <span className="msg-failed"><i class="weui-icon-warn"></i></span>
-            }
-            {/* 回执标志 */}
-            {msgUnRead >= 0 &&
-              <span className="msg-unread">{msgUnRead && '未读'}</span>
-            }
           </div>
         }
       </li >

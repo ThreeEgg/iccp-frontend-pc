@@ -4,14 +4,14 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 17:17:27
+ * @LastEditTime: 2020-03-30 11:02:39
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import config from '../configs';
-import { message } from 'antd'
+import { message, Tooltip } from 'antd'
 
 class ChatEditor extends React.Component {
   //在这里进行类型检测(这里的名字不是随便自定义的，规定这样写的)
@@ -33,11 +33,9 @@ class ChatEditor extends React.Component {
   state = {
     isEmojiShown: false,
     msgToSent: '',
-    icon1: `${config.resourceUrl}/im/chat-editor-1.png`,
-    icon2: `${config.resourceUrl}/im/chat-editor-2.png`,
-    icon3: `${config.resourceUrl}/im/chat-editor-3.png`,
-    icon4: `https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fchat-editor-keyboard.png`,
-    icon5: `https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fchat-editor-record.png`,
+    icon1: `/im/ic_im_document.svg`,
+    icon2: ``,
+    icon3: ``,
     sendTxt: true,
     recording: false,
     recordDisable: false,
@@ -47,18 +45,19 @@ class ChatEditor extends React.Component {
     recordTimeout: '',
     recorder: null,
     audioContext: null,
+    ctrlDown: false,
   };
 
   componentDidMount = () => {
-    try {
-      this.setState({
-        audioContext: new window.AudioContext(),
-      });
-    } catch (e) {
-      this.setState({
-        recordDisable: true,
-      });
-    }
+    // try {
+    //   this.setState({
+    //     audioContext: new window.AudioContext(),
+    //   });
+    // } catch (e) {
+    //   this.setState({
+    //     recordDisable: true,
+    //   });
+    // }
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -102,6 +101,7 @@ class ChatEditor extends React.Component {
     });
   };
   sendFileMsg = () => {
+    debugger
     if (this.state.invalid) {
       message.error(this.state.invalidHint);
       return;
@@ -123,8 +123,27 @@ class ChatEditor extends React.Component {
       }
     }
   }
+  onKeyPress = (e) => {
+    if (e.charCode === 13 && this.state.ctrlDown) {
+      e.preventDefault();
+      this.sendTextMsg();
+    }
+  }
+  onKeyUp = (e) => {
+    if (e.keyCode === 17 && this.state.ctrlDown) {
+      this.setState({
+        ctrlDown: false,
+      });
+    }
+  }
+  onKeyDown = (e) => {
+    if (e.keyCode === 17 && !this.state.ctrlDown) {
+      this.setState({
+        ctrlDown: true,
+      });
+    }
+  }
   showEmoji = () => {
-    debugger
     this.setState({
       isEmojiShown: true,
     });
@@ -145,7 +164,7 @@ class ChatEditor extends React.Component {
       <div className="chat-editor">
         <div className="editor-tools">
           <span className="editor-tool">
-            <i className="icon-img"><img src={this.state.icon2} /></i>
+            <i className="icon-img"><img src={this.state.icon1} /></i>
             <input className='editor-file' type="file" ref="fileToSent" onChange={this.sendFileMsg} />
           </span>
         </div>
@@ -157,12 +176,16 @@ class ChatEditor extends React.Component {
             })
           }}
           placeholder='按如下方式描述更有利于描述清楚您的问题：&#10;公司名称：&#10;情况描述：'
+          onKeyPress={this.onKeyPress}
+          onKeyUp={this.onKeyUp}
+          onKeyDown={this.onKeyDown}
         />
         {/* <span className="editor-icon" onClick={this.showEmoji} >
             <i className="icon-img"><img src={this.state.icon1} /></i>
           </span > */}
-
-        <span className="editor-send" onClick={this.sendTextMsg}> 发 送 </span >
+        <Tooltip placement="left" title='Ctrl+Enter发送'>
+          <span className="editor-send" onClick={this.sendTextMsg}> 发 送 </span >
+        </Tooltip>
       </div >
     );
   }

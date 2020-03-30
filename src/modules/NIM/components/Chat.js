@@ -4,18 +4,17 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 18:18:05
+ * @LastEditTime: 2020-03-30 16:14:04
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import ChatList from './ChatList';
 import ChatEditor from './ChatEditor';
-import { Layout } from 'antd';
+import { Layout, Popconfirm, message } from 'antd';
 const { Header, Footer, Content } = Layout;
 import util from '../utils';
 import page from '../utils/page';
-
 class Chat extends React.Component {
   state = {
     sessionName: '',
@@ -26,10 +25,16 @@ class Chat extends React.Component {
     teamInvalid: false,
     muteInTeam: false,
     sendInvalidHint: '',
+    icon1: `/im/ic_im_evaluate.svg`,
+    icon2: `/im/ic_im_star.svg`,
+    evaluation: {
+      service: 3,
+      professional: 3,
+    }
   };
   // 进入该页面，文档被挂载
   async componentDidMount() {
-
+    this.initSession()
   }
   async componentDidUpdate(prevProps, prevState) {
     // 监听会话改变
@@ -154,10 +159,40 @@ class Chat extends React.Component {
       this.$toast('您已退出该群');
     }
   };
+
+  confirmEvaluation = (e) => {
+    console.log(e);
+    message.success('Click on Yes');
+  }
+
+  evaluate = (item, data) => {
+    let temp = { ...this.state.evaluation }
+    temp[data] = item + 1;
+    this.setState({
+      evaluation: temp,
+    })
+  }
   render() {
-    const { teamInfo, scene, to, teamInvalid, muteInTeam, sendInvalidHint, sessionName } = this.state;
+    const { teamInfo, scene, to, teamInvalid, muteInTeam, sendInvalidHint, sessionName, icon1, icon2, evaluation } = this.state;
     const { chat } = this.props;
     const { myInfo, userInfos, currSessionMsgs } = chat;
+    let Evaluation = (
+      <div className='evaluate-box'>
+        <div className='evaluate-title'>服务评价</div>
+        <div className='evaluate-content'>
+          <span>服务态度</span>
+          {[0, 1, 2].map(item => (
+            <img key={item} className={`evaluate-star ${evaluation.service > item ? '' : 'gray'}`} src={icon2} alt="" onClick={this.evaluate.bind(this, item, 'service')} />
+          ))}
+        </div>
+        <div className='evaluate-content'>
+          <span>专业能力</span>
+          {[0, 1, 2].map(item => (
+            <img key={item} className={`evaluate-star ${evaluation.professional > item ? '' : 'gray'}`} src={icon2} alt="" onClick={this.evaluate.bind(this, item, 'professional')} />
+          ))}
+        </div>
+      </div>
+    );
     return (
       <div className="chat-box">
         <div className='chat-title'>
@@ -165,8 +200,10 @@ class Chat extends React.Component {
             <span className='expert-name'>
               {sessionName}
             </span>
-            <span className="expert-like" />
-            {/* <img className="expert-like" src='/public/im/ic_im_evaluate.svg' alt="" /> */}
+            <Popconfirm placement="bottom" title={
+              Evaluation} onConfirm={this.confirmEvaluation} okText="保存评分" icon={<i />}>
+              <img className="expert-evaluate" src={icon1} alt="" />
+            </Popconfirm>
           </div>
           <span className='expert-info'>
             专家信息

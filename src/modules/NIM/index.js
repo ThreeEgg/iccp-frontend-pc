@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 16:16:14
+ * @LastEditTime: 2020-03-30 11:03:57
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -45,7 +45,7 @@ class Index extends React.Component {
   // methods
   render() {
     const { chat } = this.props;
-    const { myInfo, userInfos, currSessionMsgs } = chat;
+    const { currSessionId } = chat;
     return (
       <Layout style={{ height: '100%' }}>
         <Sider
@@ -61,7 +61,20 @@ class Index extends React.Component {
           <Session />
           <Login />
         </Sider>
-        <Chat />
+        <Sider
+          theme='light'
+          width='280'
+          style={{
+            overflow: 'auto',
+            height: '100%',
+            position: 'fixed',
+            left: 0,
+          }}
+        >
+          <Session />
+          <Login />
+        </Sider>
+        {currSessionId!=='p2p-null' && <Chat />}
       </Layout>
     );
   }
@@ -69,11 +82,5 @@ class Index extends React.Component {
 
 export default connect(({ chat }) => ({
   chat,
-  userUID: chat.userUID,
-  teamMembers: chat.teamMembers,
-  myInfo: chat.myInfo,
-  userInfos: chat.userInfos,
-  robotInfos: chat.robotInfos,
-  currSessionMsgs: chat.currSessionMsgs,
-  teamlist: chat.teamlist,
+  currSessionId: chat.currSessionId,
 }))(Index);
