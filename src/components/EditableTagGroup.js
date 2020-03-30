@@ -1,36 +1,46 @@
-import { Tag, Input } from 'antd';
+import { Tag, Input, Select } from 'antd';
 import { TweenOneGroup } from 'rc-tween-one';
 import { PlusOutlined } from '@ant-design/icons';
+import * as commonService from '../services/common';
 import './EditableTagGroup.less';
+
+const { Option } = Select;
 
 class EditableTagGroup extends React.Component {
   state = {
     tags: [],
     inputVisible: false,
     inputValue: '',
+    allServiceLoading: false,
+    allServiceTags: [],
   };
 
   handleClose = removedTag => {
-    const tags = this.state.tags.filter(tag => tag !== removedTag);
-    console.log(tags);
+    const tags = this.state.tags.filter(tag => tag.id !== removedTag.id);
     this.setState({ tags });
   };
 
   showInput = () => {
-    this.setState({ inputVisible: true }, () => this.input.focus());
-  };
-
-  handleInputChange = e => {
-    this.setState({ inputValue: e.target.value });
-  };
-
-  handleInputConfirm = () => {
-    const { inputValue } = this.state;
-    let { tags } = this.state;
-    if (inputValue && tags.indexOf(inputValue) === -1) {
-      tags = [...tags, inputValue];
+    const { allServiceTags } = this.state;
+    if (!allServiceTags.length) {
+      this.getAllServiceTag();
     }
-    console.log(tags);
+    this.setState({ inputVisible: true }, () => console.log(this.input.current));
+  };
+
+  handleInputChange = val => {
+    const { allServiceTags = {} } = this.state;
+    const serviceTag = allServiceTags.find(item => item.id == val);
+    if (serviceTag) {
+      this.handleInputConfirm(serviceTag);
+    }
+  };
+
+  handleInputConfirm = val => {
+    let { tags } = this.state;
+    if (val && !tags.find(item => item.id == val.id)) {
+      tags = [...tags, val];
+    }
     this.setState({
       tags,
       inputVisible: false,
@@ -51,19 +61,40 @@ class EditableTagGroup extends React.Component {
           this.handleClose(tag);
         }}
       >
-        {tag}
+        {tag.chineseContent}
       </Tag>
     );
     return (
-      <span key={tag} style={{ display: 'inline-block' }}>
+      <span key={tag.id} style={{ display: 'inline-block' }}>
         {tagElem}
       </span>
     );
   };
 
+  getAllServiceTag = async () => {
+    this.setState({ allServiceLoading: true });
+    const res = await commonService.getServiceList();
+
+    this.setState({ allServiceLoading: false });
+    if (res.code === '0') {
+      this.setState({
+        allServiceTags: res.data,
+      });
+    }
+  };
+
+  componentDidMount = () => {
+    if (this.props.tags) {
+      this.setState({
+        tags: this.props.tags,
+      });
+    }
+    this.getAllServiceTag();
+  };
+
   render() {
-    const { tags, inputVisible, inputValue } = this.state;
-    const tagChild = tags.map(this.forMap);
+    const { tags, inputVisible, inputValue, allServiceLoading, allServiceTags } = this.state;
+    const tagChild = tags.length ? tags.map(this.forMap) : '请添加您的服务标签';
     return (
       <div className="editable-tag-group">
         <div style={{ marginBottom: 16 }}>
@@ -84,16 +115,31 @@ class EditableTagGroup extends React.Component {
           </TweenOneGroup>
         </div>
         {inputVisible && (
-          <Input
+          // <Input
+          //   ref={this.saveInputRef}
+          //   type="text"
+          //   size="small"
+          //   style={{ width: '100%' }}
+          //   value={inputValue}
+          //   onChange={this.handleInputChange}
+          //   onBlur={this.handleInputConfirm}
+          //   onPressEnter={this.handleInputConfirm}
+          // />
+          <Select
             ref={this.saveInputRef}
-            type="text"
-            size="small"
+            // value={inputValue}
             style={{ width: '100%' }}
-            value={inputValue}
+            loading={allServiceLoading}
             onChange={this.handleInputChange}
-            onBlur={this.handleInputConfirm}
-            onPressEnter={this.handleInputConfirm}
-          />
+          >
+            {allServiceTags.map(item => {
+              return (
+                <Option key={item.id} value={item.id}>
+                  {item.chineseContent}
+                </Option>
+              );
+            })}
+          </Select>
         )}
         {!inputVisible && (
           <Tag

@@ -96,10 +96,10 @@ export const getAllServiceTagList = async ({ userId }) => {
   });
 };
 
-export const saveServiceTagList = async ({ serviceIdList }) => {
-  return request(api.saveServiceTagList, {
+export const saveServiceTagList = async ({ serviceIdStr }) => {
+  return request.post(api.saveServiceTagList, {
     params: {
-      serviceIdList,
+      serviceIdStr,
     },
   });
 };

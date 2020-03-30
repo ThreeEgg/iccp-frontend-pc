@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { Button, Avatar, Pagination, Modal, Input, message } from 'antd';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import Rate from '../../components/Rate';
@@ -33,22 +33,37 @@ export default class extends Component {
   state = {
     serviceTag: [],
     introduction: '',
+    editIntroduction: '',
     introductionModalVisible: false,
     serviceTagModalVisible: false,
   };
 
+  editableTagRef = createRef();
+
   modifyIntroduction = async () => {
-    const { introduction } = this.state;
-    const res = await expertService.saveExpertIndividualIntroduce({ introduction });
+    const { editIntroduction } = this.state;
+    const res = await expertService.saveExpertIndividualIntroduce({
+      introduction: editIntroduction,
+    });
 
     if (res.code === '0') {
       console.log(res);
       message.success('已更新');
-      this.setState({ introductionModalVisible: false });
+      this.setState({ introductionModalVisible: false, introduction: editIntroduction });
     }
   };
 
-  modifyServiceTag = async () => {};
+  modifyServiceTag = async () => {
+    const tags = this.editableTagRef.current.state.tags;
+    const serviceIdStr = tags.map(item => item.id).join(',');
+    const res = await expertService.saveServiceTagList({ serviceIdStr });
+
+    if (res.code === '0') {
+      console.log(res);
+      message.success('已更新');
+      this.setState({ serviceTagModalVisible: false });
+    }
+  };
 
   componentDidMount = () => {
     const { introduction, serviceTag } = this.props;
@@ -63,6 +78,7 @@ export default class extends Component {
       introductionModalVisible,
       serviceTagModalVisible,
       introduction,
+      editIntroduction,
       serviceTag,
     } = this.state;
     return (
@@ -98,7 +114,9 @@ export default class extends Component {
               <p className="flex-1">{introduction}</p>
               <div
                 className="action flex flex-justifyEnd"
-                onClick={() => this.setState({ introductionModalVisible: true })}
+                onClick={() =>
+                  this.setState({ introductionModalVisible: true, editIntroduction: introduction })
+                }
               >
                 <i className="iconfont">&#xe693;</i>
               </div>
@@ -202,12 +220,12 @@ export default class extends Component {
           onCancel={() => this.setState({ introductionModalVisible: false })}
         >
           <TextArea
-            value={introduction}
+            value={editIntroduction}
             autoSize={{ minRows: 7, maxRows: 12 }}
             allowClear
-            onChange={e => this.setState({ introduction: e.target.value.slice(0, 400) })}
+            onChange={e => this.setState({ editIntroduction: e.target.value.slice(0, 400) })}
           />
-          <div className="count-limit flex flex-justifyEnd">{introduction.length} / 400</div>
+          <div className="count-limit flex flex-justifyEnd">{editIntroduction.length} / 400</div>
         </Modal>
 
         <Modal
@@ -216,10 +234,10 @@ export default class extends Component {
           visible={serviceTagModalVisible}
           maskClosable={false}
           wrapClassName="expert-introduction-modal"
-          onOk={() => this.setState({ serviceTagModalVisible: false })}
+          onOk={this.modifyServiceTag}
           onCancel={() => this.setState({ serviceTagModalVisible: false })}
         >
-          <EditableTagGroup />
+          <EditableTagGroup ref={this.editableTagRef} tags={serviceTag} />
         </Modal>
       </ContentLayoutExpert>
     );
