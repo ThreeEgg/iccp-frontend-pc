@@ -24,11 +24,9 @@ export const getExpertIndividualIntroduce = async ({ userId }) => {
   });
 };
 
-export const saveExpertIndividualIntroduce = async ({ content }) => {
+export const saveExpertIndividualIntroduce = async ({ introduction }) => {
   return request.post(api.saveExpertIndividualIntroduce, {
-    params: {
-      content,
-    },
+    data: introduction,
   });
 };
 

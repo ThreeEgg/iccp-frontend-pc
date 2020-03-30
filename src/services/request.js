@@ -95,7 +95,7 @@ request.interceptors.response.use(async (response, options) => {
       message.error('登录失效');
     } else {
       notification.error({
-        description: data.msg,
+        description: data.errorInfo,
         message: '请求错误',
       });
     }

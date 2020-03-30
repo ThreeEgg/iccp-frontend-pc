@@ -5,11 +5,10 @@ export const getCommonHeader = () => {
     platform: 'pcweb',
     language: 'zh-CN',
     ua: window.navigator.userAgent,
-    ip: '0.0.0.0',
     timezone: new Date().getTimezoneOffset() / 60,
   };
 
-  const token = getAuthorityToken();
+  const token = localStorage.getItem('accessToken');
   if (token) {
     header['x-auth-token'] = token;
   }
