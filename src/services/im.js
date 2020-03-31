@@ -12,8 +12,8 @@ export const requestIMId = async ({ guestId }) => {
 export const checkFirstChat = async ({ expertImId, userImId }) => {
   return request(api.checkFirstChat, {
     params: {
-      expertImId,
-      userImId,
+      expertAccid,
+      userAccid,
     },
   });
 };

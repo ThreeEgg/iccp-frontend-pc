@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 10:39:50
+ * @LastEditTime: 2020-03-31 15:39:24
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -31,14 +31,14 @@ class ChatItem extends React.Component {
   //在这里进行类型检测(这里的名字不是随便自定义的，规定这样写的)
   static propTypes = {
     rawMsg: PropTypes.object,
-    userInfos: PropTypes.object,
+    userInfo: PropTypes.object,
     myInfo: PropTypes.object,
     isHistory: PropTypes.bool,
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
     rawMsg: {},
-    userInfos: {},
+    userInfo: {},
     myInfo: {},
     isHistory: false,
   };
@@ -50,9 +50,9 @@ class ChatItem extends React.Component {
     icon1: `/im/ic_im_failed.svg`,
   };
   componentWillMount() {
-    this.computedItem()
   }
   componentDidMount() {
+    this.computedItem()
     let item = this.state.msg
     // window.stopPlayAudio = this.stopPlayAudio.bind(this)
 
@@ -132,15 +132,13 @@ class ChatItem extends React.Component {
     if (this.props.type === 'session') {
       if (item.flow === 'in') {
         if (item.from !== this.props.userUID) {
-          item.avatar = (this.props.userInfos[item.from] && this.props.userInfos[item.from].avatar) || config.defaultUserIcon
-          // TODO
-          item.link = `#/namecard/${item.from}`
-          //todo  如果是未加好友的人发了消息，是否能看到名片
+          item.avatar = (this.props.userInfo && this.props.userInfo.image) || config.defaultUserIcon
+          item.name = this.props.userInfo && this.props.userInfo.name
         } else {
-          item.avatar = this.props.myInfo.avatar
+          item.avatar = config.defaultMeIcon
         }
       } else if (item.flow === 'out') {
-        item.avatar = this.props.myInfo.avatar
+        item.avatar = config.defaultMeIcon
       }
     } else {
       // 标记时间，聊天室中
@@ -162,7 +160,8 @@ class ChatItem extends React.Component {
         })
       }
     } else if (item.type === 'custom') {
-      let content = JSON.parse(item.content.replace(/\n/g, "\\\\n"))
+      let content = JSON.parse(item.content.replace(/\n\r/g, "<br>").replace(/\r\n/g, "<br>").replace(/\n/g, "<br>").replace(/\r/g, "<br>"))
+      console.log(content);
       // type 1 为猜拳消息
       if (content.type === 1) {
         let data = content.data
@@ -181,10 +180,11 @@ class ChatItem extends React.Component {
           item.imgUrl = `${emojiCnt.img}`
         }
       } else {
-        item.showText = util.parseCustomMsg(item)
-        if (item.showText !== '[自定义消息]') {
-          item.showText += ',请到手机或电脑客户端查看'
-        }
+        item.showText = content.msg
+        // item.showText = util.parseCustomMsg(item)
+        // if (item.showText !== '[自定义消息]') {
+        //   item.showText += ',请到手机或电脑客户端查看'
+        // }
       }
     } else if (item.type === 'image') {
       // 原始图片全屏显示
@@ -278,7 +278,7 @@ class ChatItem extends React.Component {
   }
 
   render() {
-    const { msg, msgUnRead, translate } = this.state;
+    const { msg, msgUnRead, translate,icon1 } = this.state;
     const { type } = this.props;
     return (
       /* 信息类型*/
@@ -298,18 +298,13 @@ class ChatItem extends React.Component {
             onClick={this.revocateMsg}
           >
             {/* 信息来源 */}
-            {msg.avatar &&
-              <a className="msg-head" href={msg.link}>
+            {msg.avatar && msg.type !== 'notification' &&
+              <span className="msg-head">
                 <img src={msg.avatar} />
-              </a>
+              </span>
             }
-            {!msg.avatar && msg.type !== 'notification' &&
-              <a className="msg-head" href={msg.link}>
-                <img src={msg.avatar} />
-              </a>
-            }
-            {msg.fromNick &&
-              <span className="msg-name" >{msg.fromNick}</span>
+            {msg.name &&
+              <span className="msg-name" >{msg.name}</span>
             }
             {/* 信息主体 */}
             <div className="msg-content">
@@ -336,7 +331,7 @@ class ChatItem extends React.Component {
                 <div className="msg-text notify">{msg.showText}</div>
               }
               {!['text', 'custom-type1', 'custom-type3', 'video', 'image', 'audio', 'file', 'robot', 'notification'].includes(msg.type) &&
-                <div className="msg-text" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
+                <div className="msg-text custom" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
               }
               {/* 翻译 */}
               {msg.type === 'text' && msg.flow === 'in' &&
@@ -347,7 +342,7 @@ class ChatItem extends React.Component {
               }
               {/* 发送失败 */}
               {msg.status === 'fail' &&
-                <span className="msg-failed"><img src={this.state.icon1} /></span>
+                <span className="msg-failed"><img src={icon1} /></span>
               }
               {/* 回执标志 */}
               {msg.flow === 'out' && msg.status !== 'fail' &&

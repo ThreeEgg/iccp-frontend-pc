@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-30 11:03:57
+ * @LastEditTime: 2020-03-31 14:43:27
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -74,7 +74,7 @@ class Index extends React.Component {
           <Session />
           <Login />
         </Sider>
-        {currSessionId!=='p2p-null' && <Chat />}
+        {currSessionId && <Chat />}
       </Layout>
     );
   }

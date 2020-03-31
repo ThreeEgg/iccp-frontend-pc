@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-13 14:53:30
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-30 18:23:16
+ * @LastEditTime: 2020-03-31 12:20:08
  * @FilePath: \PC端-前端\src\modules\NIM\dva\state.js
  */
 export default {
@@ -116,7 +116,7 @@ export default {
   // 客服信息
   serviceInfo: {},
   // 专家列表
-  expertList: [],
+  expertInfos: {},
   // 当前会话的用户ID
   currUserInfo: null,
 

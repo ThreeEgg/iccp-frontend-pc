@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 16:21:28
+ * @LastEditTime: 2020-03-31 15:06:28
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatList.js
  */
 import React from 'react';
@@ -18,14 +18,14 @@ export default class ChatList extends React.Component {
     type: PropTypes.string,
     canLoadMore: PropTypes.bool,
     msglist: PropTypes.array,
-    userInfos: PropTypes.object,
+    userInfo: PropTypes.object,
     myInfo: PropTypes.object,
     isHistory: PropTypes.bool,
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
     msglist: [],
-    userInfos: {},
+    userInfo: {},
     myInfo: {},
     isHistory: false,
   };
@@ -46,7 +46,7 @@ export default class ChatList extends React.Component {
     }, 20);
   };
   render() {
-    const { type, msglist, userInfos, myInfo, isHistory, canLoadMore } = this.props;
+    const { type, userInfo, msglist, myInfo, isHistory, canLoadMore } = this.props;
 
     return (
       <ul id="chat-list" className="chat-list">
@@ -58,7 +58,7 @@ export default class ChatList extends React.Component {
             <ChatItem
               type={type}
               rawMsg={msg}
-              userInfos={userInfos}
+              userInfo={userInfo}
               myInfo={myInfo}
               key={msg.idClient || index}
               isHistory={isHistory}

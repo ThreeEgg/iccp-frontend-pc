@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 11:13:24
+ * @LastEditTime: 2020-03-31 14:16:56
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -150,11 +150,76 @@ export default {
     }
   },
   updateSessions(state, { sessions }) {
-    const { nim, sessionlist: sessionlistOld, sessionMap: sessionMapOld } = state;
+    const { nim,
+      userUID,
+      userInfos,
+      serviceInfo,
+      expertInfos,
+      teamlist,
+      sessionlist: sessionlistOld,
+      sessionMap: sessionMapOld } = state;
     let sessionlist = [...sessionlistOld],
       sessionMap = { ...sessionMapOld },
       unreadCount = 0;
-      debugger
+    // 更新会话列表
+    sessions = sessions.filter(item => {
+      item.name = '未知';
+      item.avatar = '';
+      if (item.scene === 'p2p') {
+        let userInfo = null;
+        if (item.to !== userUID) {
+          // userInfo = userInfos[item.to];
+          if (item.to === serviceInfo.accid) {
+            userInfo = serviceInfo
+          } else {
+            userInfo = expertInfos[item.to] || {};
+          }
+        } else {
+          // userInfo = this.myInfo
+          // userInfo.alias = '我的手机'
+          // userInfo.avatar = `${config.myPhoneIcon}`
+          return false;
+        }
+        if (userInfo) {
+          // item.name = util.getFriendAlias(userInfo);
+          // item.avatar = userInfo.avatar;
+          item.name = userInfo.name;
+          item.avatar = userInfo.image;
+        }
+      } else if (item.scene === 'team') {
+        let teamInfo = null;
+        teamInfo = teamlist.find(team => {
+          return team.teamId === item.to;
+        });
+        if (teamInfo) {
+          item.name = teamInfo.name;
+          item.avatar =
+            teamInfo.avatar ||
+            (teamInfo.type === 'normal' ? config.defaultGroupIcon : config.defaultAdvancedIcon);
+        } else {
+          item.name = `群${item.to}`;
+          item.avatar = item.avatar || config.defaultGroupIcon;
+        }
+        // 去掉群聊
+        return
+      }
+      let lastMsg = item.lastMsg || {};
+      if (lastMsg.type === 'text') {
+        item.lastMsgShow = lastMsg.text || '';
+      } else if (lastMsg.type === 'custom') {
+        item.lastMsgShow = util.parseCustomMsg(lastMsg);
+      } else if (lastMsg.scene === 'team' && lastMsg.type === 'notification') {
+        item.lastMsgShow = util.generateTeamSysmMsg(lastMsg);
+      } else if (util.mapMsgType(lastMsg)) {
+        item.lastMsgShow = `[${util.mapMsgType(lastMsg)}]`;
+      } else {
+        item.lastMsgShow = '';
+      }
+      if (item.updateTime) {
+        item.updateTimeShow = util.formatDate(item.updateTime, true);
+      }
+      return item;
+    });
     sessionlist = nim.mergeSessions(sessionlist, sessions)
     sessionlist.sort((a, b) => {
       return b.updateTime - a.updateTime
@@ -166,10 +231,16 @@ export default {
     return { ...state, sessionlist, sessionMap, unreadCount };
   },
   updateServiceInfo(state, { serviceInfo }) {
+    serviceInfo.image = `/im/ic_im_service.svg`
     return { ...state, serviceInfo };
   },
-  updateExpertList(state, { expertList }) {
-    return { ...state, expertList };
+  updateExpertInfos(state, { expertList }) {
+    const { expertInfos: expertInfosOld } = state;
+    let expertInfos = { ...expertInfosOld };
+    expertList.forEach(item => {
+      expertInfos[item.accid] = item
+    })
+    return { ...state, expertInfos };
   },
   deleteSessions(state, sessionIds) {
     const { nim } = state;
