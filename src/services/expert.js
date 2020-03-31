@@ -48,11 +48,9 @@ export const getExpertActivityById = async ({ articleId }) => {
   });
 };
 
-export const saveExpertActivity = async ({ content }) => {
+export const saveExpertActivity = async ({ activity }) => {
   return request.post(api.saveExpertActivity, {
-    params: {
-      content,
-    },
+    data: activity,
   });
 };
 

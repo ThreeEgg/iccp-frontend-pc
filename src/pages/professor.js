@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { getResponseRateAverage } from '../common/index';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
+import Timeline from '../components/Timeline';
 import Rate from '../components/Rate';
 import './professor.less';
 
@@ -107,6 +108,8 @@ export default class Platform extends React.Component {
 
     if (targetUrl.match('tabName')) {
       targetUrl = targetUrl.replace(/tabName=[^&]+/, `tabName=${key}`);
+    } else {
+      targetUrl += `&tabName=${key}`;
     }
 
     router.push(targetUrl);
@@ -194,49 +197,14 @@ export default class Platform extends React.Component {
             {!articleDetail ? (
               <Tabs activeKey={tabName} onChange={this.changeTab}>
                 <TabPane tab="专家动态" key="activity">
-                  <div className="pro-statu-item">
-                    <div className="statu-con">
-                      <div className="statu-title flex flex-align">
-                        <span className="statu-year">2020</span>
-                        <div>
-                          <p className="statu-monthNo">04</p>
-                          <p className="statu-monthEN">Jan</p>
-                        </div>
-                      </div>
-                      <div className="statu-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        <span>20:41</span>
-                        <div className="statu-circle-big" />
-                      </div>
-                      <div className="statu-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        <span>20:41</span>
-                        <div className="statu-circle-small" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pro-statu-item">
-                    <div className="statu-con">
-                      <div className="statu-title flex flex-align">
-                        <span className="statu-year">2020</span>
-                        <div>
-                          <p className="statu-monthNo">03</p>
-                          <p className="statu-monthEN">Mar</p>
-                        </div>
-                      </div>
-                      <div className="statu-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod
-                        bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra
-                        justo commodo.
-                        <span>20:41</span>
-                        <div className="statu-circle-big" />
-                      </div>
-                      <div className="statu-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        <span>20:41</span>
-                        <div className="statu-circle-small" />
-                      </div>
-                    </div>
+                  <Timeline data={activity} />
+                  <div className="common-pagination">
+                    <Pagination
+                      current={this.state.current}
+                      onChange={this.onChange}
+                      size="small"
+                      total={50}
+                    />
                   </div>
                 </TabPane>
                 <TabPane tab="专家文章" key="article">

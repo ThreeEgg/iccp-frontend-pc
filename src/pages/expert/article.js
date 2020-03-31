@@ -161,8 +161,8 @@ export class Article extends Component {
     return (
       <ContentLayoutExpert
         className="expert-article"
-        title="Classic Case"
-        url="/images/ic_header_classcase.png"
+        title="My Article"
+        url="/images/ic_professor_article.png"
       >
         {!edit ? (
           <div className="expert-article-list">
