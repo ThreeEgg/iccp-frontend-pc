@@ -25,21 +25,33 @@ export default class extends Component {
     const expertInfoRes = await fetch(`${requestUrl}?userId=${id}`);
     const expertInfoContent = await expertInfoRes.json();
     const {
-      baseInfo,
       schedule,
       serviceTagList,
-      rating,
-      information = {},
-      briefIntro,
+      attitudeRateAVG,
+      skillRateAVG,
+      responseSpeed,
+      content,
+      introduction,
+      cname,
+      name,
+      image,
     } = expertInfoContent.data;
 
     return {
-      introduction: briefIntro.introduction,
+      introduction: introduction,
       serviceTag: serviceTagList,
-      information: information.content ? JSON.parse(information.content) : [],
-      userInfo: baseInfo,
+      information: content ? JSON.parse(content) : [],
+      userInfo: {
+        name,
+        image,
+      },
       schedule,
-      rating,
+      rating: {
+        attitudeRateAVG,
+        skillRateAVG,
+        responseSpeed,
+      },
+      cname,
     };
   }
 
@@ -325,8 +337,9 @@ export default class extends Component {
       information,
     } = this.state;
     const {
-      userInfo: { name, image, countryCode },
+      userInfo: { name, image },
       rating: { attitudeRateAVG, skillRateAVG, responseSpeed },
+      cname,
     } = this.props;
     const responseRateAVG = getResponseRateAverage(responseSpeed);
     const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
@@ -347,7 +360,7 @@ export default class extends Component {
                 <h1 className="name">{name}</h1>
                 <h4 className="location flex">
                   <i className="iconfont">&#xe698;</i>
-                  &nbsp;&nbsp; {countryCode}
+                  &nbsp;&nbsp; {cname}
                 </h4>
               </div>
             </div>

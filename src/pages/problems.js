@@ -37,7 +37,7 @@ export default class Problems extends React.Component {
   render() {
     const { pageNum, pageInfo } = this.props;
     return (
-      <Platform title="problems" url="/images/ic_header_problems.png">
+      <ContentLayout title="problems" url="/images/ic_header_problems.png">
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">
@@ -60,7 +60,7 @@ export default class Problems extends React.Component {
             total={pageInfo.totalResults}
           />
         </div>
-      </Platform>
+      </ContentLayout>
     );
   }
 }

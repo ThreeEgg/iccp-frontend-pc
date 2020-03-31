@@ -65,13 +65,13 @@ export default {
     },
 
     *logout({ payload }, { put, call }) {
-      const res = yield call(userService.logout);
+      // FIXME: 2020.4.1 wph 无法异步登出
+      userService.logout();
 
       localStorage.removeItem('userInfo');
       localStorage.removeItem('imInfo');
       localStorage.removeItem('isLogin');
       localStorage.removeItem('accessToken');
-
       yield put({
         type: 'save',
         payload: {
@@ -81,7 +81,7 @@ export default {
         },
       });
       if (localStorage.platform === 'expert') {
-        return router.replace('/expert');
+        return router.replace('/expert/home');
       }
       router.replace('/');
     },
@@ -116,7 +116,7 @@ export default {
         message.success('密码修改成功');
 
         if (localStorage.platform === 'expert') {
-          return router.replace('/expert');
+          return router.replace('/expert/home');
         }
         router.replace('/');
       }
@@ -130,7 +130,7 @@ export default {
         message.success('密码修改成功');
 
         if (localStorage.platform === 'expert') {
-          return router.replace('/expert');
+          return router.replace('/expert/home');
         }
         router.replace('/');
       }

@@ -83,6 +83,7 @@ export class Article extends Component {
     };
     editor.create(); //创建
     editor.txt.html(this.state.content); //设置富文本默认内容
+    // FIXME: 2020.4.1 校验图片大小的提示需要改成message
     editor.customConfig.customAlert = function(info) {
       // info 是需要提示的内容
       message.error(info);
@@ -93,6 +94,8 @@ export class Article extends Component {
 
   save = async () => {
     const form = this.formRef.current;
+    const article = this.editor.txt.html();
+    form.setFieldsValue({ article: article.replace('<p><br></p>', '') });
     await form.validateFields();
     const fieldError = form.getFieldsError();
     // 查看是否没有异常
@@ -104,7 +107,7 @@ export class Article extends Component {
     const { title, brief } = form.getFieldsValue();
 
     const res = await expertService.saveExpertArticle({
-      article: this.editor.txt.html(),
+      article,
       title,
       brief,
     });
@@ -230,11 +233,17 @@ export class Article extends Component {
               >
                 <Input.TextArea />
               </Form.Item>
+              <Form.Item
+                label="详情"
+                name="article"
+                rules={[{ required: true, message: '请输入详情' }]}
+              >
+                {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
+                <div className="editor" ref={this.editorElem}>
+                  <div />
+                </div>
+              </Form.Item>
             </Form>
-            {/* 此处通过一个空白符，解决手动操作dom导致的dom残留问题 */}
-            <div className="editor" ref={this.editorElem}>
-              &nbsp;
-            </div>
           </div>
         )}
       </ContentLayoutExpert>
