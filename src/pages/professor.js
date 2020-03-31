@@ -1,29 +1,28 @@
 import React from 'react';
 import ContentLayout from '../layouts/ContentLayout';
 import { Button, Calendar, Modal, Tabs } from 'antd';
+import classNames from 'classnames';
 import Router from 'next/router';
 import { Pagination } from 'antd';
+import Swiper from 'react-id-swiper';
+import 'swiper/css/swiper.css';
 import { getResponseRateAverage } from '../common/index';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
 import Rate from '../components/Rate';
 import './professor.less';
+
 const { TabPane } = Tabs;
 
 export default class Platform extends React.Component {
   static async getInitialProps({ req, query }) {
-    const { id } = query;
+    const { id = 'A000001' } = query;
     const fetch = require('isomorphic-unfetch');
 
-    // 专家信息
-    const expertInfoRes = await fetch(`${api.baseUrl}/api${api.getExpertInformation}?`);
-    // 专家简介
+    const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
 
-    const introductionRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertIndividualIntroduce}?userId=${id}`,
-    );
-    const introductionContent = await introductionRes.json();
-    const introduction = introductionContent.data;
+    const expertInfoRes = await fetch(`${requestUrl}?userId=${id}`);
+    const expertInfoContent = await expertInfoRes.json();
 
     // 专家动态
     const activityRes = await fetch(
@@ -39,44 +38,26 @@ export default class Platform extends React.Component {
     const articleContent = await articleRes.json();
     const article = articleContent.data.items;
 
-    // 专家详情
-    const informationRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertInformation}?userId=${id}`,
-    );
-    const informationContent = await informationRes.json();
-    // 结构参考专家端上传的结构
-    const information = informationContent.data.content
-      ? JSON.parse(informationContent.data.content)
-      : [];
-
-    // 专家服务
-    const serviceTagRes = await fetch(`${api.baseUrl}/api${api.getServiceTagList}?userId=${id}`);
-    const serviceTagContent = await serviceTagRes.json();
-    const serviceTag = serviceTagContent.data;
-
-    // 专家时间表
-    const expertScheduleRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertScheduleByGreenwich}?timeZone=${8}&userId=${id}`,
-    );
-    const expertScheduleContent = await expertScheduleRes.json();
-    const expertSchedule = expertScheduleContent.data;
-    const { schedule, startTime } = expertSchedule;
-
-    // 专家评分
-    const rateRes = await fetch(`${api.baseUrl}/api${api.getExpertRating}?userId=${id}`);
-    const rateContent = await rateRes.json();
-    const rate = rateContent.data;
+    const {
+      baseInfo,
+      schedule,
+      serviceTagList,
+      rating,
+      information = {},
+      briefIntro,
+      imUser,
+    } = expertInfoContent.data;
 
     return {
-      startTime,
+      introduction: briefIntro.introduction,
+      serviceTag: serviceTagList,
+      information: information.content ? JSON.parse(information.content) : [],
+      userInfo: baseInfo,
       schedule,
-      serviceTag,
-      information,
+      rating,
       article,
       activity,
-      introduction,
-      rate,
-      // info,
+      imUser,
     };
   }
 
@@ -104,17 +85,18 @@ export default class Platform extends React.Component {
 
   render() {
     const {
-      startTime,
-      schedule,
+      introduction,
       serviceTag,
       information,
+      userInfo,
+      imUser,
+      schedule,
+      rating,
       article,
       activity,
-      introduction,
-      rate,
     } = this.props;
 
-    const { attitudeRateAVG, skillRateAVG, responseSpeed } = rate;
+    const { attitudeRateAVG, skillRateAVG, responseSpeed } = rating;
     let responseRateAVG = getResponseRateAverage(responseSpeed);
     const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
 
@@ -127,11 +109,13 @@ export default class Platform extends React.Component {
       >
         <div className="con-pro-r">
           <div className="con-pro-r-img">
-            <img className="img-avatar" src="/images/img_cardbg_hover.png" />
-            <img className="img-type" src="/images/ic_online.png" />
+            <img className="img-avatar" src={userInfo.image} />
+            <i className={classNames('img-type iconfont', { active: imUser.onlineState === 0 })}>
+              &#xe68b;
+            </i>
           </div>
-          <div className="con-pro-r-name">Steven Jackson</div>
-          <div className="con-pro-r-status">最近在线：现在</div>
+          <div className="con-pro-r-name">{userInfo.name}</div>
+          <div className="con-pro-r-status">最近在线：无</div>
           <Button onClick={this.goToCommunication}>立即沟通</Button>
           <div className="con-pro-r-title">本月日程</div>
           <div className="con-pro-r-time">
@@ -215,14 +199,31 @@ export default class Platform extends React.Component {
                   {information.map(item => {
                     return (
                       <div className="pro-info-item">
-                        <h1>国际征信业务通论</h1>
-                        <p>
-                          Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin
-                          gravida dolor sit amet lacus accumsan et viverra justo commodo
-                        </p>
-                        <div className="flex">
-                          <img src="/images/case/card1.png" />
-                          <img src="/images/case/card2.png" />
+                        <h1>{item.title}</h1>
+                        <p>{item.content}</p>
+                        <div>
+                          <Swiper
+                            {...{
+                              slidesPerView: 3,
+                              spaceBetween: 30,
+                              grabCursor: true,
+                              navigation:
+                                item.images.length > 3
+                                  ? {
+                                      nextEl: '.swiper-button-next',
+                                      prevEl: '.swiper-button-prev',
+                                    }
+                                  : {},
+                            }}
+                          >
+                            {item.images.map(url => (
+                              <div
+                                key={url}
+                                className="swiper-img-container"
+                                style={{ backgroundImage: `url(${url})` }}
+                              />
+                            ))}
+                          </Swiper>
                         </div>
                       </div>
                     );
@@ -248,10 +249,7 @@ export default class Platform extends React.Component {
             专家简介
             <img src="/images/ic_breif.png" />
           </div>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-            laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo.
-          </p>
+          <p>{introduction}</p>
           <div
             className="con-pro-r-list flex flex-align flex-justifyBetween"
             onClick={this.timeList}
@@ -260,9 +258,9 @@ export default class Platform extends React.Component {
             <img src="/images/ic_tag.png" />
           </div>
           <div className="con-pro-r-label">
-            <span>Commercial debt</span>
-            <span>Lawyer’s letter</span>
-            <span>Credit investigation</span>
+            {serviceTag.map(tag => (
+              <span key={tag.id}>{tag.chineseContent}</span>
+            ))}
           </div>
           <div
             className="con-pro-r-list flex flex-align flex-justifyBetween"
@@ -297,7 +295,7 @@ export default class Platform extends React.Component {
           width={720}
           onCancel={() => this.showSchedule(false)}
         >
-          <Schedule mode="read" schedule={schedule} />
+          <Schedule mode="read" schedule={schedule.schedule} />
         </Modal>
       </ContentLayout>
     );

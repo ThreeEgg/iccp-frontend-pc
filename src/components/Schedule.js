@@ -26,6 +26,9 @@ export class Schedule extends Component {
   parseSchedule = scheduleString => {
     // 从字符串中计算出表格的情况
     const parseScheduleData = [];
+    if (!scheduleString) {
+      return parseScheduleData;
+    }
     scheduleString.split('').forEach((item, index) => {
       // 没有选中的直接跳过，0代表没有选中，1代表选中
       if (item !== '1') {

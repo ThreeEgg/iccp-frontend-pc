@@ -19,9 +19,12 @@
       .img-type {
         position: absolute;
         right: -5px;
-        bottom: -5px;
-        width: 24px;
-        height: 24px;
+        bottom: -9px;
+        color: #666;
+        font-size: 24px;
+        &.active {
+          color: #27cc94;
+        }
       }
     }
     .con-pro-r-name {
@@ -209,11 +212,18 @@
           font-size: 16px;
           line-height: 22px;
         }
-      }
-      .pro-essay-item {
-        cursor: pointer;
-      }
-      .pro-info-item {
+        .swiper-img-container {
+          width: 170.667px;
+          height: 170.667px;
+        }
+        .swiper-button-next,
+        .swiper-button-prev {
+          color: white;
+          background: rgba(0, 0, 0, 0.2);
+          &::after {
+            font-size: 16px;
+          }
+        }
         > div {
           img {
             width: 185px;
@@ -223,6 +233,9 @@
             margin-right: 5px;
           }
         }
+      }
+      .pro-essay-item {
+        cursor: pointer;
       }
     }
   }
