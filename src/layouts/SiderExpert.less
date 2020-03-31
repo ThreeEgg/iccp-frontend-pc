@@ -1,4 +1,4 @@
-.sider-component {
+.sider-expert-component {
   .content-plat-c {
     .anticon {
       display: none;
@@ -8,10 +8,13 @@
   .ant-menu-submenu-selected,
   .ant-menu-item-selected {
     color: #fff;
+    background: @primary-color;
   }
   .ant-menu-inline {
-    .ant-menu-submenu-title {
+    .ant-menu-item {
+      height: 64px;
       margin: 0;
+      line-height: 64px;
       background: rgba(67, 73, 94, 0.8);
     }
     .ant-menu-submenu {
@@ -20,9 +23,6 @@
         width: 240px;
         background: rgba(67, 73, 94, 0.7);
       }
-    }
-    .ant-menu-item {
-      margin: 0;
     }
     .ant-menu-item::after {
       border-right: 0;
@@ -50,12 +50,6 @@
     background-color: @primary-color;
   }
 
-  .ant-menu-sub.ant-menu-inline {
-    > .ant-menu-item {
-      height: 64px;
-      line-height: 64px;
-    }
-  }
   .ant-menu-inline .ant-menu-item,
   .ant-menu-inline .ant-menu-submenu-title {
     width: 240px;

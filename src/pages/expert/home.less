@@ -1,0 +1,164 @@
+.expert-home {
+  padding-bottom: 80px;
+  .user-info {
+    margin-bottom: 16px;
+    padding: 24px 32px;
+    .avatar {
+      margin-right: 24px;
+    }
+    .name {
+      margin-bottom: 4px;
+      font-size: 23px;
+    }
+    .location {
+      font-size: 13px;
+      i {
+        color: @primary-color;
+      }
+    }
+  }
+  .infos {
+    margin-bottom: 16px;
+    > div {
+      height: 308px;
+      margin-right: 8px;
+      .info-header {
+        flex-shrink: 0;
+        height: 64px;
+        padding: 0 16px;
+        border-bottom: 1px solid rgba(238, 238, 238, 0.8);
+        strong {
+          font-size: 16px;
+        }
+        i {
+          color: rgba(0, 0, 0, 0.3);
+          font-size: 20px;
+          cursor: pointer;
+        }
+      }
+      p,
+      .rate {
+        margin-bottom: 0;
+        padding: 16px;
+        overflow-y: scroll;
+        color: #666;
+        font-size: 14px;
+        line-height: 20px;
+      }
+      .rate {
+        padding-top: 40px;
+        > div {
+          margin-bottom: 20px;
+          font-size: 14px;
+          span {
+            margin-right: 36px;
+          }
+        }
+      }
+      .action {
+        padding: 10px 16px;
+        color: rgba(0, 0, 0, 0.3);
+      }
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .detail {
+    padding-bottom: 24px;
+    .bar {
+      padding: 29px 24px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .edit {
+      padding: 24px;
+      .title {
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(238, 238, 238, 0.8);
+        .title-edit {
+          margin-right: 20px;
+          font-weight: bold;
+          font-size: 16px;
+          line-height: 22px;
+          border: none;
+          // overflow: scroll;
+          outline: none;
+          box-shadow: none;
+        }
+        i {
+          color: rgba(0, 0, 0, 0.3);
+          font-size: 16px;
+        }
+      }
+
+      .edit-content {
+        margin-top: 10px;
+        margin-bottom: 24px;
+        color: #666;
+        font-size: 16px;
+        line-height: 22px;
+        border: none;
+        box-shadow: none;
+      }
+
+      .img {
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        .img-item {
+          position: relative;
+          width: 173px;
+          height: 173px;
+          margin: 0 5px 5px 0;
+          background-repeat: no-repeat;
+          background-position: center center;
+          background-size: cover;
+          &:last-of-type {
+            margin-right: 0;
+            margin-bottom: 0;
+          }
+          .close {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            color: white;
+            font-size: 14px;
+            background: red;
+            border-radius: 50%;
+            cursor: pointer;
+          }
+          &-add {
+            cursor: pointer;
+            i {
+              color: #999;
+              font-size: 30px;
+            }
+          }
+        }
+      }
+
+      .add {
+        color: #1b2857;
+        font-size: 14px;
+        text-align: center;
+        border: 1px solid rgba(27, 40, 87, 0.3);
+        border-radius: 24px;
+        cursor: pointer;
+        i {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+.expert-introduction-modal {
+  .count-limit {
+    margin-top: 12px;
+    color: #666;
+    font-size: 14px;
+  }
+}

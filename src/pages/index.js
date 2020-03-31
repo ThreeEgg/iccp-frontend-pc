@@ -16,10 +16,10 @@ export default class extends React.Component {
   static async getInitialProps({ req, query }) {
     const fetch = require('isomorphic-unfetch');
 
-    const requestUrl = 'http://221.215.57.110:9090/api' + api.listPlatformContent;
+    const requestUrl = `${api.baseUrl}/api${api.listPlatformContent}`;
 
     const aboutUsContentRes = await fetch(
-      `${requestUrl}?pageNum=1&pageSize=1&languageId=0&type=${platformContentType.PLATFORMINTRO}`,
+      `${requestUrl}?pageNum=1&pageSize=1&type=${platformContentType.PLATFORMINTRO}`,
     );
     const aboutUsContent = await aboutUsContentRes.json();
     const aboutUs = aboutUsContent.data.items[0].content;
@@ -36,7 +36,7 @@ export default class extends React.Component {
     const classicCaseContent = await classicCaseRes.json();
     const classicCase = classicCaseContent.data.items;
 
-    const continentListRes = await fetch(`http://221.215.57.110:9090/api${api.getContinentList}`);
+    const continentListRes = await fetch(`${api.baseUrl}/api${api.getContinentList}`);
     const continentListContent = await continentListRes.json();
     const continentList = continentListContent.data;
 
@@ -87,8 +87,10 @@ export default class extends React.Component {
       this.continent = continent;
     }
 
-    if (!this.country || country.id !== this.country.id) {
-      this.mapRef.current.updateArea(country);
+    if (country.capitalLatitude && country.capitalLongitude) {
+      if (!this.country || country.id !== this.country.id) {
+        this.mapRef.current.updateArea(country.capitalLongitude, country.capitalLatitude);
+      }
     }
   };
 

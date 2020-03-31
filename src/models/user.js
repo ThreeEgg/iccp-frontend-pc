@@ -58,7 +58,7 @@ export default {
         });
 
         if (localStorage.platform === 'expert') {
-          return router.replace('/expert');
+          return router.replace('/expert/home');
         }
         router.replace('/');
       }

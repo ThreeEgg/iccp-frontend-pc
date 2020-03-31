@@ -1,4 +1,7 @@
+import config from '../config';
+
 export default {
+  baseUrl: config.baseUrl,
   //用户管理
   registry: '/user/registry',
   getRegistryAgreement: '/user/registry-agreement',
@@ -12,6 +15,10 @@ export default {
 
   //专家管理
   getExpertList: '/expert/list',
+  getExpertHomePage: '/expert/index',
+  getExpertRating: '/expert/rating',
+  getExpertUserRating: '/expert/user-rating/get',
+  saveExpertUserRating: '/expert/user-rating/update',
   getExpertIndividualIntroduce: '/expert/introduction',
   saveExpertIndividualIntroduce: '/expert/introduction/update',
   getExpertActivityList: '/expert/activity/list',

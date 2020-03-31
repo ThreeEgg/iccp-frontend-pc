@@ -24,11 +24,9 @@ export const getExpertIndividualIntroduce = async ({ userId }) => {
   });
 };
 
-export const saveExpertIndividualIntroduce = async ({ content }) => {
+export const saveExpertIndividualIntroduce = async ({ introduction }) => {
   return request.post(api.saveExpertIndividualIntroduce, {
-    params: {
-      content,
-    },
+    data: introduction,
   });
 };
 
@@ -98,10 +96,10 @@ export const getAllServiceTagList = async ({ userId }) => {
   });
 };
 
-export const saveServiceTagList = async ({ serviceIdList }) => {
-  return request(api.saveServiceTagList, {
+export const saveServiceTagList = async ({ serviceIdStr }) => {
+  return request.post(api.saveServiceTagList, {
     params: {
-      serviceIdList,
+      serviceIdStr,
     },
   });
 };
@@ -115,10 +113,8 @@ export const getExpertInformation = async ({ userId }) => {
 };
 
 export const saveExpertInformation = async ({ content }) => {
-  return request.post(api.saveServiceTagList, {
-    params: {
-      content,
-    },
+  return request.post(api.saveExpertInformation, {
+    data: content,
   });
 };
 
@@ -131,12 +127,15 @@ export const getExpertScheduleByGreenwich = async ({ timeZone, userId }) => {
   });
 };
 
-export const saveExpertSchedule = async ({ isBusyStr, timeZone, userId }) => {
+export const saveExpertSchedule = async ({ schedule, startTime, timeZone, userId }) => {
   return request.post(api.saveExpertSchedule, {
-    params: {
-      isBusyStr,
+    data: {
+      // 日程表字符串
+      schedule,
       userId,
       timeZone,
+      // 开始时间，单位为秒
+      startTime,
     },
   });
 };

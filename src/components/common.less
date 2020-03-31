@@ -2,18 +2,21 @@
 // @import './iconfont.css';
 
 // 公用类
-@font-size: 20px;
-div {
-  font-size: @font-size;
-}
+
 .flex {
   display: flex;
+}
+.flex-1 {
+  flex: 1;
 }
 .flex-column {
   flex-direction: column;
 }
 .flex-align {
   align-items: center;
+}
+.flex-wrap {
+  flex-wrap: wrap;
 }
 .flex-justifyCenter {
   justify-content: center;
@@ -23,6 +26,9 @@ div {
 }
 .flex-justifyAround {
   justify-content: space-around;
+}
+.flex-justifyEnd {
+  justify-content: flex-end;
 }
 .flex-alignCenter {
   align-items: center;
@@ -36,4 +42,13 @@ div {
 .commonWidth {
   width: 1200px;
   margin: 0 auto;
+}
+
+.grey-shadow {
+  box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+}
+
+p,
+textarea {
+  word-break: break-word;
 }
