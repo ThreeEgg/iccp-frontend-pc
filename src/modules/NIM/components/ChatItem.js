@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-30 16:34:36
+ * @LastEditTime: 2020-03-31 10:39:50
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -162,7 +162,7 @@ class ChatItem extends React.Component {
         })
       }
     } else if (item.type === 'custom') {
-      let content = JSON.parse(item.content)
+      let content = JSON.parse(item.content.replace(/\n/g, "\\\\n"))
       // type 1 为猜拳消息
       if (content.type === 1) {
         let data = content.data

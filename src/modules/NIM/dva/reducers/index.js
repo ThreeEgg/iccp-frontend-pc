@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 18:42:50
+ * @LastEditTime: 2020-03-31 11:13:24
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -50,8 +50,10 @@ export default {
   },
   updateUserUID(state, payload) {
     const { loginInfo } = payload;
-    localStorage.uid = loginInfo.uid
-    localStorage.sdktoken = loginInfo.sdktoken
+    let imInfo = {}
+    imInfo.accid = loginInfo.uid
+    imInfo.token = loginInfo.sdktoken
+    localStorage.imInfo = JSON.stringify(imInfo)
     return {
       ...state,
       userUID: loginInfo.uid,
@@ -59,7 +61,7 @@ export default {
       isLogin: true,
     };
   },
-  updateMyInfo(state, {myInfo}) {
+  updateMyInfo(state, { myInfo }) {
     const { myInfoOld } = state;
     myInfo = util.mergeObject(myInfoOld, myInfo)
     return { ...state, myInfo: myInfo };
@@ -149,15 +151,25 @@ export default {
   },
   updateSessions(state, { sessions }) {
     const { nim, sessionlist: sessionlistOld, sessionMap: sessionMapOld } = state;
-    let sessionlist = [...sessionlistOld], sessionMap = { ...sessionMapOld };
+    let sessionlist = [...sessionlistOld],
+      sessionMap = { ...sessionMapOld },
+      unreadCount = 0;
+      debugger
     sessionlist = nim.mergeSessions(sessionlist, sessions)
     sessionlist.sort((a, b) => {
       return b.updateTime - a.updateTime
     })
     sessionlist.forEach(item => {
+      unreadCount += item.unread;
       sessionMap[item.id] = item
     })
-    return { ...state, sessionlist, sessionMap };
+    return { ...state, sessionlist, sessionMap, unreadCount };
+  },
+  updateServiceInfo(state, { serviceInfo }) {
+    return { ...state, serviceInfo };
+  },
+  updateExpertList(state, { expertList }) {
+    return { ...state, expertList };
   },
   deleteSessions(state, sessionIds) {
     const { nim } = state;
@@ -183,7 +195,7 @@ export default {
     const { msgs } = state;
     let sessionId = msg.sessionId
     let msgsNew = { ...msgs };
-    let msgNew = [...msgsNew[sessionId]] || []
+    let msgNew = (Object.keys(msgsNew).length > 0 && [...msgsNew[sessionId]]) || []
     let lastMsgIndex = msgNew.length - 1
     if (msgNew.length === 0 || msg.time >= msgNew[lastMsgIndex].time) {
       msgNew.push(msg)

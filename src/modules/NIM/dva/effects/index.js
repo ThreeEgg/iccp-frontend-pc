@@ -31,9 +31,10 @@ export default {
     const nim = yield select(state => state.chat.nim);
     // 操作为内容页刷新页面，此时无nim实例
     if (!nim || force) {
+      let imInfo= JSON.parse(localStorage.imInfo);
       let loginInfo = {
-        uid: localStorage.uid,
-        sdktoken: localStorage.sdktoken,
+        uid: imInfo.accid,
+        sdktoken: imInfo.token,
       };
       if (!loginInfo.uid) {
         // 无localStorage，直接跳转登录页
@@ -79,8 +80,7 @@ export default {
 
   // 用户触发的登出逻辑
   *logout(action, { put, select }) {
-    localStorage.uid = ''
-    localStorage.sdktoken = ''
+    localStorage.imInfo = {}
     yield put({ type: 'disconnect' });
     yield put({ type: 'updateLogin', isLogin:false });
     // pageUtil.turnPage('', 'login');

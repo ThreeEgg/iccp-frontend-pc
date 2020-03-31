@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-29 19:01:50
+ * @LastEditTime: 2020-03-30 17:56:10
  * @FilePath: \PC端-前端\src\modules\NIM\components\Login.js
  */
 import React from 'react';
@@ -77,12 +77,11 @@ class Login extends React.Component {
     this.setState({
       errorMsg: '',
     });
-    // 本demo做一次假登录
-    // 真实场景应在此向服务器发起ajax请求
-    let sdktoken = md5(this.state.password);
     // 服务端帐号均为小写
-    localStorage.uid = this.state.account.toLowerCase();
-    localStorage.sdktoken = sdktoken;
+    let imInfo={}
+    imInfo.accid = this.state.account.toLowerCase()
+    imInfo.token = this.state.password.toLowerCase()
+    localStorage.imInfo = JSON.stringify(imInfo)
     // 提交sdk连接请求
     this.props.dispatch({ type: 'chat/connect' })
       .then((result) => {

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-27 15:25:38
+ * @LastEditTime: 2020-03-31 10:27:20
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\extFunction.js
  */
 
@@ -27,7 +27,10 @@ export function* updateMyInfoExt({ myInfo }, { put }) {
   yield put({ type: 'updateMyInfo', myInfo });
 }
 export function* updateSessionsExt({ sessions }, { put }) {
+  // 更新会话列表
   yield put({ type: 'updateSessions', sessions });
+  // 更新客服信息及专家列表
+  yield put({ type: 'updateUsers' });
 }
 export function* onRobotsExt({ robots }, { put }) {
   yield put({ type: 'updateRobots', robots });
@@ -42,7 +45,7 @@ export function* updateSearchlistExt({ method, list }, { put }) {
   yield put({ type: 'updateSearchlist', method, list });
 }
 export function* onMsgExt({ msg }, { put, select }) {
-  yield put({ type: 'updateMsgByIdClient', msgs: [msg]});
+  yield put({ type: 'updateMsgByIdClient', msgs: [msg] });
   yield put({ type: 'updateMsg', msg });
   const currSessionId = yield select(state => state.chat.currSessionId);
   if (msg.sessionId === currSessionId) {

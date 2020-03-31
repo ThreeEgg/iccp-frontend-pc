@@ -55,7 +55,13 @@ export function* initNimSDK({ loginInfo }, { put, select }, ) {
       if (loginInfo) {
         message.success('登录成功');
         // 连接上以后更新uid
-        window.dispatch({ type: 'chat/updateUserUIDExt', loginInfo });
+        window.dispatch({ type: 'chat/updateUserUIDExt', loginInfo })
+          .then(() => {
+            // 更新客服信息及专家列表
+            window.dispatch({ type: 'chat/updateUsers' })
+          }).catch((err) => {
+            console.log(err);
+          });;
       }
     },
     onerror: function onError(event) {
@@ -104,7 +110,7 @@ export function* initNimSDK({ loginInfo }, { put, select }, ) {
     // 机器人
     onrobots: onRobots,
     // 用户名片 - actions/userInfo
-    onmyinfo: onMyInfo, 
+    onmyinfo: onMyInfo,
     onupdatemyinfo: onMyInfo,
     onusers: onUserInfo,
     onupdateuser: onUserInfo,

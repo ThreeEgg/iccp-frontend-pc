@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-24 17:11:25
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-03-30 17:50:36
+ * @FilePath: \PC端-前端\src\modules\NIM\configs\index.js
+ */
 let config = {
   sdk: 'NIM_Web_SDK_v6.1.0',
   // 用户自定义的登录注册地址
@@ -30,11 +39,11 @@ let appConfig = {
   // 用户的appkey
   // 用于在web demo中注册账号异步请求demo 服务器中使用
   test: {
-    appkey: 'fe416640c8e8a72734219e1847ad2547',
+    appkey: 'aa1e4938eb76eb6533267b3adc303bd6',
     postUrl: 'https://apptest.netease.im'
   },
   online: {
-    appkey: '45c6af3c98409b18a84451215d0bdd6e',
+    appkey: 'aa1e4938eb76eb6533267b3adc303bd6',
     postUrl: 'https://app.netease.im'
   }
 }

@@ -159,7 +159,6 @@ export function* sendMsg(paylord, { put, select }) {
 export function* sendFileMsg(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
   let { method: type, fileInput } = paylord
-  debugger
   if (!type && fileInput) {
     paylord.type = 'file'
     if (/\.(png|jpg|bmp|jpeg|gif)$/i.test(fileInput.value)) {

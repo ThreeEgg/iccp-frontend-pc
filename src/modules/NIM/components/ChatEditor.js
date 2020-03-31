@@ -101,7 +101,6 @@ class ChatEditor extends React.Component {
     });
   };
   sendFileMsg = () => {
-    debugger
     if (this.state.invalid) {
       message.error(this.state.invalidHint);
       return;

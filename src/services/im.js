@@ -18,19 +18,19 @@ export const checkFirstChat = async ({ expertImId, userImId }) => {
   });
 };
 
-export const checkFirstChatForCustomerService = async ({ imId, serviceImId }) => {
+export const checkFirstChatForCustomerService = async ({ accid, serviceAccid }) => {
   return request(api.checkFirstChatForCustomerService, {
     params: {
-      imId,
-      serviceImId,
+      accid,
+      serviceAccid,
     },
   });
 };
 
-export const recentChatList = async ({ imId, pageNum, pageSize }) => {
+export const recentChatList = async ({ accid, pageNum, pageSize }) => {
   return request(api.recentChatList, {
     params: {
-      imId,
+      accid,
       pageNum,
       pageSize,
     },
