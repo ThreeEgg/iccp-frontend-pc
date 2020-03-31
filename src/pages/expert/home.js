@@ -4,11 +4,11 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import Rate from '../../components/Rate';
+import ImageUpload from '../../components/ImageUpload';
 import EditableTagGroup from '../../components/EditableTagGroup';
 import api from '../../services/api';
 import * as expertService from '../../services/expert';
-import * as commonService from '../../services/common';
-import { importFile, dataURLtoBlob, blobToFile } from '../../utils';
+import { importFile } from '../../utils';
 import './home.less';
 
 const { TextArea } = Input;
@@ -52,8 +52,6 @@ export default class extends Component {
         title: '标题',
         content: '内容',
         images: [],
-        // 前端临时变量
-        files: [],
       },
     ],
   };
@@ -65,45 +63,23 @@ export default class extends Component {
     return (
       <div className="edit">
         <div className="title flex flex-align">
-          <div
+          <Input
             className="title-edit flex-1"
-            contentEditable
-            suppressContentEditableWarning
-            onInput={e => this.changeTitle(value, itemIndex, e)}
-          >
-            {title}
-          </div>
+            value={title}
+            onChange={e => this.changeTitle(itemIndex, e)}
+          />
           <i className="iconfont" onClick={() => this.removeInformation(itemIndex)}>
             &#xe695;
           </i>
         </div>
-        <div className="content">{content}</div>
-        <div className="img flex">
-          {images.map((item, index) => {
-            return (
-              <div
-                key={item}
-                className="img-item"
-                style={{
-                  backgroundImage: `url(${item})`,
-                }}
-              >
-                <div
-                  className="close flex flex-align flex-justifyCenter"
-                  onClick={() => this.removeImage(itemIndex, index)}
-                >
-                  －
-                </div>
-              </div>
-            );
-          })}
-          {/* 添加按钮 */}
-          <div
-            className="img-item img-item-add flex flex-align flex-justifyCenter"
-            onClick={() => this.selectImage(value, itemIndex)}
-          >
-            <i className="iconfont">&#xe694;</i>
-          </div>
+        <TextArea
+          className="edit-content"
+          autoSize={{ minRows: 4, maxRows: 10 }}
+          value={content}
+          onChange={e => this.changeContent(itemIndex, e)}
+        />
+        <div className="img">
+          <ImageUpload onChange={fileList => this.onImageChange(itemIndex, fileList)} />
         </div>
         <div className="add" onClick={() => this.addInformation(itemIndex)}>
           <i className="iconfont">&#xe694;</i>
@@ -145,7 +121,7 @@ export default class extends Component {
 
     if (res.code === '0') {
       message.success('已更新');
-      this.setState({ serviceTagModalVisible: false });
+      this.setState({ serviceTagModalVisible: false, serviceTag: [...tags] });
     }
   };
 
@@ -188,7 +164,32 @@ export default class extends Component {
     }));
   };
 
-  changeTitle = () => {};
+  changeTitle = (itemIndex, e) => {
+    const title = e.target.value.trim();
+    console.log(title);
+    const information = [...this.state.information];
+    information[itemIndex] = {
+      ...information[itemIndex],
+      title,
+    };
+
+    this.setState({
+      information,
+    });
+  };
+
+  changeContent = (itemIndex, e) => {
+    const content = e.target.value.trim();
+    const information = [...this.state.information];
+    information[itemIndex] = {
+      ...information[itemIndex],
+      content,
+    };
+
+    this.setState({
+      information,
+    });
+  };
 
   selectImage = async (item, index) => {
     const result = await importFile(['image/png', 'image/jpeg'], true);
@@ -227,6 +228,23 @@ export default class extends Component {
     const images = [...information[itemIndex].images];
 
     images.splice(imgIndex, 1);
+
+    information[itemIndex].images = images;
+
+    this.setState({
+      information,
+    });
+  };
+
+  // 图片上传发生变化，就保存到state中
+  onImageChange = (itemIndex, imageList) => {
+    console.log(itemIndex, imageList);
+    const information = [...this.state.information];
+    const images = imageList.map(item => {
+      if (item.response && item.response.code == '0') {
+        return item.response.data.webUrl;
+      }
+    });
 
     information[itemIndex].images = images;
 
@@ -324,7 +342,7 @@ export default class extends Component {
               <p className="flex-1">
                 {serviceTag.map(item => {
                   const { id, chineseContent, englishContent } = item;
-                  return <span key={id}>{chineseContent}</span>;
+                  return <span key={id}>{chineseContent} &nbsp;&nbsp;</span>;
                 })}
               </p>
               <div className="action flex flex-justifyEnd">

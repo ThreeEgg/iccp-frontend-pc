@@ -6,11 +6,10 @@ import request from './request';
  * @param {*} file File类型
  */
 export const fileUpload = async ({ clientUserId, expertUserId, file, fileName, type = 0 }) => {
-  console.log(file);
   const form = new FormData();
   form.append('file', file, fileName);
 
-  let userInfo = localStorage.getItem('userInfo');
+  let userInfo = window.localStorage.getItem('userInfo');
   if (!userInfo) {
     throw new Error('userInfo not exist');
   }

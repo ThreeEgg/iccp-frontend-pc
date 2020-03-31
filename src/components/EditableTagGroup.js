@@ -131,6 +131,7 @@ class EditableTagGroup extends React.Component {
             style={{ width: '100%' }}
             loading={allServiceLoading}
             onChange={this.handleInputChange}
+            size="small"
           >
             {allServiceTags.map(item => {
               return (

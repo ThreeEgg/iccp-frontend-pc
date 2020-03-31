@@ -76,13 +76,14 @@
       padding: 24px;
       .title {
         padding-bottom: 16px;
-        font-weight: bold;
-        font-size: 16px;
-        line-height: 22px;
         border-bottom: 1px solid rgba(238, 238, 238, 0.8);
         .title-edit {
           margin-right: 20px;
-          overflow: scroll;
+          font-weight: bold;
+          font-size: 16px;
+          line-height: 22px;
+          border: none;
+          // overflow: scroll;
           outline: none;
         }
         i {
@@ -91,11 +92,13 @@
         }
       }
 
-      .content {
+      .edit-content {
+        margin-top: 10px;
         margin-bottom: 24px;
         color: #666;
         font-size: 16px;
         line-height: 22px;
+        border: none;
       }
 
       .img {

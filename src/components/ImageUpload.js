@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Upload, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import api from '../services/api';
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -13,39 +14,10 @@ function getBase64(file) {
 
 export class ImageUpload extends Component {
   state = {
+    uploadUrl: '',
     previewVisible: false,
     previewImage: '',
-    fileList: [
-      {
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-2',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-3',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-4',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-      {
-        uid: '-5',
-        name: 'image.png',
-        status: 'error',
-      },
-    ],
+    fileList: [],
   };
 
   handleCancel = () => this.setState({ previewVisible: false });
@@ -61,10 +33,31 @@ export class ImageUpload extends Component {
     });
   };
 
-  handleChange = ({ fileList }) => this.setState({ fileList });
+  handleChange = ({ fileList }) => {
+    this.setState({ fileList });
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(fileList);
+    }
+  };
+
+  componentDidMount = () => {
+    // FIXME: 2020.3.31 此处服务端不应该需要uploadUserId
+    let userInfo = localStorage.getItem('userInfo');
+    if (!userInfo) {
+      throw new Error('userInfo not exist');
+    }
+    userInfo = JSON.parse(userInfo);
+    const uploadUserId = userInfo.userId;
+    const uploadUrl = `/api${api.fileUpload}?type=0&uploadUserId=${uploadUserId}`;
+
+    this.setState({
+      uploadUrl,
+    });
+  };
 
   render() {
-    const { previewVisible, previewImage, fileList } = this.state;
+    const { previewVisible, previewImage, fileList, uploadUrl } = this.state;
     const uploadButton = (
       <div>
         <PlusOutlined />
@@ -74,7 +67,7 @@ export class ImageUpload extends Component {
     return (
       <div className="clearfix">
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          action={uploadUrl}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}
