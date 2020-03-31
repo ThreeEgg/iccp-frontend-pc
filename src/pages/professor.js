@@ -16,7 +16,7 @@ const { TabPane } = Tabs;
 
 export default class Platform extends React.Component {
   static async getInitialProps({ req, query }) {
-    const { id = 'A000001' } = query;
+    const { id = 'A000001', tabName = 'activity' } = query;
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
@@ -26,38 +26,55 @@ export default class Platform extends React.Component {
 
     // 专家动态
     const activityRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertActivityList}?userId=${id}&pageSize=1&pageNum=10`,
+      `${api.baseUrl}/api${api.getExpertActivityList}?userId=${id}&pageSize=10&pageNum=1`,
     );
     const activityContent = await activityRes.json();
     const activity = activityContent.data.items;
 
     // 专家文章
     const articleRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertArticleList}?userId=${id}&pageSize=1&pageNum=10`,
+      `${api.baseUrl}/api${api.getExpertArticleList}?userId=${id}&pageSize=10&pageNum=1`,
     );
     const articleContent = await articleRes.json();
     const article = articleContent.data.items;
 
     const {
-      baseInfo,
-      schedule,
+      name,
+      image,
+      introduction,
       serviceTagList,
-      rating,
-      information = {},
-      briefIntro,
-      imUser,
+      attitudeRateAVG,
+      skillRateAVG,
+      responseSpeed,
+      content,
+      schedule,
+      cname,
+      onlineState,
+      accid,
     } = expertInfoContent.data;
 
     return {
-      introduction: briefIntro.introduction,
+      tabName,
+      introduction,
       serviceTag: serviceTagList,
-      information: information.content ? JSON.parse(information.content) : [],
-      userInfo: baseInfo,
+      information: content ? JSON.parse(content) : [],
+      userInfo: {
+        name,
+        image,
+      },
+      cname,
       schedule,
-      rating,
+      rating: {
+        attitudeRateAVG,
+        skillRateAVG,
+        responseSpeed,
+      },
       article,
       activity,
-      imUser,
+      imUser: {
+        onlineState,
+        accid,
+      },
     };
   }
 
@@ -71,6 +88,16 @@ export default class Platform extends React.Component {
     this.setState({
       current: page,
     });
+  };
+
+  changeTab = key => {
+    let targetUrl = window.location.pathname + window.location.search;
+
+    if (targetUrl.match('tabName')) {
+      targetUrl = targetUrl.replace(/tabName=[^&]+/, `tabName=${key}`);
+    }
+
+    Router.push(targetUrl);
   };
 
   goToCommunication = () => {
@@ -94,6 +121,7 @@ export default class Platform extends React.Component {
       rating,
       article,
       activity,
+      tabName,
     } = this.props;
 
     const { attitudeRateAVG, skillRateAVG, responseSpeed } = rating;
@@ -134,8 +162,8 @@ export default class Platform extends React.Component {
         </div>
         <div className="con-pro-m">
           <div className="con-pro-m-title">
-            <Tabs defaultActiveKey="1">
-              <TabPane tab="专家动态" key="1">
+            <Tabs activeKey={tabName} onChange={this.changeTab}>
+              <TabPane tab="专家动态" key="activity">
                 <div className="pro-statu-item">
                   <div className="statu-con">
                     <div className="statu-title flex flex-align">
@@ -181,24 +209,29 @@ export default class Platform extends React.Component {
                   </div>
                 </div>
               </TabPane>
-              <TabPane tab="专家文章" key="2">
+              <TabPane tab="专家文章" key="article">
                 {article.map(item => {
                   return (
                     <div className="pro-essay-item" key={item.id}>
-                      <h1>国际征信业务通论</h1>
-                      <p>
-                        Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida
-                        dolor sit amet lacus accumsan et viverra justo commodo
-                      </p>
+                      <h1>{item.title}</h1>
+                      <p>{item.brief}</p>
                     </div>
                   );
                 })}
+                <div className="common-pagination">
+                  <Pagination
+                    current={this.state.current}
+                    onChange={this.onChange}
+                    size="small"
+                    total={50}
+                  />
+                </div>
               </TabPane>
-              <TabPane tab="专家详情" key="3">
+              <TabPane tab="专家详情" key="information">
                 <div className="pro-info">
                   {information.map(item => {
                     return (
-                      <div className="pro-info-item">
+                      <div className="pro-info-item" key={item.id}>
                         <h1>{item.title}</h1>
                         <p>{item.content}</p>
                         <div>
@@ -231,14 +264,6 @@ export default class Platform extends React.Component {
                 </div>
               </TabPane>
             </Tabs>
-            <div className="common-pagination">
-              <Pagination
-                current={this.state.current}
-                onChange={this.onChange}
-                size="small"
-                total={50}
-              />
-            </div>
           </div>
         </div>
         <div className="con-pro-l">
@@ -295,7 +320,7 @@ export default class Platform extends React.Component {
           width={720}
           onCancel={() => this.showSchedule(false)}
         >
-          <Schedule mode="read" schedule={schedule.schedule} />
+          <Schedule mode="read" schedule={schedule} />
         </Modal>
       </ContentLayout>
     );
