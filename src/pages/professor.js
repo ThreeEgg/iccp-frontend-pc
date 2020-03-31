@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import ContentLayout from '../layouts/ContentLayout';
 import { Button, Calendar, Modal, Tabs } from 'antd';
 import classNames from 'classnames';
@@ -18,7 +18,7 @@ const { TabPane } = Tabs;
 
 export default class Platform extends React.Component {
   static async getInitialProps({ req, query }) {
-    const { id = 'A000001', tabName = 'activity', articleId } = query;
+    const { id = 'A000001', tabName = 'activity', articleId, pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
@@ -26,19 +26,31 @@ export default class Platform extends React.Component {
     const expertInfoRes = await fetch(`${requestUrl}?userId=${id}`);
     const expertInfoContent = await expertInfoRes.json();
 
-    // 专家动态
-    const activityRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertActivityList}?userId=${id}&pageSize=10&pageNum=1`,
-    );
-    const activityContent = await activityRes.json();
-    const activity = activityContent.data.items;
+    let pageInfo = {};
 
-    // 专家文章
-    const articleRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertArticleList}?userId=${id}&pageSize=10&pageNum=1`,
-    );
-    const articleContent = await articleRes.json();
-    const article = articleContent.data.items;
+    let activity;
+    if (!tabName || tabName == 'activity') {
+      // 专家动态
+      const activityRes = await fetch(
+        `${api.baseUrl}/api${
+          api.getExpertActivityList
+        }?userId=${id}&pageSize=10&pageNum=${pageNum}`,
+      );
+      const activityContent = await activityRes.json();
+      activity = activityContent.data.items;
+      pageInfo = activityContent.data.pageInfo;
+    }
+
+    let article;
+    if (tabName === 'article') {
+      // 专家文章
+      const articleRes = await fetch(
+        `${api.baseUrl}/api${api.getExpertArticleList}?userId=${id}&pageSize=10&pageNum=${pageNum}`,
+      );
+      const articleContent = await articleRes.json();
+      article = articleContent.data.items;
+      pageInfo = articleContent.data.pageInfo;
+    }
 
     let articleDetail;
     if (articleId) {
@@ -88,6 +100,8 @@ export default class Platform extends React.Component {
         onlineState,
         accid,
       },
+      pageNum,
+      pageInfo,
     };
   }
 
@@ -96,11 +110,16 @@ export default class Platform extends React.Component {
     scheduleVisible: false,
   };
 
-  onChange = page => {
-    console.log(page);
-    this.setState({
-      current: page,
-    });
+  onPageChange = page => {
+    let targetUrl = window.location.pathname + window.location.search;
+
+    if (targetUrl.match('pageNum')) {
+      targetUrl = targetUrl.replace(/pageNum=[^&]+/, `pageNum=${page}`);
+    } else {
+      targetUrl += `&pageNum=${page}`;
+    }
+
+    router.push(targetUrl);
   };
 
   changeTab = key => {
@@ -154,6 +173,8 @@ export default class Platform extends React.Component {
       activity,
       tabName,
       articleDetail,
+      pageNum,
+      pageInfo,
     } = this.props;
 
     const { attitudeRateAVG, skillRateAVG, responseSpeed } = rating;
@@ -200,34 +221,40 @@ export default class Platform extends React.Component {
                   <Timeline data={activity} />
                   <div className="common-pagination">
                     <Pagination
-                      current={this.state.current}
-                      onChange={this.onChange}
+                      current={pageNum}
+                      onChange={this.onPageChange}
                       size="small"
-                      total={50}
+                      pageSize={10}
+                      total={pageInfo.totalResults}
                     />
                   </div>
                 </TabPane>
                 <TabPane tab="专家文章" key="article">
-                  {article.map(item => {
-                    return (
-                      <div
-                        className="pro-essay-item"
-                        key={item.id}
-                        onClick={() => this.gotoArticleDetail(item.id)}
-                      >
-                        <h1>{item.title}</h1>
-                        <p>{item.brief}</p>
+                  {article && (
+                    <Fragment>
+                      {article.map(item => {
+                        return (
+                          <div
+                            className="pro-essay-item"
+                            key={item.id}
+                            onClick={() => this.gotoArticleDetail(item.id)}
+                          >
+                            <h1>{item.title}</h1>
+                            <p>{item.brief}</p>
+                          </div>
+                        );
+                      })}
+                      <div className="common-pagination">
+                        <Pagination
+                          current={pageNum}
+                          onChange={this.onPageChange}
+                          size="small"
+                          pageSize={10}
+                          total={pageInfo.totalResults}
+                        />
                       </div>
-                    );
-                  })}
-                  <div className="common-pagination">
-                    <Pagination
-                      current={this.state.current}
-                      onChange={this.onChange}
-                      size="small"
-                      total={50}
-                    />
-                  </div>
+                    </Fragment>
+                  )}
                 </TabPane>
                 <TabPane tab="专家详情" key="information">
                   <div className="pro-info">

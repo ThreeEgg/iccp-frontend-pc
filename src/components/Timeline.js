@@ -5,7 +5,7 @@ import './Timeline.less';
 
 export class Timeline extends Component {
   render() {
-    const { data } = this.props;
+    const { data = [] } = this.props;
     // 对activity进行分组，同一年、同一天的分同一组
     const timelineGroup = {};
     let currentYear;
