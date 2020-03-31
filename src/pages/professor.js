@@ -2,10 +2,11 @@ import React from 'react';
 import ContentLayout from '../layouts/ContentLayout';
 import { Button, Calendar, Modal, Tabs } from 'antd';
 import classNames from 'classnames';
-import Router from 'next/router';
+import router from 'next/router';
 import { Pagination } from 'antd';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
+import _ from 'lodash';
 import { getResponseRateAverage } from '../common/index';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
@@ -16,7 +17,7 @@ const { TabPane } = Tabs;
 
 export default class Platform extends React.Component {
   static async getInitialProps({ req, query }) {
-    const { id = 'A000001', tabName = 'activity' } = query;
+    const { id = 'A000001', tabName = 'activity', articleId } = query;
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
@@ -37,6 +38,15 @@ export default class Platform extends React.Component {
     );
     const articleContent = await articleRes.json();
     const article = articleContent.data.items;
+
+    let articleDetail;
+    if (articleId) {
+      const articleDetailRes = await fetch(
+        `${api.baseUrl}/api${api.getExpertArticleById}?id=${articleId}`,
+      );
+      const articleDetailContent = await articleDetailRes.json();
+      articleDetail = articleDetailContent.data;
+    }
 
     const {
       name,
@@ -70,6 +80,8 @@ export default class Platform extends React.Component {
         responseSpeed,
       },
       article,
+      articleId,
+      articleDetail,
       activity,
       imUser: {
         onlineState,
@@ -97,11 +109,27 @@ export default class Platform extends React.Component {
       targetUrl = targetUrl.replace(/tabName=[^&]+/, `tabName=${key}`);
     }
 
-    Router.push(targetUrl);
+    router.push(targetUrl);
+  };
+
+  gotoArticleDetail = articleId => {
+    const targetUrl = window.location.pathname + window.location.search + '&articleId=' + articleId;
+
+    router.push(targetUrl);
+  };
+
+  backFromArticleDetail = () => {
+    let targetUrl = window.location.pathname + window.location.search;
+
+    if (targetUrl.match('articleId')) {
+      targetUrl = targetUrl.replace(/&?articleId=[^&]+/, '');
+    }
+
+    router.push(targetUrl);
   };
 
   goToCommunication = () => {
-    Router.push('');
+    router.push('');
   };
 
   showSchedule = (scheduleVisible = true) => {
@@ -122,6 +150,7 @@ export default class Platform extends React.Component {
       article,
       activity,
       tabName,
+      articleDetail,
     } = this.props;
 
     const { attitudeRateAVG, skillRateAVG, responseSpeed } = rating;
@@ -162,108 +191,130 @@ export default class Platform extends React.Component {
         </div>
         <div className="con-pro-m">
           <div className="con-pro-m-title">
-            <Tabs activeKey={tabName} onChange={this.changeTab}>
-              <TabPane tab="专家动态" key="activity">
-                <div className="pro-statu-item">
-                  <div className="statu-con">
-                    <div className="statu-title flex flex-align">
-                      <span className="statu-year">2020</span>
-                      <div>
-                        <p className="statu-monthNo">04</p>
-                        <p className="statu-monthEN">Jan</p>
-                      </div>
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      <span>20:41</span>
-                      <div className="statu-circle-big" />
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      <span>20:41</span>
-                      <div className="statu-circle-small" />
-                    </div>
-                  </div>
-                </div>
-                <div className="pro-statu-item">
-                  <div className="statu-con">
-                    <div className="statu-title flex flex-align">
-                      <span className="statu-year">2020</span>
-                      <div>
-                        <p className="statu-monthNo">03</p>
-                        <p className="statu-monthEN">Mar</p>
-                      </div>
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod
-                      bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo
-                      commodo.
-                      <span>20:41</span>
-                      <div className="statu-circle-big" />
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      <span>20:41</span>
-                      <div className="statu-circle-small" />
-                    </div>
-                  </div>
-                </div>
-              </TabPane>
-              <TabPane tab="专家文章" key="article">
-                {article.map(item => {
-                  return (
-                    <div className="pro-essay-item" key={item.id}>
-                      <h1>{item.title}</h1>
-                      <p>{item.brief}</p>
-                    </div>
-                  );
-                })}
-                <div className="common-pagination">
-                  <Pagination
-                    current={this.state.current}
-                    onChange={this.onChange}
-                    size="small"
-                    total={50}
-                  />
-                </div>
-              </TabPane>
-              <TabPane tab="专家详情" key="information">
-                <div className="pro-info">
-                  {information.map(item => {
-                    return (
-                      <div className="pro-info-item" key={item.id}>
-                        <h1>{item.title}</h1>
-                        <p>{item.content}</p>
+            {!articleDetail ? (
+              <Tabs activeKey={tabName} onChange={this.changeTab}>
+                <TabPane tab="专家动态" key="activity">
+                  <div className="pro-statu-item">
+                    <div className="statu-con">
+                      <div className="statu-title flex flex-align">
+                        <span className="statu-year">2020</span>
                         <div>
-                          <Swiper
-                            {...{
-                              slidesPerView: 3,
-                              spaceBetween: 30,
-                              grabCursor: true,
-                              navigation:
-                                item.images.length > 3
-                                  ? {
-                                      nextEl: '.swiper-button-next',
-                                      prevEl: '.swiper-button-prev',
-                                    }
-                                  : {},
-                            }}
-                          >
-                            {item.images.map(url => (
-                              <div
-                                key={url}
-                                className="swiper-img-container"
-                                style={{ backgroundImage: `url(${url})` }}
-                              />
-                            ))}
-                          </Swiper>
+                          <p className="statu-monthNo">04</p>
+                          <p className="statu-monthEN">Jan</p>
                         </div>
+                      </div>
+                      <div className="statu-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        <span>20:41</span>
+                        <div className="statu-circle-big" />
+                      </div>
+                      <div className="statu-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        <span>20:41</span>
+                        <div className="statu-circle-small" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pro-statu-item">
+                    <div className="statu-con">
+                      <div className="statu-title flex flex-align">
+                        <span className="statu-year">2020</span>
+                        <div>
+                          <p className="statu-monthNo">03</p>
+                          <p className="statu-monthEN">Mar</p>
+                        </div>
+                      </div>
+                      <div className="statu-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod
+                        bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra
+                        justo commodo.
+                        <span>20:41</span>
+                        <div className="statu-circle-big" />
+                      </div>
+                      <div className="statu-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        <span>20:41</span>
+                        <div className="statu-circle-small" />
+                      </div>
+                    </div>
+                  </div>
+                </TabPane>
+                <TabPane tab="专家文章" key="article">
+                  {article.map(item => {
+                    return (
+                      <div
+                        className="pro-essay-item"
+                        key={item.id}
+                        onClick={() => this.gotoArticleDetail(item.id)}
+                      >
+                        <h1>{item.title}</h1>
+                        <p>{item.brief}</p>
                       </div>
                     );
                   })}
-                </div>
-              </TabPane>
-            </Tabs>
+                  <div className="common-pagination">
+                    <Pagination
+                      current={this.state.current}
+                      onChange={this.onChange}
+                      size="small"
+                      total={50}
+                    />
+                  </div>
+                </TabPane>
+                <TabPane tab="专家详情" key="information">
+                  <div className="pro-info">
+                    {information.map(item => {
+                      return (
+                        <div className="pro-info-item" key={item.id}>
+                          <h1>{item.title}</h1>
+                          <p>{item.content}</p>
+                          <div>
+                            <Swiper
+                              {...{
+                                slidesPerView: 3,
+                                spaceBetween: 30,
+                                grabCursor: true,
+                                navigation:
+                                  item.images.length > 3
+                                    ? {
+                                        nextEl: '.swiper-button-next',
+                                        prevEl: '.swiper-button-prev',
+                                      }
+                                    : {},
+                              }}
+                            >
+                              {item.images.map(url => (
+                                <div
+                                  key={url}
+                                  className="swiper-img-container"
+                                  style={{ backgroundImage: `url(${url})` }}
+                                />
+                              ))}
+                            </Swiper>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </TabPane>
+              </Tabs>
+            ) : (
+              // 文章详情
+              <div className="article-detail grey-shadow">
+                {/* 返回按钮 */}
+                <img
+                  className="back-btn"
+                  src="/images/ic_header_leadback.png"
+                  onClick={this.backFromArticleDetail}
+                />
+                <h1 className="article-title">{articleDetail.title}</h1>
+                <h2 className="article-brief">{articleDetail.brief}</h2>
+                <div
+                  className="article-rich-text"
+                  dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="con-pro-l">
