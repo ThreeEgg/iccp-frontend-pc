@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 15:39:24
+ * @LastEditTime: 2020-03-31 18:25:39
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -112,6 +112,9 @@ class ChatItem extends React.Component {
       if (newCustom !== oldCustom) {
         this.computedItem()
       }
+    }
+    if (prevProps.userInfo !== this.props.userInfo) {
+      this.computedItem()
     }
   }
 
@@ -278,7 +281,7 @@ class ChatItem extends React.Component {
   }
 
   render() {
-    const { msg, msgUnRead, translate,icon1 } = this.state;
+    const { msg, msgUnRead, translate, icon1 } = this.state;
     const { type } = this.props;
     return (
       /* 信息类型*/

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 15:55:44
+ * @LastEditTime: 2020-03-31 17:24:25
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
@@ -51,7 +51,7 @@ class Session extends React.Component {
   };
   initSession = () => {
     // 我的手机页面
-    this.props.dispatch({ type: 'chat/setCurrSession', sessionId: `p2p-4633e46abbef4c83bae2a3ab2713d7de` });
+    this.props.dispatch({ type: 'chat/initSession', expertAccid: `4633e46abbef4c83bae2a3ab2713d7de` });
   };
   render() {
     const { chat } = this.props;
@@ -66,30 +66,30 @@ class Session extends React.Component {
           <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
             <img className='nav-avatar' src={session.avatar} />
             <span className='nav-info' >
-                <span className='nav-name' >
-                  {session.name}
+              <span className='nav-name' >
+                {session.name}
+              </span>
+              <span className='nav-time' >
+                {session.updateTimeShow}
+              </span>
+              <span className='nav-text' >
+                {session.lastMsgShow}
+              </span>
+              {session.unread > 0 &&
+                <span className='nav-unread' >
+                  {session.unread}
                 </span>
-                <span className='nav-time' >
-                  {session.updateTimeShow}
-                </span>
-                <span className='nav-text' >
-                  {session.lastMsgShow}
-                </span>
-                {session.unread > 0 &&
-                  <span className='nav-unread' >
-                    {session.unread}
-                  </span>
-                }
+              }
             </span>
           </Menu.Item>
         ))}
-        <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
-            <span className='nav-info' >
-                <span className='nav-name' onClick={this.initSession}>
-                  发起新会话
+        <Menu.Item onClick={this.initSession} className='nav-item'>
+          <span className='nav-info' >
+            <span className='nav-name'>
+              发起新会话
                 </span>
-            </span>
-          </Menu.Item>
+          </span>
+        </Menu.Item>
       </Menu>
     );
   }

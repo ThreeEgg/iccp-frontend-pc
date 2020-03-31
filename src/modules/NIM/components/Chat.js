@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 15:09:50
+ * @LastEditTime: 2020-03-31 18:29:28
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -55,6 +55,7 @@ class Chat extends React.Component {
       let userInfo = {};
       let expertInfo = null;
       let user = null;
+      let evaluation = {}
       if (/^p2p-/.test(sessionId)) {
         user = sessionId.replace(/^p2p-/, '');
         if (user === this.props.userUID) {
@@ -67,6 +68,18 @@ class Chat extends React.Component {
           } else {
             expertInfo = this.props.expertInfos[user];
             userInfo = this.props.expertInfos[user];
+            // 获取专家评价
+            this.props.dispatch({
+              type: 'chat/getExpertUserRating', expertUserId: expertInfo.userId,
+              callback: (res) => {
+                // if (res.code === '0') {
+                //   evaluation.service = res.data.attitudeRating
+                //   evaluation.professional = res.data.skillRating
+                // } else {
+                //   message.error(res.msg)
+                // }
+              },
+            })
           }
         }
       }
@@ -89,9 +102,23 @@ class Chat extends React.Component {
     page.scrollChatListDown();
   };
 
-  confirmEvaluation = (e) => {
-    console.log(e);
-    message.success('Click on Yes');
+  confirmEvaluation = () => {
+    // 获取专家评价
+    this.props.dispatch({
+      type: 'chat/saveExpertUserRating', 
+      expertUserId: this.state.expertInfo.userId,
+      attitudeRating: this.state.evaluation.service,
+      skillRating: this.state.evaluation.professional,
+      callback: (res) => {
+        debugger
+        if (res.code === '0') {
+          message.success(res.msg)
+
+        } else {
+          message.error(res.msg)
+        }
+      },
+    })
   }
 
   evaluate = (item, data) => {
@@ -135,7 +162,7 @@ class Chat extends React.Component {
             </Popconfirm>}
           </div>
           {expertInfo && <span className='expert-info'>
-            {expertInfo.name}
+            专家信息
           </span>}
           {expertInfo &&
             <span className='expert-case' onClick={this.onClickCase}>案件信息表</span>}

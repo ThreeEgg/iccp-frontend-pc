@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 14:16:56
+ * @LastEditTime: 2020-03-31 17:47:50
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -171,18 +171,15 @@ export default {
           // userInfo = userInfos[item.to];
           if (item.to === serviceInfo.accid) {
             userInfo = serviceInfo
+            item.isService = true;
           } else {
+            item.isService = false;
             userInfo = expertInfos[item.to] || {};
           }
         } else {
-          // userInfo = this.myInfo
-          // userInfo.alias = '我的手机'
-          // userInfo.avatar = `${config.myPhoneIcon}`
           return false;
         }
         if (userInfo) {
-          // item.name = util.getFriendAlias(userInfo);
-          // item.avatar = userInfo.avatar;
           item.name = userInfo.name;
           item.avatar = userInfo.image;
         }
@@ -223,6 +220,9 @@ export default {
     sessionlist = nim.mergeSessions(sessionlist, sessions)
     sessionlist.sort((a, b) => {
       return b.updateTime - a.updateTime
+    })
+    sessionlist.sort((a, b) => {
+      return a.isService?-1:1
     })
     sessionlist.forEach(item => {
       unreadCount += item.unread;

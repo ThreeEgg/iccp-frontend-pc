@@ -9,7 +9,7 @@ export const requestIMId = async ({ guestId }) => {
   });
 };
 
-export const checkFirstChat = async ({ expertImId, userImId }) => {
+export const checkFirstChat = async ({ expertAccid , userAccid }) => {
   return request(api.checkFirstChat, {
     params: {
       expertAccid,
@@ -130,6 +130,24 @@ export const getTranslate = async ({ msgidClient }) => {
   return request.post(api.getTranslate, {
     params: {
       msgidClient,
+    },
+  });
+};
+
+export const getExpertUserRating = async ({ expertUserId }) => {
+  return request.post(api.getExpertUserRating, {
+    params: {
+      expertUserId,
+    },
+  });
+};
+
+export const saveExpertUserRating = async ({ expertUserId, attitudeRating, skillRating}) => {
+  return request.post(api.saveExpertUserRating, {
+    params: {
+      expertUserId,
+      attitudeRating,
+      skillRating,
     },
   });
 };
