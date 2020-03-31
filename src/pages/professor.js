@@ -3,6 +3,7 @@ import ContentLayout from '../layouts/ContentLayout';
 import { Button, Calendar, Modal, Tabs } from 'antd';
 import Router from 'next/router';
 import { Pagination } from 'antd';
+import { getResponseRateAverage } from '../common/index';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
 import Rate from '../components/Rate';
@@ -114,13 +115,7 @@ export default class Platform extends React.Component {
     } = this.props;
 
     const { attitudeRateAVG, skillRateAVG, responseSpeed } = rate;
-    let responseRateAVG = 1;
-    // 1h以内为3分，24h以内为2分，24h以上为1分
-    if (responseSpeed <= 3600) {
-      responseRateAVG = 3;
-    } else if (responseSpeed <= 86400) {
-      responseRateAVG = 2;
-    }
+    let responseRateAVG = getResponseRateAverage(responseSpeed);
     const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
 
     return (

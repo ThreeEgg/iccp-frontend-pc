@@ -1,8 +1,10 @@
 import React, { Component, createRef } from 'react';
-import { Button, Avatar, Pagination, Modal, Input, message } from 'antd';
+import { Button, Avatar, Pagination, Modal, Input, message, Form } from 'antd';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+import shortId from 'shortid';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
+import { getResponseRateAverage } from '../../common';
 import Rate from '../../components/Rate';
 import ImageUpload from '../../components/ImageUpload';
 import EditableTagGroup from '../../components/EditableTagGroup';
@@ -18,26 +20,26 @@ export default class extends Component {
     const { id = 'A000001' } = query;
     const fetch = require('isomorphic-unfetch');
 
-    const requestUrl = `${api.baseUrl}/api${api.getExpertIndividualIntroduce}`;
+    const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
 
-    const introductionRes = await fetch(`${requestUrl}?userId=${id}`);
-    const introductionContent = await introductionRes.json();
-    const introduction = introductionContent.data.introduction;
-
-    const serviceTagRes = await fetch(`${api.baseUrl}/api${api.getServiceTagList}?userId=${id}`);
-    const serviceTagContent = await serviceTagRes.json();
-    const serviceTag = serviceTagContent.data;
-
-    const informationRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertInformation}?userId=${id}`,
-    );
-    const informationContent = await informationRes.json();
-    const information = informationContent.data;
+    const expertInfoRes = await fetch(`${requestUrl}?userId=${id}`);
+    const expertInfoContent = await expertInfoRes.json();
+    const {
+      baseInfo,
+      schedule,
+      serviceTagList,
+      rating,
+      information = {},
+      briefIntro,
+    } = expertInfoContent.data;
 
     return {
-      introduction,
-      serviceTag,
-      information,
+      introduction: briefIntro.introduction,
+      serviceTag: serviceTagList,
+      information: information.content ? JSON.parse(information.content) : [],
+      userInfo: baseInfo,
+      schedule,
+      rating,
     };
   }
 
@@ -48,39 +50,78 @@ export default class extends Component {
     editIntroduction: '',
     introductionModalVisible: false,
     information: [
-      {
-        title: '标题',
-        content: '内容',
-        images: [],
-      },
+      // {
+      //   id
+      //   images
+      //   title
+      //   content
+      // }
     ],
   };
 
   editableTagRef = createRef();
 
+  formsRef = {};
+
   SortableItem = SortableElement(({ value, itemIndex }) => {
-    const { title, content, images } = value;
+    const { title, content, images, id } = value;
+    if (!this.formsRef[id]) {
+      this.formsRef[id] = createRef();
+    }
+    const formRef = this.formsRef[id];
     return (
       <div className="edit">
-        <div className="title flex flex-align">
-          <Input
-            className="title-edit flex-1"
-            value={title}
-            onChange={e => this.changeTitle(itemIndex, e)}
-          />
-          <i className="iconfont" onClick={() => this.removeInformation(itemIndex)}>
-            &#xe695;
-          </i>
-        </div>
-        <TextArea
-          className="edit-content"
-          autoSize={{ minRows: 4, maxRows: 10 }}
-          value={content}
-          onChange={e => this.changeContent(itemIndex, e)}
-        />
-        <div className="img">
-          <ImageUpload onChange={fileList => this.onImageChange(itemIndex, fileList)} />
-        </div>
+        <Form
+          ref={formRef}
+          initialValues={{
+            title,
+            content,
+            images,
+          }}
+        >
+          <Form.Item
+            name="title"
+            rules={[
+              { max: 80, message: '不超过80个字符' },
+              { required: true, message: '请输入标题' },
+            ]}
+          >
+            <div className="title flex flex-align">
+              <Input
+                className="title-edit flex-1"
+                value={title}
+                onChange={e => this.changeTitle(itemIndex, e)}
+                placeholder="标题"
+              />
+              <i className="iconfont" onClick={() => this.removeInformation(itemIndex)}>
+                &#xe695;
+              </i>
+            </div>
+          </Form.Item>
+          <Form.Item
+            name="content"
+            rules={[
+              { max: 2000, message: '不超过2000个字符' },
+              { required: true, message: '请输入内容' },
+            ]}
+          >
+            <TextArea
+              className="edit-content"
+              autoSize={{ minRows: 4, maxRows: 10 }}
+              value={content}
+              placeholder="内容"
+              onChange={e => this.changeContent(itemIndex, e)}
+            />
+          </Form.Item>
+          {/* <Form.Item name='images'> */}
+          <div className="img">
+            <ImageUpload
+              images={images}
+              onChange={fileList => this.onImageChange(itemIndex, fileList)}
+            />
+          </div>
+          {/* </Form.Item> */}
+        </Form>
         <div className="add" onClick={() => this.addInformation(itemIndex)}>
           <i className="iconfont">&#xe694;</i>
           &nbsp; ADD
@@ -95,7 +136,7 @@ export default class extends Component {
       <div>
         {items.map((value, index) => (
           // 此处的index会被SortableElement hoc消费掉，不会被传递到SortableItem中
-          <SortableItem key={`item-${value}`} index={index} itemIndex={index} value={value} />
+          <SortableItem key={`item-${value.id}`} index={index} itemIndex={index} value={value} />
         ))}
       </div>
     );
@@ -108,7 +149,6 @@ export default class extends Component {
     });
 
     if (res.code === '0') {
-      console.log(res);
       message.success('已更新');
       this.setState({ introductionModalVisible: false, introduction: editIntroduction });
     }
@@ -127,33 +167,23 @@ export default class extends Component {
 
   modifyExpertInformation = async () => {
     const { information } = this.state;
-    // 选出所有需要上传的图片，然后上传
-    // message.loading('正在上传');
-    // console.log(information);
-    // for (let i = 0; i < information.length; i++) {
-    //   const currentInfo = information[i];
-    //   for (let j = 0; j < currentInfo.images.length; j++) {
-    //     const image = currentInfo.images[j];
-    //     console.log(image);
-    //     if (image.match(/(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/)) {
-    //       continue;
-    //     }
 
-    //     // 相应去找到文件对象
-    //     const file = currentInfo.files[j];
-    //     console.log('竟来了');
-    //     const res = await commonService.fileUpload({
-    //       file,
-    //     });
-
-    //     console.log(res);
-    //   }
-    // }
+    // 检查表单是否都有效
+    for (let id in this.formsRef) {
+      // 主动触发验证
+      const form = this.formsRef[id].current;
+      await form.validateFields();
+      const fieldError = form.getFieldsError();
+      // 查看是否没有异常
+      const hasError = fieldError.find(item => item.errors.length >= 1);
+      if (hasError) {
+        return;
+      }
+    }
 
     const res = await expertService.saveExpertInformation({ content: JSON.stringify(information) });
 
     if (res.code === '0') {
-      console.log(res);
       message.success('已更新');
     }
   };
@@ -166,7 +196,6 @@ export default class extends Component {
 
   changeTitle = (itemIndex, e) => {
     const title = e.target.value.trim();
-    console.log(title);
     const information = [...this.state.information];
     information[itemIndex] = {
       ...information[itemIndex],
@@ -238,11 +267,12 @@ export default class extends Component {
 
   // 图片上传发生变化，就保存到state中
   onImageChange = (itemIndex, imageList) => {
-    console.log(itemIndex, imageList);
     const information = [...this.state.information];
     const images = imageList.map(item => {
       if (item.response && item.response.code == '0') {
         return item.response.data.webUrl;
+      } else {
+        return item.url;
       }
     });
 
@@ -257,6 +287,7 @@ export default class extends Component {
     const information = [...this.state.information];
 
     information.splice(index + 1, 0, {
+      id: shortId.generate(),
       title: '标题',
       content: '内容',
       images: [],
@@ -276,10 +307,11 @@ export default class extends Component {
   };
 
   componentDidMount = () => {
-    const { introduction, serviceTag } = this.props;
+    const { introduction, serviceTag, information } = this.props;
     this.setState({
       introduction,
       serviceTag,
+      information,
     });
   };
 
@@ -292,6 +324,13 @@ export default class extends Component {
       serviceTag,
       information,
     } = this.state;
+    const {
+      userInfo: { name, image, countryCode },
+      rating: { attitudeRateAVG, skillRateAVG, responseSpeed },
+    } = this.props;
+    const responseRateAVG = getResponseRateAverage(responseSpeed);
+    const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
+
     const { SortableList } = this;
 
     return (
@@ -303,16 +342,12 @@ export default class extends Component {
         <div className="expert-home">
           <div className="user-info flex flex-justifyBetween flex-align grey-shadow">
             <div className="flex flex-align">
-              <Avatar
-                className="avatar"
-                size={72}
-                src="https://wph-1256148406.cos.ap-shanghai.myqcloud.com/brainselling/65649a1545829.576a7eb99921c.jpg"
-              />
+              <Avatar className="avatar" size={72} src={image} />
               <div className="flex flex-column">
-                <h1 className="name">Steven Jackson</h1>
+                <h1 className="name">{name}</h1>
                 <h4 className="location flex">
                   <i className="iconfont">&#xe698;</i>
-                  &nbsp;&nbsp; North America
+                  &nbsp;&nbsp; {countryCode}
                 </h4>
               </div>
             </div>
@@ -362,19 +397,19 @@ export default class extends Component {
               <div className="flex-1 rate">
                 <div>
                   <span>综合评分</span>
-                  <Rate value={2.1} max={3} />
+                  <Rate value={averageRate} max={3} />
                 </div>
                 <div>
                   <span>服务态度</span>
-                  <Rate value={2.6} max={3} />
+                  <Rate value={attitudeRateAVG} max={3} />
                 </div>
                 <div>
                   <span>专业能力</span>
-                  <Rate value={1} max={3} />
+                  <Rate value={skillRateAVG} max={3} />
                 </div>
                 <div>
                   <span>回复速度</span>
-                  <Rate value={1.6} max={3} />
+                  <Rate value={responseRateAVG} max={3} />
                 </div>
               </div>
             </div>
@@ -400,9 +435,9 @@ export default class extends Component {
                 </div>
               </div>
             )}
-            <div className="common-pagination">
+            {/* <div className="common-pagination">
               <Pagination current={1} onChange={this.onChange} size="small" total={50} />
-            </div>
+            </div> */}
           </div>
         </div>
 

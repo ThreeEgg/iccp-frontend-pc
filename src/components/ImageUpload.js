@@ -54,10 +54,25 @@ export class ImageUpload extends Component {
     this.setState({
       uploadUrl,
     });
+
+    // 从images的props同步数据
+    const { images } = this.props;
+
+    if (images) {
+      this.setState({
+        fileList: images.map(url => ({
+          uid: url,
+          name: 'image',
+          status: 'done',
+          url,
+        })),
+      });
+    }
   };
 
   render() {
     const { previewVisible, previewImage, fileList, uploadUrl } = this.state;
+    const { max = 9 } = this.props;
     const uploadButton = (
       <div>
         <PlusOutlined />
@@ -72,8 +87,9 @@ export class ImageUpload extends Component {
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
+          multiple
         >
-          {fileList.length >= 8 ? null : uploadButton}
+          {fileList.length >= max ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
