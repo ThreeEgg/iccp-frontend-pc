@@ -65,7 +65,8 @@
     "react-sortable-hoc": "^1.11.0",
     "shortid": "^2.2.15",
     "swiper": "^5.3.6",
-    "umi-request": "^1.2.19"
+    "umi-request": "^1.2.19",
+    "wangeditor": "^3.1.1"
   },
   "devDependencies": {
     "@umijs/fabric": "^2.0.3",

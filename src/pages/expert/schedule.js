@@ -62,6 +62,8 @@ export class Schedule extends Component {
     return (
       <ContentLayoutExpert title="Schedule" url="/images/ic_professor_schedule_white.png">
         <ContentHeader
+          title="Schedule"
+          image="/images/ic_professor_schedule.png"
           actions={
             <Button type="primary" size="small" onClick={this.saveSchedule}>
               Save

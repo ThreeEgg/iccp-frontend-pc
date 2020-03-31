@@ -72,18 +72,20 @@ export const getExpertArticleById = async ({ activityId }) => {
   });
 };
 
-export const saveExpertArticle = async ({ content }) => {
+export const saveExpertArticle = async ({ article, brief, title }) => {
   return request.post(api.saveExpertArticle, {
-    params: {
-      content,
+    data: {
+      article,
+      brief,
+      title,
     },
   });
 };
 
-export const deleteExpertArticle = async ({ articleId }) => {
+export const deleteExpertArticle = async ({ id }) => {
   return request(api.deleteExpertArticle, {
     params: {
-      articleId,
+      id,
     },
   });
 };
