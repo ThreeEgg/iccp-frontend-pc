@@ -1,10 +1,14 @@
 import React, { Component, createRef } from 'react';
 import { Button, Avatar, Pagination, Modal, Input, message } from 'antd';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import Rate from '../../components/Rate';
 import EditableTagGroup from '../../components/EditableTagGroup';
 import api from '../../services/api';
 import * as expertService from '../../services/expert';
+import * as commonService from '../../services/common';
+import { importFile, dataURLtoBlob, blobToFile } from '../../utils';
 import './home.less';
 
 const { TextArea } = Input;
@@ -24,21 +28,102 @@ export default class extends Component {
     const serviceTagContent = await serviceTagRes.json();
     const serviceTag = serviceTagContent.data;
 
+    const informationRes = await fetch(
+      `${api.baseUrl}/api${api.getExpertInformation}?userId=${id}`,
+    );
+    const informationContent = await informationRes.json();
+    const information = informationContent.data;
+
     return {
       introduction,
       serviceTag,
+      information,
     };
   }
 
   state = {
     serviceTag: [],
+    serviceTagModalVisible: false,
     introduction: '',
     editIntroduction: '',
     introductionModalVisible: false,
-    serviceTagModalVisible: false,
+    information: [
+      {
+        title: '标题',
+        content: '内容',
+        images: [],
+        // 前端临时变量
+        files: [],
+      },
+    ],
   };
 
   editableTagRef = createRef();
+
+  SortableItem = SortableElement(({ value, itemIndex }) => {
+    const { title, content, images } = value;
+    return (
+      <div className="edit">
+        <div className="title flex flex-align">
+          <div
+            className="title-edit flex-1"
+            contentEditable
+            suppressContentEditableWarning
+            onInput={e => this.changeTitle(value, itemIndex, e)}
+          >
+            {title}
+          </div>
+          <i className="iconfont" onClick={() => this.removeInformation(itemIndex)}>
+            &#xe695;
+          </i>
+        </div>
+        <div className="content">{content}</div>
+        <div className="img flex">
+          {images.map((item, index) => {
+            return (
+              <div
+                key={item}
+                className="img-item"
+                style={{
+                  backgroundImage: `url(${item})`,
+                }}
+              >
+                <div
+                  className="close flex flex-align flex-justifyCenter"
+                  onClick={() => this.removeImage(itemIndex, index)}
+                >
+                  －
+                </div>
+              </div>
+            );
+          })}
+          {/* 添加按钮 */}
+          <div
+            className="img-item img-item-add flex flex-align flex-justifyCenter"
+            onClick={() => this.selectImage(value, itemIndex)}
+          >
+            <i className="iconfont">&#xe694;</i>
+          </div>
+        </div>
+        <div className="add" onClick={() => this.addInformation(itemIndex)}>
+          <i className="iconfont">&#xe694;</i>
+          &nbsp; ADD
+        </div>
+      </div>
+    );
+  });
+
+  SortableList = SortableContainer(({ items }) => {
+    const { SortableItem } = this;
+    return (
+      <div>
+        {items.map((value, index) => (
+          // 此处的index会被SortableElement hoc消费掉，不会被传递到SortableItem中
+          <SortableItem key={`item-${value}`} index={index} itemIndex={index} value={value} />
+        ))}
+      </div>
+    );
+  });
 
   modifyIntroduction = async () => {
     const { editIntroduction } = this.state;
@@ -59,10 +144,117 @@ export default class extends Component {
     const res = await expertService.saveServiceTagList({ serviceIdStr });
 
     if (res.code === '0') {
-      console.log(res);
       message.success('已更新');
       this.setState({ serviceTagModalVisible: false });
     }
+  };
+
+  modifyExpertInformation = async () => {
+    const { information } = this.state;
+    // 选出所有需要上传的图片，然后上传
+    // message.loading('正在上传');
+    // console.log(information);
+    // for (let i = 0; i < information.length; i++) {
+    //   const currentInfo = information[i];
+    //   for (let j = 0; j < currentInfo.images.length; j++) {
+    //     const image = currentInfo.images[j];
+    //     console.log(image);
+    //     if (image.match(/(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/)) {
+    //       continue;
+    //     }
+
+    //     // 相应去找到文件对象
+    //     const file = currentInfo.files[j];
+    //     console.log('竟来了');
+    //     const res = await commonService.fileUpload({
+    //       file,
+    //     });
+
+    //     console.log(res);
+    //   }
+    // }
+
+    const res = await expertService.saveExpertInformation({ content: JSON.stringify(information) });
+
+    if (res.code === '0') {
+      console.log(res);
+      message.success('已更新');
+    }
+  };
+
+  informationSortEnd = ({ oldIndex, newIndex }) => {
+    this.setState(({ information }) => ({
+      information: arrayMove(information, oldIndex, newIndex),
+    }));
+  };
+
+  changeTitle = () => {};
+
+  selectImage = async (item, index) => {
+    const result = await importFile(['image/png', 'image/jpeg'], true);
+
+    const information = [...this.state.information];
+    let files;
+    if (!information[index].files) {
+      files = [];
+    } else {
+      files = [...information[index].files];
+    }
+    const images = [...information[index].images];
+    const imageLength = images.length;
+    Array.from(result).forEach((file, fileIndex) => {
+      const reader = new FileReader();
+      reader.onload = evt => {
+        const imageUrl = evt.target.result;
+        // 控制显示顺序
+        const targeIndex = imageLength + fileIndex;
+
+        images[targeIndex] = imageUrl;
+        files[targeIndex] = file;
+
+        information[index].images = images;
+
+        this.setState({
+          information: information,
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  removeImage = (itemIndex, imgIndex) => {
+    const information = [...this.state.information];
+    const images = [...information[itemIndex].images];
+
+    images.splice(imgIndex, 1);
+
+    information[itemIndex].images = images;
+
+    this.setState({
+      information,
+    });
+  };
+
+  addInformation = index => {
+    const information = [...this.state.information];
+
+    information.splice(index + 1, 0, {
+      title: '标题',
+      content: '内容',
+      images: [],
+    });
+
+    this.setState({
+      information,
+    });
+  };
+
+  removeInformation = targeIndex => {
+    const information = this.state.information.filter((item, index) => index !== targeIndex);
+
+    this.setState({
+      information,
+    });
   };
 
   componentDidMount = () => {
@@ -80,7 +272,10 @@ export default class extends Component {
       introduction,
       editIntroduction,
       serviceTag,
+      information,
     } = this.state;
+    const { SortableList } = this;
+
     return (
       <ContentLayoutExpert
         title="Classic Case"
@@ -146,7 +341,7 @@ export default class extends Component {
                 <strong>服务评价</strong>
                 <i className="iconfont">&#xe68c;</i>
               </div>
-              <p className="flex-1 rate">
+              <div className="flex-1 rate">
                 <div>
                   <span>综合评分</span>
                   <Rate value={2.1} max={3} />
@@ -163,47 +358,30 @@ export default class extends Component {
                   <span>回复速度</span>
                   <Rate value={1.6} max={3} />
                 </div>
-              </p>
+              </div>
             </div>
           </div>
           <div className="detail grey-shadow">
             <div className="bar flex flex-justifyBetween flex-align">
               专家详情
-              <Button type="primary" size="small">
+              <Button type="primary" size="small" onClick={this.modifyExpertInformation}>
                 Save
               </Button>
             </div>
-            <div className="edit">
-              <div className="title flex flex-align">
-                <div className="title-edit flex-1" contentEditable />
-                <i className="iconfont">&#xe695;</i>
+            {information.length ? (
+              <SortableList
+                items={information}
+                onSortEnd={this.informationSortEnd}
+                pressDelay={300}
+              />
+            ) : (
+              <div className="edit">
+                <div className="add" onClick={() => this.addInformation(0)}>
+                  <i className="iconfont">&#xe694;</i>
+                  &nbsp; ADD
+                </div>
               </div>
-              <div className="content">
-                Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor
-                sit amet lacus accumsan et viverra justo commodo Aenean euismod bibendum laoreet.
-                Proin gravida dolor sit amet lacus accumsan et viverra justo commodo
-              </div>
-              <div className="img flex">
-                {[1, 2, 3].map(item => {
-                  return (
-                    <div
-                      key={item}
-                      className="img-item"
-                      style={{
-                        backgroundImage:
-                          'url(https://wph-1256148406.cos.ap-shanghai.myqcloud.com/brainselling/65649a1545829.576a7eb99921c.jpg)',
-                      }}
-                    >
-                      <div className="close flex flex-align flex-justifyCenter">－</div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="add">
-                <i className="iconfont">&#xe694;</i>
-                &nbsp; ADD
-              </div>
-            </div>
+            )}
             <div className="common-pagination">
               <Pagination current={1} onChange={this.onChange} size="small" total={50} />
             </div>

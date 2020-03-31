@@ -113,10 +113,8 @@ export const getExpertInformation = async ({ userId }) => {
 };
 
 export const saveExpertInformation = async ({ content }) => {
-  return request.post(api.saveServiceTagList, {
-    params: {
-      content,
-    },
+  return request.post(api.saveExpertInformation, {
+    data: content,
   });
 };
 

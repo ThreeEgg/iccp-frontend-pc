@@ -5,14 +5,26 @@ import request from './request';
  *
  * @param {*} file File类型
  */
-export const fileUpload = async ({ clientUserId, expertUserId, file, type }) => {
+export const fileUpload = async ({ clientUserId, expertUserId, file, fileName, type = 0 }) => {
+  console.log(file);
+  const form = new FormData();
+  form.append('file', file, fileName);
+
+  let userInfo = localStorage.getItem('userInfo');
+  if (!userInfo) {
+    throw new Error('userInfo not exist');
+  }
+  userInfo = JSON.parse(userInfo);
+  const uploadUserId = userInfo.userId;
+
   return request.post(api.fileUpload, {
-    data: {
+    params: {
       clientUserId,
       expertUserId,
-      file,
       type,
+      uploadUserId,
     },
+    data: form,
   });
 };
 

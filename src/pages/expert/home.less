@@ -36,21 +36,22 @@
           cursor: pointer;
         }
       }
-      p {
+      p,
+      .rate {
         margin-bottom: 0;
         padding: 16px;
         overflow-y: scroll;
         color: #666;
         font-size: 14px;
         line-height: 20px;
-        &.rate {
-          padding-top: 40px;
-          > div {
-            margin-bottom: 20px;
-            font-size: 14px;
-            span {
-              margin-right: 36px;
-            }
+      }
+      .rate {
+        padding-top: 40px;
+        > div {
+          margin-bottom: 20px;
+          font-size: 14px;
+          span {
+            margin-right: 36px;
           }
         }
       }
@@ -98,16 +99,19 @@
       }
 
       .img {
+        flex-wrap: wrap;
         margin-bottom: 20px;
         .img-item {
           position: relative;
-          width: 186px;
-          height: 186px;
-          margin-right: 5px;
+          width: 173px;
+          height: 173px;
+          margin: 0 5px 5px 0;
           background-repeat: no-repeat;
+          background-position: center center;
           background-size: cover;
           &:last-of-type {
             margin-right: 0;
+            margin-bottom: 0;
           }
           .close {
             position: absolute;
@@ -120,6 +124,13 @@
             background: red;
             border-radius: 50%;
             cursor: pointer;
+          }
+          &-add {
+            cursor: pointer;
+            i {
+              color: #999;
+              font-size: 30px;
+            }
           }
         }
       }
