@@ -13,6 +13,7 @@ class Header extends React.Component {
 
   render() {
     const { isLogin, userInfo } = this.props;
+
     return (
       <div className="header">
         <img className="logo" src="/logo-full.svg" alt="" />

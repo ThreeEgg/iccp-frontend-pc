@@ -7,6 +7,7 @@ import { Pagination } from 'antd';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import _ from 'lodash';
+import moment from 'moment';
 import { getResponseRateAverage } from '../common/index';
 import { onlineStateEnum } from '../common/enum';
 import api from '../services/api';
@@ -75,6 +76,8 @@ export default class Professor extends React.Component {
       cname,
       onlineState,
       accid,
+      // im状态变化时间
+      eventTime,
     } = expertInfoContent.data;
 
     return {
@@ -100,6 +103,7 @@ export default class Professor extends React.Component {
       imUser: {
         onlineState,
         accid,
+        eventTime,
       },
       pageNum,
       pageInfo,
@@ -182,6 +186,27 @@ export default class Professor extends React.Component {
     let responseRateAVG = getResponseRateAverage(responseSpeed);
     const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
 
+    // 最近在线时间距今
+    // 小于24小时：n小时内；
+    // 大于等于24小时到7天：n天内；
+    // 大于等于7天小于28天：n周内；
+    // 大于等于28天：不展示；
+    // 没有该字段，也不展示
+    let onlineTime;
+    if (imUser.eventTime) {
+      const eventOnlineTime = new Date(imUser.eventTime);
+      const eventOnlineTimestamp = Date.parse(eventOnlineTime);
+      const currentTime = Date.now();
+      const timeOffset = currentTime - eventOnlineTimestamp;
+      if (timeOffset < 86400000) {
+        onlineTime = moment(new Date(timeOffset)).hour() + '小时内';
+      } else if (timeOffset < 604800000) {
+        onlineTime = moment(new Date(timeOffset)).day() + '天内';
+      } else if (timeOffset < 2419200000) {
+        onlineTime = moment(new Date(timeOffset)).week() + '周内';
+      }
+    }
+
     return (
       <ContentLayout
         hideSider
@@ -197,7 +222,7 @@ export default class Professor extends React.Component {
             </i>
           </div>
           <div className="con-pro-r-name">{userInfo.name}</div>
-          <div className="con-pro-r-status">最近在线：{onlineStateEnum[imUser.onlineState]}</div>
+          {onlineTime ? <div className="con-pro-r-status">最近在线：{onlineTime}</div> : null}
           <Button onClick={this.goToCommunication}>立即沟通</Button>
           <div className="con-pro-r-title">本月日程</div>
           <div className="con-pro-r-time">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button, Switch } from 'antd';
+import { Form, Input, Button, Switch, message } from 'antd';
 import { MailOutlined, UserOutlined, LockOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import Router from 'next/router';
 import { connect } from 'react-redux';
@@ -18,6 +18,10 @@ class ChangePWD extends React.Component {
   resetPassword = () => {
     const { password: newPassword } = this.formRef.current.getFieldsValue();
     const { verifyCode } = this.props;
+
+    if (!verifyCode) {
+      return message.error('请通过邮箱链接重置密码');
+    }
 
     this.props.dispatch({
       type: 'expertUser/resetPassword',

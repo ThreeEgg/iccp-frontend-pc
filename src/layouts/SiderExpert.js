@@ -54,7 +54,6 @@ class SiderExpert extends React.Component {
   };
 
   onClick = res => {
-    console.log(res);
     Router.push('/' + this.routerMap[res.key]);
   };
 

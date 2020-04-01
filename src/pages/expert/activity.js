@@ -74,7 +74,7 @@ export class Activity extends Component {
       <ContentLayoutExpert
         className="expert-activity"
         title="My Dynamic"
-        url="/images/ic_professor_dynamic_black.png"
+        url="/images/ic_professor_dynamic.png"
       >
         <div className="fixed-header">
           <ContentHeader title="My Dynamic" image="/images/ic_professor_dynamic_black.png" />

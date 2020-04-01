@@ -62,7 +62,7 @@ class ChangePWD extends React.Component {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" onClick={this.modifyPassword}>
-              立即找回
+              修改密码
             </Button>
           </Form.Item>
         </Form>

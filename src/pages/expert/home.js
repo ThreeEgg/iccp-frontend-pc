@@ -351,8 +351,8 @@ export default class extends Component {
 
     return (
       <ContentLayoutExpert
-        title="Classic Case"
-        url="/images/ic_header_classcase.png"
+        title="个人资料"
+        url="/images/ic_hearder_Professor.png"
         removeContentStyle
       >
         <div className="expert-home">

@@ -49,6 +49,30 @@ export class Article extends Component {
     const elem = this.editorElem.current; //获取editorElem盒子
     const editor = new E(elem); //new 一个 editorElem富文本
 
+    // 配置菜单
+    editor.customConfig.menus = [
+      'head', // 标题
+      'bold', // 粗体
+      'fontSize', // 字号
+      'fontName', // 字体
+      'italic', // 斜体
+      'underline', // 下划线
+      'strikeThrough', // 删除线
+      'foreColor', // 文字颜色
+      'backColor', // 背景颜色
+      'link', // 插入链接
+      'list', // 列表
+      'justify', // 对齐方式
+      'quote', // 引用
+      'emoticon', // 表情
+      'table', // 表格
+      'image', // 插入图片
+      'video', // 插入视频
+      // 'code',  // 插入代码
+      'undo', // 撤销
+      'redo', // 重复
+    ];
+
     // 最大同时上传数限制
     editor.customConfig.uploadImgMaxLength = 1;
     editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
@@ -214,7 +238,10 @@ export class Article extends Component {
         ) : (
           <div className="rich-text-editor">
             <div className="editor-navigator flex flex-justifyBetween">
-              <div className="flex flex-align" onClick={() => this.setState({ edit: false })}>
+              <div
+                className="editor-navigator-back flex flex-align"
+                onClick={() => this.setState({ edit: false })}
+              >
                 <img src="/images/ic_header_leadback.png" />
                 &nbsp; 返回
               </div>
