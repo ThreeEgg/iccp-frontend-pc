@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-30 11:02:39
+ * @LastEditTime: 2020-04-01 11:29:51
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
@@ -34,7 +34,7 @@ class ChatEditor extends React.Component {
     isEmojiShown: false,
     msgToSent: '',
     icon1: `/im/ic_im_document.svg`,
-    icon2: ``,
+    icon2: `/im/ic_im_star.svg`,
     icon3: ``,
     sendTxt: true,
     recording: false,
@@ -105,7 +105,7 @@ class ChatEditor extends React.Component {
       message.error(this.state.invalidHint);
       return;
     }
-    let ipt = this.refs.fileToSent;
+    let ipt = this.refs.fileToSent2;
     if (ipt.value) {
       if (this.props.type === 'session') {
         this.props.dispatch({
@@ -119,6 +119,49 @@ class ChatEditor extends React.Component {
           type: 'chat/sendChatroomFileMsg',
           fileInput: ipt,
         });
+      }
+    }
+  }
+  sendCustomFileMsg = () => {
+    if (this.state.invalid) {
+      message.error(this.state.invalidHint);
+      return;
+    }
+    let ipt = this.refs.fileToSent;
+    if (ipt.value) {
+      if (this.props.type === 'session') {
+        this.props.dispatch({
+          type: 'chat/fileUpload',
+          file: ipt.files[0],
+          fileName: ipt.files[0].name,
+          callback: (res) => {
+            if (res.code === '0') {
+              let type = 11 //'file'
+              let pushContent = '[文件]' //'file'
+              if (/(png|jpg|bmp|jpeg|gif)$/i.test(res.data.fileSuffix)) {
+                type = 12 //'image'
+                pushContent = '[图片]'
+              } else if (/\.(mov|mp4|ogg|webm)$/i.test(res.data.fileSuffix)) {
+                type = 13 //'video'
+                pushContent = '[视频]'
+              }
+              this.props.dispatch({
+                type: 'chat/sendMsg',
+                method: 'custom',
+                scene: this.props.scene,
+                to: this.props.to,
+                pushContent,
+                content: {
+                  type,
+                  data:res.data
+                }
+              });
+            } else {
+              message.error(res.msg);
+            }
+          },
+        });
+      } else if (this.props.type === 'chatroom') {
       }
     }
   }
@@ -164,7 +207,11 @@ class ChatEditor extends React.Component {
         <div className="editor-tools">
           <span className="editor-tool">
             <i className="icon-img"><img src={this.state.icon1} /></i>
-            <input className='editor-file' type="file" ref="fileToSent" onChange={this.sendFileMsg} />
+            <input className='editor-file' type="file" ref="fileToSent" onChange={this.sendCustomFileMsg} />
+          </span>
+          <span className="editor-tool">
+            <i className="icon-img"><img src={this.state.icon1} /></i>
+            <input className='editor-file' type="file" ref="fileToSent2" onChange={this.sendFileMsg} />
           </span>
         </div>
         <textarea className="editor-input"
@@ -179,9 +226,6 @@ class ChatEditor extends React.Component {
           onKeyUp={this.onKeyUp}
           onKeyDown={this.onKeyDown}
         />
-        {/* <span className="editor-icon" onClick={this.showEmoji} >
-            <i className="icon-img"><img src={this.state.icon1} /></i>
-          </span > */}
         <Tooltip placement="left" title='Ctrl+Enter发送'>
           <span className="editor-send" onClick={this.sendTextMsg}> 发 送 </span >
         </Tooltip>

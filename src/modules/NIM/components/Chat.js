@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 18:29:28
+ * @LastEditTime: 2020-04-01 09:25:42
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -110,10 +110,8 @@ class Chat extends React.Component {
       attitudeRating: this.state.evaluation.service,
       skillRating: this.state.evaluation.professional,
       callback: (res) => {
-        debugger
         if (res.code === '0') {
           message.success(res.msg)
-
         } else {
           message.error(res.msg)
         }

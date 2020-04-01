@@ -161,6 +161,14 @@ Utils.parseCustomMsg = function (msg) {
           return '[贴图表情]'
         case 4:
           return '[白板消息]'
+        case 10:
+          return '[提示]'
+        case 11:
+          return '[文件]'
+        case 12:
+          return '[图片]'
+        case 13:
+          return '[视频]'
       }
     } catch (e) {}
     return '[自定义消息]'

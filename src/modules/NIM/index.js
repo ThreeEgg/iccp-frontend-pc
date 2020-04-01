@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 19:05:23
+ * @LastEditTime: 2020-04-01 09:33:23
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -36,6 +36,8 @@ class Index extends React.Component {
     if (!window.dispatch) {
       window.dispatch = this.props.dispatch;
     }
+    // 提交sdk连接请求
+    this.props.dispatch({ type: 'chat/connect' })
   }
   async componentDidUpdate(prevProps, prevState) {
     // this.props.dispatch({ type: 'chat/updateRefreshState' })
@@ -62,8 +64,8 @@ class Index extends React.Component {
           }}
         >
           <Session />
-          <Login />
-        <Button className='login' type="primary" onClick={() => this.setState({ caseInfoShow: !caseInfoShow })}>案件信息</Button>
+          {/* <Login /> */}
+        {/* <Button className='login' type="primary" onClick={() => this.setState({ caseInfoShow: !caseInfoShow })}>案件信息</Button> */}
         </Sider>
         <CaseInfo visible={caseInfoShow} />
         {currSessionId && <Chat />}

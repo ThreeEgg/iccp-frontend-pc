@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 18:25:39
+ * @LastEditTime: 2020-04-01 11:36:58
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -50,12 +50,11 @@ class ChatItem extends React.Component {
     icon1: `/im/ic_im_failed.svg`,
   };
   componentWillMount() {
+    this.computedItem()
   }
   componentDidMount() {
-    this.computedItem()
-    let item = this.state.msg
     // window.stopPlayAudio = this.stopPlayAudio.bind(this)
-
+    let item = this.state.msg
     let media = null
     if (item.type === 'image') {
       // 图片消息缩略图
@@ -70,6 +69,11 @@ class ChatItem extends React.Component {
       // 贴图表情
       media = new Image()
       media.className = 'emoji-big'
+      media.src = item.imgUrl
+    } else if (item.type === 'custom-image') {
+      // 自定义图片
+      media = new Image()
+      media.className = 'custom-image'
       media.src = item.imgUrl
     } else if (item.type === 'video') {
       if (/(mov|mp4|ogg|webm)/i.test(item.file.ext)) {
@@ -164,7 +168,6 @@ class ChatItem extends React.Component {
       }
     } else if (item.type === 'custom') {
       let content = JSON.parse(item.content.replace(/\n\r/g, "<br>").replace(/\r\n/g, "<br>").replace(/\n/g, "<br>").replace(/\r/g, "<br>"))
-      console.log(content);
       // type 1 为猜拳消息
       if (content.type === 1) {
         let data = content.data
@@ -182,12 +185,31 @@ class ChatItem extends React.Component {
           item.type = 'custom-type3'
           item.imgUrl = `${emojiCnt.img}`
         }
+      }
+      // 10提示信息
+      else if (content.type === 10) {
+        item.showText = content.data.value
+      }
+      // 11文件信息
+      else if (content.type === 11) {
+        item.type = 'custom-file'
+        item.fileLink = content.data.webUrl
+        item.showText = content.data.oldFileName
+      }
+      // 12图片信息
+      else if (content.type === 12) {
+        item.type = 'custom-image'
+        // 原始图片全屏显示
+        item.imgUrl = content.data.webUrl
+      }
+      // 13视频信息
+      else if (content.type === 13) {
+
       } else {
-        item.showText = content.msg
-        // item.showText = util.parseCustomMsg(item)
-        // if (item.showText !== '[自定义消息]') {
-        //   item.showText += ',请到手机或电脑客户端查看'
-        // }
+        item.showText = util.parseCustomMsg(item)
+        if (item.showText !== '[自定义消息]') {
+          item.showText += ',请到手机或电脑客户端查看'
+        }
       }
     } else if (item.type === 'image') {
       // 原始图片全屏显示
@@ -220,6 +242,7 @@ class ChatItem extends React.Component {
     this.setState({
       msg: item
     })
+
   }
   revocateMsg = (vNode) => {
     // 在会话聊天页
@@ -318,13 +341,13 @@ class ChatItem extends React.Component {
               {(msg.type === 'custom-type1' || msg.type === 'custom-type3' || msg.type === 'video') &&
                 <div className="msg-text" ref="mediaMsg"></div>
               }
-              {msg.type === 'image' &&
-                <div className="msg-text" ref="mediaMsg" onClick={this.showFullImg.bind(this, msg.originLink)}></div>
+              {(msg.type === 'image' || msg.type === 'custom-image') &&
+                <div className="msg-text msg-image" ref="mediaMsg" onClick={this.showFullImg.bind(this, msg.originLink)}></div>
               }
               {msg.type === 'audio' &&
                 <div className={`msg-text msg-audio ${msg.unreadAudio && 'unreadAudio'}`} style={{ width: msg.width }} ref="mediaMsg" onClick={this.playAudio.bind(this, msg)} dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
               }
-              {msg.type === 'file' &&
+              {(msg.type === 'file' || msg.type === 'custom-file') &&
                 <div className="msg-text"><a href={msg.fileLink} target="_blank"><i class="u-icon icon-file"></i>{msg.showText}</a></div>
               }
               {msg.type === 'robot' &&
@@ -333,7 +356,7 @@ class ChatItem extends React.Component {
               {msg.type === 'notification' &&
                 <div className="msg-text notify">{msg.showText}</div>
               }
-              {!['text', 'custom-type1', 'custom-type3', 'video', 'image', 'audio', 'file', 'robot', 'notification'].includes(msg.type) &&
+              {!['text', 'custom-type1', 'custom-type3', 'custom-image', 'video', 'image', 'audio', 'custom-file', 'file', 'robot', 'notification'].includes(msg.type) &&
                 <div className="msg-text custom" dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
               }
               {/* 翻译 */}

@@ -4,12 +4,13 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 18:05:39
+ * @LastEditTime: 2020-04-01 10:29:56
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\customFunction.js
  */
 import { message } from 'antd'
 
 import * as im from '../../../../services/im';
+import * as common from '../../../../services/common';
 
 export function* computedSessionlist({ serviceAccid }, { call, select }) {
   const accid = yield select(state => state.chat.userUID);
@@ -66,10 +67,19 @@ export function* saveExpertUserRating({
   attitudeRating,
   skillRating,
   callback }, { call }) {
-  const res = yield call(im.getTranslate, {
+  const res = yield call(im.saveExpertUserRating, {
     expertUserId,
     attitudeRating,
     skillRating,
+  });
+  callback && callback(res);
+}
+
+export function* fileUpload({
+  clientUserId, expertUserId, file, fileName, filetype,
+  callback }, { call }) {
+  const res = yield call(common.fileUpload, {
+    clientUserId, expertUserId, file, fileName, type:filetype,
   });
   callback && callback(res);
 }
