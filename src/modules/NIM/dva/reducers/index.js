@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 17:47:50
+ * @LastEditTime: 2020-04-01 14:54:50
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -152,9 +152,8 @@ export default {
   updateSessions(state, { sessions }) {
     const { nim,
       userUID,
-      userInfos,
       serviceInfo,
-      expertInfos,
+      iccpUserInfos,
       teamlist,
       sessionlist: sessionlistOld,
       sessionMap: sessionMapOld } = state;
@@ -174,7 +173,7 @@ export default {
             item.isService = true;
           } else {
             item.isService = false;
-            userInfo = expertInfos[item.to] || {};
+            userInfo = iccpUserInfos[item.to] || {};
           }
         } else {
           return false;
@@ -234,13 +233,13 @@ export default {
     serviceInfo.image = `/im/ic_im_service.svg`
     return { ...state, serviceInfo };
   },
-  updateExpertInfos(state, { expertList }) {
-    const { expertInfos: expertInfosOld } = state;
-    let expertInfos = { ...expertInfosOld };
-    expertList.forEach(item => {
-      expertInfos[item.accid] = item
+  updateiccpUserInfos(state, { iccpUserList }) {
+    const { iccpUserInfos: iccpUserInfosOld } = state;
+    let iccpUserInfos = { ...iccpUserInfosOld };
+    iccpUserList.forEach(item => {
+      iccpUserInfos[item.accid] = item
     })
-    return { ...state, expertInfos };
+    return { ...state, iccpUserInfos };
   },
   deleteSessions(state, sessionIds) {
     const { nim } = state;

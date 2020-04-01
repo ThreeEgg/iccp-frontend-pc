@@ -4,13 +4,14 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 09:25:42
+ * @LastEditTime: 2020-04-01 18:29:31
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import ChatList from './ChatList';
 import ChatEditor from './ChatEditor';
+import CaseInfo from './CaseInfo';
 import { Layout, Popconfirm, message } from 'antd';
 const { Header, Footer, Content } = Layout;
 import util from '../utils';
@@ -20,13 +21,16 @@ class Chat extends React.Component {
     scene: null,
     to: null,
     userInfo: {},
-    expertInfo: null,
+    isExpert: false,
+    hasCaseInfo: false,
+    hasEvaluation: false,
     icon1: `/im/ic_im_evaluate.svg`,
     icon2: `/im/ic_im_star.svg`,
     evaluation: {
       service: 3,
       professional: 3,
-    }
+    },
+    caseInfoShow: true,
   };
   // 进入该页面，文档被挂载
   async componentDidMount() {
@@ -53,7 +57,9 @@ class Chat extends React.Component {
       let to = util.parseSession(this.props.currSessionId).to
       let sessionId = this.props.currSessionId;
       let userInfo = {};
-      let expertInfo = null;
+      let isExpert = false;
+      let hasCaseInfo = false;
+      let hasEvaluation = false;
       let user = null;
       let evaluation = {}
       if (/^p2p-/.test(sessionId)) {
@@ -66,32 +72,43 @@ class Chat extends React.Component {
           if (user === this.props.serviceInfo.accid) {
             userInfo = this.props.serviceInfo
           } else {
-            expertInfo = this.props.expertInfos[user];
-            userInfo = this.props.expertInfos[user];
-            // 获取专家评价
-            this.props.dispatch({
-              type: 'chat/getExpertUserRating', expertUserId: expertInfo.userId,
-              callback: (res) => {
-                // if (res.code === '0') {
-                //   evaluation.service = res.data.attitudeRating
-                //   evaluation.professional = res.data.skillRating
-                // } else {
-                //   message.error(res.msg)
-                // }
-              },
-            })
+            userInfo = this.props.iccpUserInfos[user];
+            if (userInfo.userType === 'expert') {
+              isExpert = true
+              if (this.props.myInfo.type === 'user' || this.props.myInfo.type === 'guest') {
+                hasEvaluation = true
+                hasCaseInfo = true
+                // 获取专家评价
+                this.props.dispatch({
+                  type: 'chat/getExpertUserRating', expertUserId: userInfo.userId,
+                  callback: (res) => {
+                    if (res.code === '0') {
+                      evaluation.service = res.data.attitudeRating
+                      evaluation.professional = res.data.skillRating
+                    } else {
+                      message.error(res.msg)
+                    }
+                  },
+                })
+              }
+            }
+            else if (userInfo.userType === 'user' || userInfo.userType === 'guest') {
+              if (this.props.myInfo.type === 'expert') {
+                hasCaseInfo = true
+              }
+            }
           }
         }
       }
       this.setState({
         scene,
         to,
-        expertInfo,
         userInfo,
+        isExpert,
+        hasCaseInfo,
+        hasEvaluation,
       })
     }
-  };
-  onClickCase = () => {
   };
   onClickBack = () => {
     // location.href = '#/contacts'
@@ -105,8 +122,8 @@ class Chat extends React.Component {
   confirmEvaluation = () => {
     // 获取专家评价
     this.props.dispatch({
-      type: 'chat/saveExpertUserRating', 
-      expertUserId: this.state.expertInfo.userId,
+      type: 'chat/saveExpertUserRating',
+      expertUserId: this.state.userInfo.userId,
       attitudeRating: this.state.evaluation.service,
       skillRating: this.state.evaluation.professional,
       callback: (res) => {
@@ -126,10 +143,16 @@ class Chat extends React.Component {
       evaluation: temp,
     })
   }
+  toggleCaseInfo = () => {
+    this.setState({
+      caseInfoShow: !this.state.caseInfoShow
+    })
+  }
   render() {
-    const { expertInfo, userInfo, scene, to, icon1, icon2, evaluation } = this.state;
-    const { chat } = this.props;
-    const { myInfo, currSessionMsgs } = chat;
+    const { userInfo, isExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow } = this.state;
+    const { chat, user } = this.props;
+    const { userInfo: myInfo } = user;
+    const { currSessionMsgs, } = chat;
     let Evaluation = (
       <div className='evaluate-box'>
         <div className='evaluate-title'>服务评价</div>
@@ -149,26 +172,33 @@ class Chat extends React.Component {
     );
     return (
       <div className="chat-box">
+        {hasCaseInfo && <CaseInfo
+          visible={caseInfoShow}
+          userInfo={userInfo}
+          myInfo={myInfo}
+          toggleCaseInfo={this.toggleCaseInfo}
+        />}
         <div className='chat-title'>
           <div className='chat-expert'>
             <span className='expert-name'>
               {userInfo.name}
             </span>
-            {expertInfo && <Popconfirm placement="bottom" title={
+            {hasEvaluation && <Popconfirm placement="bottom" title={
               Evaluation} onConfirm={this.confirmEvaluation} okText="保存评分" icon={<i />}>
               <img className="expert-evaluate" src={icon1} alt="" />
             </Popconfirm>}
           </div>
-          {expertInfo && <span className='expert-info'>
+          {isExpert && <span className='expert-info'>
             专家信息
           </span>}
-          {expertInfo &&
-            <span className='expert-case' onClick={this.onClickCase}>案件信息表</span>}
+          {hasCaseInfo &&
+            <span className='expert-case' onClick={this.toggleCaseInfo}>案件信息表</span>}
         </div>
         <ChatList
           type="session"
           msglist={currSessionMsgs}
           userInfo={userInfo}
+          isExpert={isExpert}
           myInfo={myInfo}
           msgsLoaded={this.msgsLoaded}
         />
@@ -183,13 +213,14 @@ class Chat extends React.Component {
 }
 
 // export default Chat;
-export default connect(({ chat }) => ({
+export default connect(({ chat, user }) => ({
   chat,
+  user,
   currSessionId: chat.currSessionId,
   userUID: chat.userUID,
   sessionId: chat.sessionId,
-  myInfo: chat.myInfo,
+  myInfo: user.userInfo,
   serviceInfo: chat.serviceInfo,
-  expertInfos: chat.expertInfos,
+  iccpUserInfos: chat.iccpUserInfos,
   currSessionMsgs: chat.currSessionMsgs,
 }))(Chat);

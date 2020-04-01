@@ -50,7 +50,7 @@ class Session extends React.Component {
     this.props.dispatch({ type: 'chat/setCurrSession', sessionId: `p2p-${this.myPhoneId}` });
   };
   initSession = () => {
-    // 我的手机页面
+    // 发起会话
     this.props.dispatch({ type: 'chat/initSession', expertAccid: `4633e46abbef4c83bae2a3ab2713d7de` });
   };
   render() {

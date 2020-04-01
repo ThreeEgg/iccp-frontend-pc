@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-24 17:11:25
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 14:09:57
+ * @LastEditTime: 2020-04-01 15:33:07
  * @FilePath: \PC端-前端\src\modules\NIM\configs\index.js
  */
 let config = {
@@ -22,6 +22,8 @@ let config = {
   defaultUserIcon: '/im/ic_im_default.svg',
   // 默认本人头像
   defaultMeIcon: '/im/ic_im_me.svg',
+  // 默认他人头像
+  defaultClientIcon: '/im/ic_im_client.svg',
   // 默认普通群头像
   defaultGroupIcon: 'http://yx-web.nos.netease.com/webdoc/h5/im/default-group.png',
   // 默认高级群头像

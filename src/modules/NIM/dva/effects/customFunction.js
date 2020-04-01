@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 10:29:56
+ * @LastEditTime: 2020-04-01 14:28:42
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\customFunction.js
  */
 import { message } from 'antd'
@@ -18,7 +18,7 @@ export function* computedSessionlist({ serviceAccid }, { call, select }) {
   if (res.code === '0') {
     console.log(res.data.msg);
   } else {
-    message.error(res.msg);
+    // message.error(res.errorInfo);
   }
 }
 export function* checkFirstChatForCustomerService({ serviceAccid }, { call, select }) {
@@ -27,7 +27,7 @@ export function* checkFirstChatForCustomerService({ serviceAccid }, { call, sele
   if (res.code === '0') {
     console.log(res.data.msg);
   } else {
-    message.error(res.msg);
+    // message.error(res.errorInfo);
   }
 }
 export function* updateUsers(action, { put, call, select }) {
@@ -36,8 +36,8 @@ export function* updateUsers(action, { put, call, select }) {
   if (res.code === '0') {
     const serviceInfo = res.data.serviceChatInfo;
     yield put({ type: 'updateServiceInfo', serviceInfo });
-    const expertList = res.data.pagedItems && res.data.pagedItems.items;
-    yield put({ type: 'updateExpertInfos', expertList });
+    const iccpUserList = res.data.pagedItems && res.data.pagedItems.items;
+    yield put({ type: 'updateiccpUserInfos', iccpUserList });
     // 若客服信息不为空且客服会话为空则主动触发一次会话
     if (serviceInfo && !serviceInfo.lastChatTime) {
       // yield put({ type: 'checkFirstChatForCustomerService', serviceAccid: serviceInfo.accid });
@@ -48,7 +48,7 @@ export function* updateUsers(action, { put, call, select }) {
       yield put({ type: 'checkFirstChatForCustomerService', serviceAccid: serviceInfo.accid });
     }
   } else {
-    message.error(res.msg);
+    // message.error(res.errorInfo);
   }
 }
 
@@ -75,11 +75,30 @@ export function* saveExpertUserRating({
   callback && callback(res);
 }
 
+export function* getCaseInfo({
+  clientUserId,
+  expertUserId, callback }, { call }) {
+  const res = yield call(im.getCaseInfo, {
+    clientUserId,
+    expertUserId,
+  });
+  callback && callback(res);
+}
+
+
+export function* saveCaseInfo({
+  extIccpCase, callback }, { call }) {
+  const res = yield call(im.saveCaseInfo, {
+    extIccpCase,
+  });
+  callback && callback(res);
+}
+
 export function* fileUpload({
   clientUserId, expertUserId, file, fileName, filetype,
   callback }, { call }) {
   const res = yield call(common.fileUpload, {
-    clientUserId, expertUserId, file, fileName, type:filetype,
+    clientUserId, expertUserId, file, fileName, type: filetype,
   });
   callback && callback(res);
 }
@@ -90,7 +109,7 @@ export function* initSession({ expertAccid, callback }, { call, select }) {
   if (res.code === '0') {
     console.log(res.data.msg);
   } else {
-    message.error(res.msg);
+    // message.error(res.errorInfo);
   }
   callback && callback();
 }

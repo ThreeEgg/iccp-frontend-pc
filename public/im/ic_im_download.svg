@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>ic_im_document_download</title>
+    <desc>Created with Sketch.</desc>
+    <g id="ic_im_document_download" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="下载" fill-rule="nonzero">
+            <rect id="矩形" fill="#000000" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <path d="M8.25531915,10.8829268 L12,7.44878049 L8.85106383,7.44878049 L8.85106383,2 L7.14893617,2 L7.14893617,7.44878049 L4,7.44878049 L7.74468085,10.8829268 C7.82978723,11.0390244 8.17021277,11.0390244 8.25531915,10.8829268 Z M2.72147089,12.5 L13.2785291,12.5 C13.5113011,12.5 13.7,12.6886989 13.7,12.9214709 C13.7,13.1542428 13.5113011,13.3429418 13.2785291,13.3429418 L2.72147089,13.3429418 C2.48869894,13.3429418 2.3,13.1542428 2.3,12.9214709 C2.3,12.6886989 2.48869894,12.5 2.72147089,12.5 Z" id="形状" fill="#999999"></path>
+        </g>
+    </g>
+</svg>

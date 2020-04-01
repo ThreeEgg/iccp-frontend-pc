@@ -157,7 +157,7 @@ class ChatEditor extends React.Component {
                 }
               });
             } else {
-              message.error(res.msg);
+              // message.error(res.errorInfo);
             }
           },
         });

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 11:36:58
+ * @LastEditTime: 2020-04-01 15:54:56
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -137,15 +137,20 @@ class ChatItem extends React.Component {
     let item = Object.assign({}, this.props.rawMsg)
     // 标记用户，区分聊天室、普通消息
     if (this.props.type === 'session') {
+      let defaultIcon = config.defaultUserIcon;
       if (item.flow === 'in') {
-        if (item.from !== this.props.userUID) {
-          item.avatar = (this.props.userInfo && this.props.userInfo.image) || config.defaultUserIcon
-          item.name = this.props.userInfo && this.props.userInfo.name
-        } else {
-          item.avatar = config.defaultMeIcon
+        if (this.props.userInfo.userType === 'user' || this.props.userInfo.userType === 'guest') {
+          defaultIcon = config.defaultClientIcon;
         }
+        item.avatar = (this.props.userInfo && this.props.userInfo.image) || defaultIcon
+        item.name = this.props.userInfo && this.props.userInfo.name || ''
       } else if (item.flow === 'out') {
-        item.avatar = config.defaultMeIcon
+        item.name = this.props.myInfo && this.props.myInfo.name || ''
+        if (this.props.myInfo.type === 'user' || this.props.myInfo.type === 'guest') {
+          defaultIcon = config.defaultMeIcon;
+          item.name = ''
+        }
+        item.avatar = (this.props.myInfo && this.props.myInfo.image) || defaultIcon
       }
     } else {
       // 标记时间，聊天室中
@@ -162,7 +167,7 @@ class ChatItem extends React.Component {
         emojiItems.forEach(text => {
           let emojiCnt = emojiObj.emojiList.emoji
           if (emojiCnt[text]) {
-            item.showText = item.showText.replace(text, `<img class="emoji-small" src="${emojiCnt[text].img}">`)
+            item.showText = item.showText.replace(text, `<img className="emoji-small" src="${emojiCnt[text].img}">`)
           }
         })
       }
@@ -348,7 +353,7 @@ class ChatItem extends React.Component {
                 <div className={`msg-text msg-audio ${msg.unreadAudio && 'unreadAudio'}`} style={{ width: msg.width }} ref="mediaMsg" onClick={this.playAudio.bind(this, msg)} dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
               }
               {(msg.type === 'file' || msg.type === 'custom-file') &&
-                <div className="msg-text"><a href={msg.fileLink} target="_blank"><i class="u-icon icon-file"></i>{msg.showText}</a></div>
+                <div className="msg-text"><a href={msg.fileLink} target="_blank"><i className="u-icon icon-file"></i>{msg.showText}</a></div>
               }
               {msg.type === 'robot' &&
                 <div className="msg-text">功能暂未开放</div>

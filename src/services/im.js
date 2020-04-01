@@ -9,7 +9,7 @@ export const requestIMId = async ({ guestId }) => {
   });
 };
 
-export const checkFirstChat = async ({ expertAccid , userAccid }) => {
+export const checkFirstChat = async ({ expertAccid, userAccid }) => {
   return request(api.checkFirstChat, {
     params: {
       expertAccid,
@@ -47,45 +47,9 @@ export const getCaseInfo = async ({ caseId, clientUserId, expertUserId }) => {
   });
 };
 
-export const saveCaseInfo = async ({
-  ageOfAccount,
-  caseId,
-  caseIntroduction,
-  clientUserId,
-  companyAddress,
-  companyName,
-  contactInformation,
-  country,
-  creditor,
-  currencyType,
-  debtOfAmount,
-  expertUserId,
-  expertUserName,
-  iccpCaseEnclosureList = [],
-  isValid,
-  obligor,
-  obligorCountry,
-}) => {
+export const saveCaseInfo = async (extIccpCase) => {
   return request.post(api.saveCaseInfo, {
-    data: {
-      ageOfAccount,
-      caseId,
-      caseIntroduction,
-      clientUserId,
-      companyAddress,
-      companyName,
-      contactInformation,
-      country,
-      creditor,
-      currencyType,
-      debtOfAmount,
-      expertUserId,
-      expertUserName,
-      iccpCaseEnclosureList,
-      isValid,
-      obligor,
-      obligorCountry,
-    },
+    extIccpCase ,
   });
 };
 
@@ -142,7 +106,7 @@ export const getExpertUserRating = async ({ expertUserId }) => {
   });
 };
 
-export const saveExpertUserRating = async ({ expertUserId, attitudeRating, skillRating}) => {
+export const saveExpertUserRating = async ({ expertUserId, attitudeRating, skillRating }) => {
   return request.post(api.saveExpertUserRating, {
     params: {
       expertUserId,

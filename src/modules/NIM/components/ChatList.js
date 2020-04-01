@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 15:06:28
+ * @LastEditTime: 2020-04-01 15:51:06
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatList.js
  */
 import React from 'react';
