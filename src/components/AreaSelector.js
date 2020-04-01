@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Button, Collapse } from 'antd';
+import React, { Component, Fragment } from 'react';
+import { Button, Collapse, Empty } from 'antd';
 import {
   CaretRightOutlined,
   CaretDownOutlined,
@@ -61,13 +61,13 @@ export default class extends Component {
     const { country, service } = this.state;
 
     const res = await expertService.getExpertList({
-      countryCode: country['country_code'],
+      countryCode: country.countryCode,
       serviceTagIdList: [service.id],
     });
 
     if (res.code === '0') {
       this.setState({
-        expertList: [1, 2, 3, 4, 5, 6, 7] || res.data,
+        expertList: res.data,
       });
     }
   };
@@ -227,66 +227,61 @@ export default class extends Component {
 
           {/* 专家信息 */}
           <div className={classNames(['expert-info flex flex-column', { active: infoExpand }])}>
-            <div className="expert-select flex flex-justifyBetween flex-align">
-              <span>选择专家</span>
-              {/* TODO: 20200326 专家分页器 */}
-              {/* <div>
+            {expertList.length ? (
+              <Fragment>
+                <div className="expert-select flex flex-justifyBetween flex-align">
+                  <span>选择专家</span>
+                  {/* TODO: 20200326 专家分页器 */}
+                  {/* <div>
                 <LeftOutlined style={{ fontSize: 16, color: 'rgba(255, 255, 255, .3)' }} />
                 <RightOutlined style={{ fontSize: 16 }} />
               </div> */}
-            </div>
-
-            <div className="expert-list flex">
-              {expertList.map((item, index) => (
-                <div
-                  key={index}
-                  className={classNames('expert-list-item flex flex-column flex-align', {
-                    active: currentExpertIndex == index,
-                  })}
-                  onClick={() => this.setState({ currentExpertIndex: index })}
-                >
-                  <img
-                    src={
-                      'https://wph-1256148406.cos.ap-shanghai.myqcloud.com/brainselling/65649a1545829.576a7eb99921c.jpg'
-                    }
-                    alt=""
-                  />
-                  <span>名字</span>
                 </div>
-              ))}
-            </div>
-            <div className="expert-detail flex flex-column">
-              <div className="expert-detail-title flex flex-justifyBetween flex-align">
-                <span className="strong">
-                  Cynthia Miller{' '}
-                  <i className="iconfont" style={{ color: '#45D49D', fontSize: 13 }}>
-                    &#xe697;
-                  </i>
-                </span>
-                <span>美国</span>
-              </div>
-              <div className="expert-detail-content flex">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum
-                laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Lorem
-                ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.
-                Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin gravida
-                dolor sit amet lacus accumsan et viverra justo commodo Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor
-                sit amet lacus accumsan et viverra justo commodo. Proin gravida dolor sit amet lacus
-                accumsan et viverra justo commodo Lorem ipsum dolor sit amet, consectetur adipiscing
-                elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan
-                et viverra justo commodo. Proin gravida dolor sit amet lacus accumsan et viverra
-                justo commodo
-              </div>
-            </div>
-            <div className="btns flex flex-justifyBetween">
-              <div>
-                <Link href="/professor">
-                  <a>专家主页</a>
-                </Link>
-              </div>
-              <div className="active">立即沟通</div>
-            </div>
+
+                <div className="expert-list flex">
+                  {expertList.map((item, index) => (
+                    <div
+                      key={index}
+                      className={classNames('expert-list-item flex flex-column flex-align', {
+                        active: currentExpertIndex == index,
+                      })}
+                      onClick={() => this.setState({ currentExpertIndex: index })}
+                    >
+                      <img src={item.image} alt="" />
+                      <span>{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+                {expertList[currentExpertIndex] ? (
+                  <Fragment>
+                    <div className="expert-detail flex flex-column">
+                      <div className="expert-detail-title flex flex-justifyBetween flex-align">
+                        <span className="strong">
+                          {expertList[currentExpertIndex].name}&nbsp;&nbsp;
+                          <i className="iconfont" style={{ color: '#45D49D', fontSize: 13 }}>
+                            &#xe697;
+                          </i>
+                        </span>
+                        <span>{expertList[currentExpertIndex].countryCode}</span>
+                      </div>
+                      <div className="expert-detail-content flex">
+                        {expertList[currentExpertIndex].name}
+                      </div>
+                    </div>
+                    <div className="btns flex flex-justifyBetween">
+                      <div>
+                        <Link href={`/professor?id=${expertList[currentExpertIndex].userId}`}>
+                          <a>专家主页</a>
+                        </Link>
+                      </div>
+                      <div className="active">立即沟通</div>
+                    </div>
+                  </Fragment>
+                ) : null}
+              </Fragment>
+            ) : (
+              <Empty />
+            )}
           </div>
         </div>
       </div>

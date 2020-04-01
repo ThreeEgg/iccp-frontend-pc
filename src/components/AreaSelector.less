@@ -4,6 +4,10 @@
   height: 400px;
   background: rgba(67, 73, 94, 0.8);
   transition: all 0.3s;
+  span,
+  div {
+    color: white;
+  }
   &.expand {
     width: 200px;
   }
@@ -80,6 +84,17 @@
     background-color: rgba(67, 73, 94, 0.7);
     opacity: 0;
     transition: opacity 0.3s;
+    .ant-empty {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      span,
+      div,
+      p {
+        color: white;
+      }
+    }
     &.active {
       opacity: 1;
     }
