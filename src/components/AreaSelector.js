@@ -5,6 +5,7 @@ import {
   CaretDownOutlined,
   LeftOutlined,
   RightOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -236,6 +237,9 @@ export default class extends Component {
                 <LeftOutlined style={{ fontSize: 16, color: 'rgba(255, 255, 255, .3)' }} />
                 <RightOutlined style={{ fontSize: 16 }} />
               </div> */}
+                  <div onClick={() => this.setState({ infoExpand: false })}>
+                    <CloseOutlined style={{ fontSize: 16, cursor: 'pointer' }} />
+                  </div>
                 </div>
 
                 <div className="expert-list flex">
@@ -258,15 +262,19 @@ export default class extends Component {
                       <div className="expert-detail-title flex flex-justifyBetween flex-align">
                         <span className="strong">
                           {expertList[currentExpertIndex].name}&nbsp;&nbsp;
-                          <i className="iconfont" style={{ color: '#45D49D', fontSize: 13 }}>
-                            &#xe697;
+                          <i
+                            className={classNames('online-state iconfont', {
+                              active: expertList[currentExpertIndex].onlineState === 0,
+                            })}
+                          >
+                            &#xe68b;
                           </i>
                         </span>
                         <span>{expertList[currentExpertIndex].countryCode}</span>
                       </div>
-                      <div className="expert-detail-content flex">
-                        {expertList[currentExpertIndex].name}
-                      </div>
+                      <p className="expert-detail-content flex">
+                        {expertList[currentExpertIndex].introduction}
+                      </p>
                     </div>
                     <div className="btns flex flex-justifyBetween">
                       <div>

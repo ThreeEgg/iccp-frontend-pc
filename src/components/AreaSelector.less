@@ -79,7 +79,7 @@
     position: absolute;
     top: 0;
     right: -320px;
-    width: 320px;
+    width: 0;
     height: 100%;
     background-color: rgba(67, 73, 94, 0.7);
     opacity: 0;
@@ -96,6 +96,7 @@
       }
     }
     &.active {
+      width: 320px;
       opacity: 1;
     }
     .expert-select {
@@ -110,6 +111,7 @@
         flex-shrink: 0;
         width: 70px;
         height: 70px;
+        overflow: hidden;
         cursor: pointer;
         &.active {
           img {
@@ -149,11 +151,19 @@
           font-weight: bold;
           font-size: 18px;
         }
+        .online-state {
+          color: #fff;
+          font-size: 13px;
+          &.active {
+            color: '#45D49D';
+          }
+        }
       }
       &-content {
         flex-grow: 1;
         padding: 0 12px;
         overflow: auto;
+        color: white;
         font-size: 13px;
       }
     }

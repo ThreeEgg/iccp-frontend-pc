@@ -70,7 +70,7 @@ export default {
 
     *logout({ payload }, { put, call }) {
       // FIXME: 2020.4.1 wph 无法异步登出
-      userService.logout();
+      // userService.logout();
 
       localStorage.removeItem('userInfo');
       localStorage.removeItem('imInfo');

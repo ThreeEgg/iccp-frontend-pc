@@ -54,13 +54,11 @@ export default class Classic extends React.Component {
               <div className="cla-item flex flex-justifyBetween" key={item.id}>
                 <div className="cla-item-text">
                   <h1>{item.title}</h1>
-                  <div>{item.content}</div>
-                  <Button onClick={this.goToArticle}>
+                  <div className="cla-item-content">{item.content}</div>
+                  <div className="cla-more-btn" onClick={this.goToArticle}>
                     More
-                    <RightOutlined
-                      style={{ fontSize: '12px', position: 'absolute', top: '10px' }}
-                    />
-                  </Button>
+                    <RightOutlined style={{ fontSize: '12px' }} />
+                  </div>
                 </div>
                 <img src={item.image} />
               </div>
