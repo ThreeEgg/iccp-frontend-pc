@@ -4,6 +4,7 @@ import { MailOutlined, UserOutlined, LockOutlined, CheckSquareOutlined } from '@
 import Router from 'next/router';
 import { connect } from 'react-redux';
 import LoginLayout from '../layouts/LoginLayout';
+import './login.less';
 
 class ChangePWD extends React.Component {
   static async getInitialProps({ req, query }) {

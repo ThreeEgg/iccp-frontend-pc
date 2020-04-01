@@ -10,12 +10,19 @@ if [ "$1" == "--env" ]; then
   if [ "$2" == "test" ]; then
     # 端口
     export PORT=8090
-    # 环境
+    # 环境 online 线上 test 测试 dev 开发
+    export API_ENV=test
   # 线上
   elif [ "$2" == "online" ]; then
-    echo "online"
+    # 端口
+    export PORT=8090
+    # 环境 online 线上 test 测试 dev 开发
+    export API_ENV=online
   else
-    echo "default"
+    # 端口
+    export PORT=8090
+    # 环境 online 线上 test 测试 dev 开发
+    export API_ENV=dev
   fi
 fi
 
