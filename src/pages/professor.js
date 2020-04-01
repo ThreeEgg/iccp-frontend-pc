@@ -8,6 +8,7 @@ import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
 import _ from 'lodash';
 import { getResponseRateAverage } from '../common/index';
+import { onlineStateEnum } from '../common/enum';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
 import Timeline from '../components/Timeline';
@@ -16,9 +17,9 @@ import './professor.less';
 
 const { TabPane } = Tabs;
 
-export default class Platform extends React.Component {
+export default class Professor extends React.Component {
   static async getInitialProps({ req, query }) {
-    const { id = 'A000001', tabName = 'activity', articleId, pageNum = 1 } = query;
+    const { id, tabName = 'activity', articleId, pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
@@ -168,7 +169,7 @@ export default class Platform extends React.Component {
       userInfo,
       imUser,
       schedule,
-      rating,
+      rating = {},
       article,
       activity,
       tabName,
@@ -196,7 +197,7 @@ export default class Platform extends React.Component {
             </i>
           </div>
           <div className="con-pro-r-name">{userInfo.name}</div>
-          <div className="con-pro-r-status">最近在线：无</div>
+          <div className="con-pro-r-status">最近在线：{onlineStateEnum[imUser.onlineState]}</div>
           <Button onClick={this.goToCommunication}>立即沟通</Button>
           <div className="con-pro-r-title">本月日程</div>
           <div className="con-pro-r-time">

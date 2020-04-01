@@ -6,17 +6,22 @@ import ContentHeader from '../../components/ContentHeader';
 import Timeline from '../../components/Timeline';
 import api from '../../services/api';
 import * as expertService from '../../services/expert';
+import { cookieToJson } from '../../utils';
 import './activity.less';
 
 export class Activity extends Component {
   static async getInitialProps({ req, query }) {
+    const { cookie } = req.headers;
+
+    const { userId } = cookieToJson(cookie);
+
     const { pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertActivityList}`;
 
     const activityContentRes = await fetch(
-      `${requestUrl}?pageNum=${pageNum}&pageSize=10&userId=${'A000001'}`,
+      `${requestUrl}?pageNum=${pageNum}&pageSize=10&userId=${userId}`,
     );
     const activityContent = await activityContentRes.json();
     const activity = activityContent.data.items;

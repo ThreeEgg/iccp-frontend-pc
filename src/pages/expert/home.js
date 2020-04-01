@@ -10,19 +10,22 @@ import ImageUpload from '../../components/ImageUpload';
 import EditableTagGroup from '../../components/EditableTagGroup';
 import api from '../../services/api';
 import * as expertService from '../../services/expert';
-import { importFile } from '../../utils';
+import { importFile, cookieToJson } from '../../utils';
 import './home.less';
 
 const { TextArea } = Input;
 
 export default class extends Component {
   static async getInitialProps({ req, query }) {
-    const { id = 'A000001' } = query;
+    const { cookie } = req.headers;
+
+    const { userId } = cookieToJson(cookie);
+
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
 
-    const expertInfoRes = await fetch(`${requestUrl}?userId=${id}`);
+    const expertInfoRes = await fetch(`${requestUrl}?userId=${userId}`);
     const expertInfoContent = await expertInfoRes.json();
     const {
       schedule,

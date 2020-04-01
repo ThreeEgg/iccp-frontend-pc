@@ -1,5 +1,6 @@
 import router from 'next/router';
 import { message } from 'antd';
+import Cookie from 'js-cookie';
 import * as userService from '../services/user';
 import { setAuthorityToken } from '../common/authority';
 
@@ -48,6 +49,9 @@ export default {
         localStorage.isLogin = 1;
         localStorage.platform = platform;
 
+        Cookie.set('userId', baseInfo.userId);
+        Cookie.set('token', accessToken);
+
         yield put({
           type: 'save',
           payload: {
@@ -72,6 +76,10 @@ export default {
       localStorage.removeItem('imInfo');
       localStorage.removeItem('isLogin');
       localStorage.removeItem('accessToken');
+
+      Cookie.remove('userId');
+      Cookie.remove('token');
+
       yield put({
         type: 'save',
         payload: {

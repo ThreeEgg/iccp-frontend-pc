@@ -7,3 +7,9 @@ export const platformContentType = {
   COMMONQUESTION: 'commonQuestion', // 常见问题
   REGISTRYAGGREEMENT: 'registryAggreement', // 注册协议
 };
+
+export const onlineStateEnum = {
+  0: '在线',
+  1: '离线',
+  2: '未知',
+};

@@ -6,15 +6,20 @@ import ScheduleComponent from '../../components/Schedule';
 import ContentHeader from '../../components/ContentHeader';
 import api from '../../services/api';
 import * as expertService from '../../services/expert';
+import { cookieToJson } from '../../utils';
 import './schedule.less';
 
 export class Schedule extends Component {
   static async getInitialProps({ req, query }) {
+    const { cookie } = req.headers;
+
+    const { userId } = cookieToJson(cookie);
+
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertScheduleByGreenwich}`;
 
-    const expertScheduleRes = await fetch(`${requestUrl}?timeZone=${8}&userId=${'A000001'}`);
+    const expertScheduleRes = await fetch(`${requestUrl}?timeZone=${8}&userId=${userId}`);
     const expertScheduleContent = await expertScheduleRes.json();
     const expertSchedule = expertScheduleContent.data;
 

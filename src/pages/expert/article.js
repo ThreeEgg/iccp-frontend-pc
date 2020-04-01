@@ -7,17 +7,23 @@ import ContentHeader from '../../components/ContentHeader';
 import api from '../../services/api';
 import * as commonService from '../../services/common';
 import * as expertService from '../../services/expert';
+import { importFile, cookieToJson } from '../../utils';
+
 import './article.less';
 
 export class Article extends Component {
   static async getInitialProps({ req, query }) {
+    const { cookie } = req.headers;
+
+    const { userId } = cookieToJson(cookie);
+
     const { pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertArticleList}`;
 
     const articleContentRes = await fetch(
-      `${requestUrl}?pageNum=${pageNum}&pageSize=10&userId=${'A000001'}`,
+      `${requestUrl}?pageNum=${pageNum}&pageSize=10&userId=${userId}`,
     );
     const articleContent = await articleContentRes.json();
     const articles = articleContent.data.items;
