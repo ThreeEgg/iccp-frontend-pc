@@ -1,6 +1,6 @@
 const apiEnv = process.env.API_ENV;
 
-let baseUrl = 'http://221.215.57.110:9821';
+let baseUrl = 'http://172.16.1.161';
 
 switch (apiEnv) {
   case 'test':

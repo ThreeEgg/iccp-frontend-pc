@@ -160,7 +160,8 @@ export default class extends Component {
   modifyIntroduction = async () => {
     const { editIntroduction } = this.state;
     const res = await expertService.saveExpertIndividualIntroduce({
-      introduction: editIntroduction,
+      // FIXME：2020.4.1 此处对于空数据，会导致直接不传body，通过空字符串解决
+      introduction: editIntroduction || ' ',
     });
 
     if (res.code === '0') {

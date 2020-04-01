@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { Button, Switch } from 'antd';
+import { Button, Switch, Modal } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import router from 'next/router';
@@ -7,8 +8,16 @@ import './Header.less';
 
 class Header extends React.Component {
   logout = () => {
-    this.props.dispatch({
-      type: 'user/logout',
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: '是否要退出登录',
+      okText: '是的',
+      cancelText: '取消',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'user/logout',
+        });
+      },
     });
   };
 
