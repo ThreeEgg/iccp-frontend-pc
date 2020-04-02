@@ -38,7 +38,11 @@ export default class Regulation extends React.Component {
     const { pageNum, pageInfo } = this.props;
 
     return (
-      <Platform title="Regulation" url="/images/ic_header_regulation.png">
+      <ContentLayout
+        title="Regulation"
+        url="/images/ic_header_regulation.png"
+        className="regulation-page"
+      >
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">
@@ -61,7 +65,7 @@ export default class Regulation extends React.Component {
             total={pageInfo.totalResults}
           />
         </div>
-      </Platform>
+      </ContentLayout>
     );
   }
 }

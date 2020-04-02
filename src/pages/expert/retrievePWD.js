@@ -3,6 +3,7 @@ import { Form, Input, Button, Switch } from 'antd';
 import { MailOutlined, UserOutlined, LockOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import LoginLayout from '../../layouts/LoginLayout';
+import './login.less';
 
 class RetrievePWD extends React.Component {
   formRef = React.createRef();

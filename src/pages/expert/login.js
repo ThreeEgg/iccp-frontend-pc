@@ -44,13 +44,26 @@ class Login extends React.Component {
               className="login-form"
               initialValues={{ remember: true }}
             >
-              <Form.Item name="userName" rules={[{ required: true, message: '请输入邮箱' }]}>
+              <Form.Item
+                name="userName"
+                rules={[
+                  { required: true, message: '请输入邮箱' },
+                  { type: 'email', message: '请输入正确的邮箱' },
+                  { min: 1, max: 30, message: '邮箱为1-30个字符' },
+                ]}
+              >
                 <Input
                   prefix={<MailOutlined className="site-form-item-icon" />}
-                  placeholder="请输入用户名"
+                  placeholder="请输入邮箱"
                 />
               </Form.Item>
-              <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
+              <Form.Item
+                name="password"
+                rules={[
+                  { required: true, message: '请输入密码' },
+                  { min: 8, max: 20, message: '密码大于8位且小于20位' },
+                ]}
+              >
                 <Input
                   prefix={<LockOutlined className="site-form-item-icon" />}
                   type="password"

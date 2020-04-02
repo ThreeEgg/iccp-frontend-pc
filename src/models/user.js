@@ -1,5 +1,6 @@
 import router from 'next/router';
 import { message } from 'antd';
+import Cookie from 'js-cookie';
 import * as userService from '../services/user';
 import { setAuthorityToken } from '../common/authority';
 
@@ -48,6 +49,9 @@ export default {
         localStorage.isLogin = 1;
         localStorage.platform = platform;
 
+        Cookie.set('userId', baseInfo.userId);
+        Cookie.set('token', accessToken);
+
         yield put({
           type: 'save',
           payload: {
@@ -65,12 +69,16 @@ export default {
     },
 
     *logout({ payload }, { put, call }) {
-      const res = yield call(userService.logout);
+      // FIXME: 2020.4.1 wph 无法异步登出
+      // userService.logout();
 
       localStorage.removeItem('userInfo');
       localStorage.removeItem('imInfo');
       localStorage.removeItem('isLogin');
       localStorage.removeItem('accessToken');
+
+      Cookie.remove('userId');
+      Cookie.remove('token');
 
       yield put({
         type: 'save',
@@ -81,7 +89,7 @@ export default {
         },
       });
       if (localStorage.platform === 'expert') {
-        return router.replace('/expert');
+        return router.replace('/expert/home');
       }
       router.replace('/');
     },
@@ -116,7 +124,7 @@ export default {
         message.success('密码修改成功');
 
         if (localStorage.platform === 'expert') {
-          return router.replace('/expert');
+          return router.replace('/expert/home');
         }
         router.replace('/');
       }
@@ -130,7 +138,7 @@ export default {
         message.success('密码修改成功');
 
         if (localStorage.platform === 'expert') {
-          return router.replace('/expert');
+          return router.replace('/expert/home');
         }
         router.replace('/');
       }

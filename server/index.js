@@ -1,12 +1,3 @@
-/*
- * @Descripttion: 
- * @version: 
- * @Author: 毛翔宇
- * @Date: 2020-03-06 15:43:36
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 16:42:09
- * @FilePath: \PC端-前端\server\index.js
- */
 const express = require('express');
 const next = require('next');
 const dev = process.env.NODE_ENV !== 'production';
@@ -19,7 +10,7 @@ const devProxy = {
     target: 'http://221.215.57.110:9821', // 公网测试
     // target: 'http://172.16.1.161:8080', // 内网测试
     // target: 'http://221.215.57.110:9090', // 公网开发
-    // target: 'http://172.16.220.5:9090', // 内网开发
+    // target: 'http://172.16.110.5:9090', // 内网开发
     // pathRewrite: {
     //     '^/api': '/'
     // },

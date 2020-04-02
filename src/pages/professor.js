@@ -1,22 +1,26 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import ContentLayout from '../layouts/ContentLayout';
 import { Button, Calendar, Modal, Tabs } from 'antd';
 import classNames from 'classnames';
-import Router from 'next/router';
+import router from 'next/router';
 import { Pagination } from 'antd';
 import Swiper from 'react-id-swiper';
 import 'swiper/css/swiper.css';
+import _ from 'lodash';
+import moment from 'moment';
 import { getResponseRateAverage } from '../common/index';
+import { onlineStateEnum } from '../common/enum';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
+import Timeline from '../components/Timeline';
 import Rate from '../components/Rate';
 import './professor.less';
 
 const { TabPane } = Tabs;
 
-export default class Platform extends React.Component {
+export default class Professor extends React.Component {
   static async getInitialProps({ req, query }) {
-    const { id = 'A000001' } = query;
+    const { id, tabName = 'activity', articleId, pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
@@ -24,40 +28,85 @@ export default class Platform extends React.Component {
     const expertInfoRes = await fetch(`${requestUrl}?userId=${id}`);
     const expertInfoContent = await expertInfoRes.json();
 
-    // 专家动态
-    const activityRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertActivityList}?userId=${id}&pageSize=1&pageNum=10`,
-    );
-    const activityContent = await activityRes.json();
-    const activity = activityContent.data.items;
+    let pageInfo = {};
 
-    // 专家文章
-    const articleRes = await fetch(
-      `${api.baseUrl}/api${api.getExpertArticleList}?userId=${id}&pageSize=1&pageNum=10`,
-    );
-    const articleContent = await articleRes.json();
-    const article = articleContent.data.items;
+    let activity;
+    if (!tabName || tabName == 'activity') {
+      // 专家动态
+      const activityRes = await fetch(
+        `${api.baseUrl}/api${
+          api.getExpertActivityList
+        }?userId=${id}&pageSize=10&pageNum=${pageNum}`,
+      );
+      const activityContent = await activityRes.json();
+      activity = activityContent.data.items;
+      pageInfo = activityContent.data.pageInfo;
+    }
+
+    let article;
+    if (tabName === 'article') {
+      // 专家文章
+      const articleRes = await fetch(
+        `${api.baseUrl}/api${api.getExpertArticleList}?userId=${id}&pageSize=10&pageNum=${pageNum}`,
+      );
+      const articleContent = await articleRes.json();
+      article = articleContent.data.items;
+      pageInfo = articleContent.data.pageInfo;
+    }
+
+    let articleDetail;
+    if (articleId) {
+      const articleDetailRes = await fetch(
+        `${api.baseUrl}/api${api.getExpertArticleById}?id=${articleId}`,
+      );
+      const articleDetailContent = await articleDetailRes.json();
+      articleDetail = articleDetailContent.data;
+    }
 
     const {
-      baseInfo,
-      schedule,
+      name,
+      image,
+      introduction,
       serviceTagList,
-      rating,
-      information = {},
-      briefIntro,
-      imUser,
+      attitudeRateAVG,
+      skillRateAVG,
+      responseSpeed,
+      content,
+      schedule,
+      cname,
+      onlineState,
+      accid,
+      // im状态变化时间
+      eventTime,
     } = expertInfoContent.data;
 
     return {
-      introduction: briefIntro.introduction,
+      tabName,
+      introduction,
       serviceTag: serviceTagList,
-      information: information.content ? JSON.parse(information.content) : [],
-      userInfo: baseInfo,
+      information: content ? JSON.parse(content) : [],
+      userInfo: {
+        name,
+        image,
+      },
+      cname,
       schedule,
-      rating,
+      rating: {
+        attitudeRateAVG,
+        skillRateAVG,
+        responseSpeed,
+      },
       article,
+      articleId,
+      articleDetail,
       activity,
-      imUser,
+      imUser: {
+        onlineState,
+        accid,
+        eventTime,
+      },
+      pageNum,
+      pageInfo,
     };
   }
 
@@ -66,15 +115,48 @@ export default class Platform extends React.Component {
     scheduleVisible: false,
   };
 
-  onChange = page => {
-    console.log(page);
-    this.setState({
-      current: page,
-    });
+  onPageChange = page => {
+    let targetUrl = window.location.pathname + window.location.search;
+
+    if (targetUrl.match('pageNum')) {
+      targetUrl = targetUrl.replace(/pageNum=[^&]+/, `pageNum=${page}`);
+    } else {
+      targetUrl += `&pageNum=${page}`;
+    }
+
+    router.push(targetUrl);
+  };
+
+  changeTab = key => {
+    let targetUrl = window.location.pathname + window.location.search;
+
+    if (targetUrl.match('tabName')) {
+      targetUrl = targetUrl.replace(/tabName=[^&]+/, `tabName=${key}`);
+    } else {
+      targetUrl += `&tabName=${key}`;
+    }
+
+    router.push(targetUrl);
+  };
+
+  gotoArticleDetail = articleId => {
+    const targetUrl = window.location.pathname + window.location.search + '&articleId=' + articleId;
+
+    router.push(targetUrl);
+  };
+
+  backFromArticleDetail = () => {
+    let targetUrl = window.location.pathname + window.location.search;
+
+    if (targetUrl.match('articleId')) {
+      targetUrl = targetUrl.replace(/&?articleId=[^&]+/, '');
+    }
+
+    router.push(targetUrl);
   };
 
   goToCommunication = () => {
-    Router.push('');
+    router.push('');
   };
 
   showSchedule = (scheduleVisible = true) => {
@@ -91,14 +173,39 @@ export default class Platform extends React.Component {
       userInfo,
       imUser,
       schedule,
-      rating,
+      rating = {},
       article,
       activity,
+      tabName,
+      articleDetail,
+      pageNum,
+      pageInfo,
     } = this.props;
 
     const { attitudeRateAVG, skillRateAVG, responseSpeed } = rating;
     let responseRateAVG = getResponseRateAverage(responseSpeed);
     const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
+
+    // 最近在线时间距今
+    // 小于24小时：n小时内；
+    // 大于等于24小时到7天：n天内；
+    // 大于等于7天小于28天：n周内；
+    // 大于等于28天：不展示；
+    // 没有该字段，也不展示
+    let onlineTime;
+    if (imUser.eventTime) {
+      const eventOnlineTime = new Date(imUser.eventTime);
+      const eventOnlineTimestamp = Date.parse(eventOnlineTime);
+      const currentTime = Date.now();
+      const timeOffset = currentTime - eventOnlineTimestamp;
+      if (timeOffset < 86400000) {
+        onlineTime = moment(new Date(timeOffset)).hour() + '小时内';
+      } else if (timeOffset < 604800000) {
+        onlineTime = moment(new Date(timeOffset)).day() + '天内';
+      } else if (timeOffset < 2419200000) {
+        onlineTime = moment(new Date(timeOffset)).week() + '周内';
+      }
+    }
 
     return (
       <ContentLayout
@@ -115,7 +222,7 @@ export default class Platform extends React.Component {
             </i>
           </div>
           <div className="con-pro-r-name">{userInfo.name}</div>
-          <div className="con-pro-r-status">最近在线：无</div>
+          {onlineTime ? <div className="con-pro-r-status">最近在线：{onlineTime}</div> : null}
           <Button onClick={this.goToCommunication}>立即沟通</Button>
           <div className="con-pro-r-title">本月日程</div>
           <div className="con-pro-r-time">
@@ -134,111 +241,101 @@ export default class Platform extends React.Component {
         </div>
         <div className="con-pro-m">
           <div className="con-pro-m-title">
-            <Tabs defaultActiveKey="1">
-              <TabPane tab="专家动态" key="1">
-                <div className="pro-statu-item">
-                  <div className="statu-con">
-                    <div className="statu-title flex flex-align">
-                      <span className="statu-year">2020</span>
-                      <div>
-                        <p className="statu-monthNo">04</p>
-                        <p className="statu-monthEN">Jan</p>
-                      </div>
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      <span>20:41</span>
-                      <div className="statu-circle-big" />
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      <span>20:41</span>
-                      <div className="statu-circle-small" />
-                    </div>
+            {!articleDetail ? (
+              <Tabs activeKey={tabName} onChange={this.changeTab}>
+                <TabPane tab="专家动态" key="activity">
+                  <Timeline data={activity} />
+                  <div className="common-pagination">
+                    <Pagination
+                      current={pageNum}
+                      onChange={this.onPageChange}
+                      size="small"
+                      pageSize={10}
+                      total={pageInfo.totalResults}
+                    />
                   </div>
-                </div>
-                <div className="pro-statu-item">
-                  <div className="statu-con">
-                    <div className="statu-title flex flex-align">
-                      <span className="statu-year">2020</span>
-                      <div>
-                        <p className="statu-monthNo">03</p>
-                        <p className="statu-monthEN">Mar</p>
-                      </div>
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod
-                      bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo
-                      commodo.
-                      <span>20:41</span>
-                      <div className="statu-circle-big" />
-                    </div>
-                    <div className="statu-text">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      <span>20:41</span>
-                      <div className="statu-circle-small" />
-                    </div>
-                  </div>
-                </div>
-              </TabPane>
-              <TabPane tab="专家文章" key="2">
-                {article.map(item => {
-                  return (
-                    <div className="pro-essay-item" key={item.id}>
-                      <h1>国际征信业务通论</h1>
-                      <p>
-                        Consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida
-                        dolor sit amet lacus accumsan et viverra justo commodo
-                      </p>
-                    </div>
-                  );
-                })}
-              </TabPane>
-              <TabPane tab="专家详情" key="3">
-                <div className="pro-info">
-                  {information.map(item => {
-                    return (
-                      <div className="pro-info-item">
-                        <h1>{item.title}</h1>
-                        <p>{item.content}</p>
-                        <div>
-                          <Swiper
-                            {...{
-                              slidesPerView: 3,
-                              spaceBetween: 30,
-                              grabCursor: true,
-                              navigation:
-                                item.images.length > 3
-                                  ? {
-                                      nextEl: '.swiper-button-next',
-                                      prevEl: '.swiper-button-prev',
-                                    }
-                                  : {},
-                            }}
+                </TabPane>
+                <TabPane tab="专家文章" key="article">
+                  {article && (
+                    <Fragment>
+                      {article.map(item => {
+                        return (
+                          <div
+                            className="pro-essay-item"
+                            key={item.id}
+                            onClick={() => this.gotoArticleDetail(item.id)}
                           >
-                            {item.images.map(url => (
-                              <div
-                                key={url}
-                                className="swiper-img-container"
-                                style={{ backgroundImage: `url(${url})` }}
-                              />
-                            ))}
-                          </Swiper>
-                        </div>
+                            <h1>{item.title}</h1>
+                            <p>{item.brief}</p>
+                          </div>
+                        );
+                      })}
+                      <div className="common-pagination">
+                        <Pagination
+                          current={pageNum}
+                          onChange={this.onPageChange}
+                          size="small"
+                          pageSize={10}
+                          total={pageInfo.totalResults}
+                        />
                       </div>
-                    );
-                  })}
-                </div>
-              </TabPane>
-            </Tabs>
-            <div className="common-pagination">
-              <Pagination
-                current={this.state.current}
-                onChange={this.onChange}
-                size="small"
-                total={50}
-              />
-            </div>
+                    </Fragment>
+                  )}
+                </TabPane>
+                <TabPane tab="专家详情" key="information">
+                  <div className="pro-info">
+                    {information.map(item => {
+                      return (
+                        <div className="pro-info-item" key={item.id}>
+                          <h1>{item.title}</h1>
+                          <p>{item.content}</p>
+                          <div>
+                            <Swiper
+                              {...{
+                                slidesPerView: 3,
+                                spaceBetween: 30,
+                                grabCursor: true,
+                                navigation:
+                                  item.images.length > 3
+                                    ? {
+                                        nextEl: '.swiper-button-next',
+                                        prevEl: '.swiper-button-prev',
+                                      }
+                                    : {},
+                              }}
+                            >
+                              {item.images.map(url => (
+                                <div
+                                  key={url}
+                                  className="swiper-img-container"
+                                  style={{ backgroundImage: `url(${url})` }}
+                                />
+                              ))}
+                            </Swiper>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </TabPane>
+              </Tabs>
+            ) : (
+              // 文章详情
+              <div className="article-detail grey-shadow">
+                {/* 返回按钮 */}
+                <img
+                  className="back-btn"
+                  src="/images/ic_header_leadback.png"
+                  onClick={this.backFromArticleDetail}
+                />
+                <h1 className="article-title">{articleDetail.title}</h1>
+                <h2 className="article-brief">{articleDetail.brief}</h2>
+                <div
+                  className="article-rich-text"
+                  dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="con-pro-l">
@@ -295,7 +392,7 @@ export default class Platform extends React.Component {
           width={720}
           onCancel={() => this.showSchedule(false)}
         >
-          <Schedule mode="read" schedule={schedule.schedule} />
+          <Schedule mode="read" schedule={schedule} />
         </Modal>
       </ContentLayout>
     );

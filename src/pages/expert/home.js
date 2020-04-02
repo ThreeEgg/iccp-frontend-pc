@@ -10,36 +10,51 @@ import ImageUpload from '../../components/ImageUpload';
 import EditableTagGroup from '../../components/EditableTagGroup';
 import api from '../../services/api';
 import * as expertService from '../../services/expert';
-import { importFile } from '../../utils';
+import { importFile, cookieToJson } from '../../utils';
 import './home.less';
 
 const { TextArea } = Input;
 
 export default class extends Component {
   static async getInitialProps({ req, query }) {
-    const { id = 'A000001' } = query;
+    const { cookie } = req.headers;
+
+    const { userId } = cookieToJson(cookie);
+
     const fetch = require('isomorphic-unfetch');
 
     const requestUrl = `${api.baseUrl}/api${api.getExpertHomePage}`;
 
-    const expertInfoRes = await fetch(`${requestUrl}?userId=${id}`);
+    const expertInfoRes = await fetch(`${requestUrl}?userId=${userId}`);
     const expertInfoContent = await expertInfoRes.json();
     const {
-      baseInfo,
       schedule,
       serviceTagList,
-      rating,
-      information = {},
-      briefIntro,
+      attitudeRateAVG,
+      skillRateAVG,
+      responseSpeed,
+      content,
+      introduction,
+      cname,
+      name,
+      image,
     } = expertInfoContent.data;
 
     return {
-      introduction: briefIntro.introduction,
+      introduction: introduction,
       serviceTag: serviceTagList,
-      information: information.content ? JSON.parse(information.content) : [],
-      userInfo: baseInfo,
+      information: content ? JSON.parse(content) : [],
+      userInfo: {
+        name,
+        image,
+      },
       schedule,
-      rating,
+      rating: {
+        attitudeRateAVG,
+        skillRateAVG,
+        responseSpeed,
+      },
+      cname,
     };
   }
 
@@ -145,7 +160,8 @@ export default class extends Component {
   modifyIntroduction = async () => {
     const { editIntroduction } = this.state;
     const res = await expertService.saveExpertIndividualIntroduce({
-      introduction: editIntroduction,
+      // FIXME：2020.4.1 此处对于空数据，会导致直接不传body，通过空字符串解决
+      introduction: editIntroduction || ' ',
     });
 
     if (res.code === '0') {
@@ -325,8 +341,9 @@ export default class extends Component {
       information,
     } = this.state;
     const {
-      userInfo: { name, image, countryCode },
+      userInfo: { name, image },
       rating: { attitudeRateAVG, skillRateAVG, responseSpeed },
+      cname,
     } = this.props;
     const responseRateAVG = getResponseRateAverage(responseSpeed);
     const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
@@ -335,8 +352,8 @@ export default class extends Component {
 
     return (
       <ContentLayoutExpert
-        title="Classic Case"
-        url="/images/ic_header_classcase.png"
+        title="个人资料"
+        url="/images/ic_hearder_Professor.png"
         removeContentStyle
       >
         <div className="expert-home">
@@ -347,7 +364,7 @@ export default class extends Component {
                 <h1 className="name">{name}</h1>
                 <h4 className="location flex">
                   <i className="iconfont">&#xe698;</i>
-                  &nbsp;&nbsp; {countryCode}
+                  &nbsp;&nbsp; {cname}
                 </h4>
               </div>
             </div>

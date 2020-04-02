@@ -1,23 +1,40 @@
 import React, { Fragment } from 'react';
-import { Button, Switch } from 'antd';
+import { Button, Switch, Modal } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { connect } from 'react-redux';
+import router from 'next/router';
 import './Header.less';
 
 class Header extends React.Component {
   logout = () => {
-    this.props.dispatch({
-      type: 'user/logout',
+    Modal.confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: '是否要退出登录',
+      okText: '是的',
+      cancelText: '取消',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'user/logout',
+        });
+      },
     });
+  };
+
+  gotoHome = () => {
+    router.push('/');
   };
 
   render() {
     const { isLogin, userInfo } = this.props;
+
     return (
-      <div className="header">
-        <img className="logo" src="/logo-full.svg" alt="" />
-        <div className="line" />
-        <div className="platName">国际风险管理平台</div>
+      <div className="header flex flex-align flex-justifyBetween">
+        <div className="band flex flex-align" onClick={this.gotoHome}>
+          <img className="logo" src="/logo-full.svg" alt="" />
+          <div className="line" />
+          <div className="platName">国际风险管理平台</div>
+        </div>
         <div className="type">
           {!isLogin ? (
             <Fragment>

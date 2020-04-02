@@ -4,6 +4,7 @@ import { MailOutlined, UserOutlined, LockOutlined, CheckSquareOutlined } from '@
 import Router from 'next/router';
 import { connect } from 'react-redux';
 import LoginLayout from '../layouts/LoginLayout';
+import './login.less';
 
 class ChangePWD extends React.Component {
   formRef = React.createRef();
@@ -61,7 +62,7 @@ class ChangePWD extends React.Component {
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" onClick={this.modifyPassword}>
-              立即找回
+              修改密码
             </Button>
           </Form.Item>
         </Form>

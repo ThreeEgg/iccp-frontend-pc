@@ -9,7 +9,7 @@ export class ContentListItem extends Component {
 
   showMore = () => {
     this.setState({
-      showMore: true,
+      hasShowMore: true,
     });
   };
 
