@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-20 09:04:49
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-26 10:59:51
+ * @LastEditTime: 2020-04-02 18:09:25
  * @FilePath: \PC端-前端\src\pages\chat.js
  */
 import React from 'react';
@@ -15,19 +15,14 @@ const NIMChat = dynamic(import('../modules/NIM'), {
   ssr: false,
 });
 
-class Chat extends React.Component {
+export default class Chat extends React.Component {
 
   async componentDidMount() {
-    await this.props.dispatch({ type: 'index/init' });
   }
 
   render() {
-    const { index, loading } = this.props;
-    const { name, count } = index;
-    // console.log('rendered!!');
-    return <NIMChat />;
+    return <div style={{padding:'100px', height:'100%',backgroundColor:'#000000'}}>
+      <NIMChat />
+    </div>;
   }
 }
-
-// export default Home;
-export default connect(({ index, loading }) => ({ index, loading: loading.models.index }))(Chat);

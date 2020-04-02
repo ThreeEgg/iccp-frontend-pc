@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 09:47:48
+ * @LastEditTime: 2020-04-02 18:37:16
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -173,7 +173,7 @@ class Chat extends React.Component {
     return (
       <div className="chat-box">
         {hasCaseInfo && <CaseInfo
-          visible={caseInfoShow}
+          collapsed={!caseInfoShow}
           userInfo={userInfo}
           myInfo={myInfo}
           toggleCaseInfo={this.toggleCaseInfo}

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 09:38:47
+ * @LastEditTime: 2020-04-02 10:24:28
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -239,7 +239,7 @@ export default {
   updateiccpUserInfos(state, { iccpUserList }) {
     const { iccpUserInfos: iccpUserInfosOld } = state;
     let iccpUserInfos = { ...iccpUserInfosOld };
-    iccpUserList.forEach(item => {
+    iccpUserList && iccpUserList.forEach(item => {
       iccpUserInfos[item.accid] = item
     })
     return { ...state, iccpUserInfos };

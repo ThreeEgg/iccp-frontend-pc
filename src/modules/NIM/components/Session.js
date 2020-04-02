@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 09:36:59
+ * @LastEditTime: 2020-04-02 18:52:12
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
@@ -65,7 +65,7 @@ class Session extends React.Component {
         {sessionlist.map((session, index) => (
           session.show &&
           <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
-            <img className='nav-avatar' src={session.avatar} />
+            <img className='nav-avatar' src={session.avatar || config.defaultUserIcon} />
             <span className='nav-info' >
               <span className='nav-name' >
                 {session.name}

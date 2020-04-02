@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 09:08:00
+ * @LastEditTime: 2020-04-02 17:50:22
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
@@ -138,24 +138,47 @@ class ChatEditor extends React.Component {
             if (res.code === '0') {
               let type = 11 //'file'
               let pushContent = '[文件]' //'file'
+              let data = res.data;
               if (/(png|jpg|bmp|jpeg|gif)$/i.test(res.data.fileSuffix)) {
                 type = 12 //'image'
                 pushContent = '[图片]'
+                let inmge = new Image();
+                inmge.src = data.webUrl;
+                inmge.onload = () => {
+                  data.width=inmge.width
+                  data.height=inmge.height
+                  this.props.dispatch({
+                    type: 'chat/sendMsg',
+                    method: 'custom',
+                    scene: this.props.scene,
+                    to: this.props.to,
+                    pushContent,
+                    content: {
+                      type,
+                      data:res.data
+                    }
+                  });
+                }
+                inmge.onerror = () => {
+                  message.error('图片上传失败');
+                }
               } else if (/\.(mov|mp4|ogg|webm)$/i.test(res.data.fileSuffix)) {
                 type = 13 //'video'
                 pushContent = '[视频]'
               }
-              this.props.dispatch({
-                type: 'chat/sendMsg',
-                method: 'custom',
-                scene: this.props.scene,
-                to: this.props.to,
-                pushContent,
-                content: {
-                  type,
-                  data:res.data
-                }
-              });
+              if(type!==12){
+                this.props.dispatch({
+                  type: 'chat/sendMsg',
+                  method: 'custom',
+                  scene: this.props.scene,
+                  to: this.props.to,
+                  pushContent,
+                  content: {
+                    type,
+                    data:res.data
+                  }
+                });
+              }
             } else {
               // message.error(res.errorInfo);
             }

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 14:16:03
+ * @LastEditTime: 2020-04-02 18:34:13
  * @FilePath: \PC端-前端\src\modules\NIM\index.js
  */
 import React from 'react';
@@ -42,15 +42,13 @@ class Index extends React.Component {
     const { chat } = this.props;
     const { currSessionId } = chat;
     return (
-      <Layout style={{ height: '100%' }}>
+      <Layout style={{ height: '100%' }} className='nim'>
         <Sider
           theme='light'
           width='280'
           style={{
             overflow: 'auto',
             height: '100%',
-            position: 'fixed',
-            left: 0,
           }}
         >
           <Session />
