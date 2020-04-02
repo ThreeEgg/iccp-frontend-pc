@@ -26,12 +26,12 @@ import { onSysMsgs, onSysMsg, onSysMsgUnread, onCustomSysMsgs } from './sysMsgs'
 //   onUpdateTeamMembersMute,
 //   onTeamMsgReceipt,
 // } from './team';
-import { message } from 'antd'
+import { message } from 'antd';
 
 let SDK = null;
 
 // 重新初始化 NIM SDK
-export function* initNimSDK({ loginInfo }, { put, select }, ) {
+export function* initNimSDK({ loginInfo }, { put, select }) {
   yield put({ type: 'disconnect' });
   if (!SDK) {
     SDK = require('../../sdk/' + config.sdk);
@@ -53,15 +53,16 @@ export function* initNimSDK({ loginInfo }, { put, select }, ) {
     autoMarkRead: true, // 默认为true
     onconnect: function onConnect(event) {
       if (loginInfo) {
-        message.success('登录成功');
         // 连接上以后更新uid
-        window.dispatch({ type: 'chat/updateUserUIDExt', loginInfo })
+        window
+          .dispatch({ type: 'chat/updateUserUIDExt', loginInfo })
           .then(() => {
             // 更新客服信息及专家列表
-            window.dispatch({ type: 'chat/updateUsers' })
-          }).catch((err) => {
+            window.dispatch({ type: 'chat/updateUsers' });
+          })
+          .catch(err => {
             console.log(err);
-          });;
+          });
       }
     },
     onerror: function onError(event) {
