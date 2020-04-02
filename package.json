@@ -65,6 +65,7 @@
     "react-ratings-declarative": "^3.4.1",
     "react-redux": "^7.2.0",
     "react-sortable-hoc": "^1.11.0",
+    "react-virtualized": "^9.21.2",
     "shortid": "^2.2.15",
     "swiper": "^5.3.6",
     "umi-request": "^1.2.19",
