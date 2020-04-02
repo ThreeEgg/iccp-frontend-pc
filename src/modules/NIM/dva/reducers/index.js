@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 14:54:50
+ * @LastEditTime: 2020-04-02 09:38:47
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 store 中的状态的唯一方法是提交 reducers
@@ -162,8 +162,9 @@ export default {
       unreadCount = 0;
     // 更新会话列表
     sessions = sessions.filter(item => {
-      item.name = '未知';
-      item.avatar = '';
+      item.name = '未知'
+      item.avatar = ''
+      item.show = true
       if (item.scene === 'p2p') {
         let userInfo = null;
         if (item.to !== userUID) {
@@ -173,14 +174,16 @@ export default {
             item.isService = true;
           } else {
             item.isService = false;
-            userInfo = iccpUserInfos[item.to] || {};
+            userInfo = iccpUserInfos[item.to] || null;
           }
         } else {
-          return false;
+          item.show = false
         }
         if (userInfo) {
           item.name = userInfo.name;
           item.avatar = userInfo.image;
+        } else {
+          item.show = false
         }
       } else if (item.scene === 'team') {
         let teamInfo = null;
@@ -221,7 +224,7 @@ export default {
       return b.updateTime - a.updateTime
     })
     sessionlist.sort((a, b) => {
-      return a.isService?-1:1
+      return a.isService ? -1 : 1
     })
     sessionlist.forEach(item => {
       unreadCount += item.unread;

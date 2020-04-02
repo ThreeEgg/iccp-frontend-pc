@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 15:54:56
+ * @LastEditTime: 2020-04-02 09:36:28
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 

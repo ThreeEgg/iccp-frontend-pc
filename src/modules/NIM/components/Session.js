@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 17:24:25
+ * @LastEditTime: 2020-04-02 09:36:59
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
@@ -63,6 +63,7 @@ class Session extends React.Component {
         defaultSelectedKeys={['-1']}
       >
         {sessionlist.map((session, index) => (
+          session.show &&
           <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
             <img className='nav-avatar' src={session.avatar} />
             <span className='nav-info' >
@@ -83,13 +84,13 @@ class Session extends React.Component {
             </span>
           </Menu.Item>
         ))}
-        <Menu.Item onClick={this.initSession} className='nav-item'>
+        {/* <Menu.Item onClick={this.initSession} className='nav-item'>
           <span className='nav-info' >
             <span className='nav-name'>
               发起新会话
                 </span>
           </span>
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     );
   }

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 18:29:31
+ * @LastEditTime: 2020-04-02 09:47:48
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -30,7 +30,7 @@ class Chat extends React.Component {
       service: 3,
       professional: 3,
     },
-    caseInfoShow: true,
+    caseInfoShow: false,
   };
   // 进入该页面，文档被挂载
   async componentDidMount() {

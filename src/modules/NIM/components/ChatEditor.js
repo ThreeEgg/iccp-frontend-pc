@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 11:29:51
+ * @LastEditTime: 2020-04-02 09:08:00
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
@@ -209,10 +209,11 @@ class ChatEditor extends React.Component {
             <i className="icon-img"><img src={this.state.icon1} /></i>
             <input className='editor-file' type="file" ref="fileToSent" onChange={this.sendCustomFileMsg} />
           </span>
-          <span className="editor-tool">
+          {/* 原生文件图片发送 */}
+          {/* <span className="editor-tool">
             <i className="icon-img"><img src={this.state.icon1} /></i>
             <input className='editor-file' type="file" ref="fileToSent2" onChange={this.sendFileMsg} />
-          </span>
+          </span> */}
         </div>
         <textarea className="editor-input"
           value={this.state.msgToSent}
