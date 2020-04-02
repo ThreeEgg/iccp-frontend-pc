@@ -6,6 +6,7 @@ import { Badge, ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'normalize.css';
 import AuthorityLayout from '../layouts/AuthorityLayout';
+import IMLayout from '../layouts/IMLayout';
 import withDva from '../utils/withDva';
 import './_app.less';
 
@@ -79,9 +80,11 @@ class MainApp extends App {
     return (
       <ConfigProvider locale={zhCN}>
         <Provider store={dvaStore}>
-          <AuthorityLayout>
-            <Component {...pageProps} />
-          </AuthorityLayout>
+          <IMLayout>
+            <AuthorityLayout>
+              <Component {...pageProps} />
+            </AuthorityLayout>
+          </IMLayout>
           <BuildInfo />
         </Provider>
       </ConfigProvider>

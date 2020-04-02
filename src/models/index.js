@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: 毛翔宇
  * @Date: 2020-03-20 14:01:31
  * @LastEditors: 毛翔宇
@@ -10,8 +10,9 @@
 import homepage from './homepage';
 import app from './app';
 import user from './user';
+import im from './im';
 import chat from '../modules/NIM/dva';
 
-const model = [app, homepage, user, chat];
+const model = [app, homepage, user, im, chat];
 
 export default model;

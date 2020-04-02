@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import ContentLayout from '../layouts/ContentLayout';
-import { Button, Calendar, Modal, Tabs } from 'antd';
+import { Button, Calendar, Modal, Tabs, message } from 'antd';
 import classNames from 'classnames';
 import router from 'next/router';
 import { Pagination } from 'antd';
@@ -9,6 +9,7 @@ import 'swiper/css/swiper.css';
 import _ from 'lodash';
 import moment from 'moment';
 import { getResponseRateAverage } from '../common/index';
+import { connect } from 'react-redux';
 import { onlineStateEnum } from '../common/enum';
 import api from '../services/api';
 import Schedule from '../components/Schedule';
@@ -18,7 +19,7 @@ import './professor.less';
 
 const { TabPane } = Tabs;
 
-export default class Professor extends React.Component {
+class Professor extends React.Component {
   static async getInitialProps({ req, query }) {
     const { id, tabName = 'activity', articleId, pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
@@ -35,7 +36,7 @@ export default class Professor extends React.Component {
       // 专家动态
       const activityRes = await fetch(
         `${api.baseUrl}/api${
-          api.getExpertActivityList
+        api.getExpertActivityList
         }?userId=${id}&pageSize=10&pageNum=${pageNum}`,
       );
       const activityContent = await activityRes.json();
@@ -155,8 +156,18 @@ export default class Professor extends React.Component {
     router.push(targetUrl);
   };
 
-  goToCommunication = () => {
-    router.push('');
+  goToCommunication = (accid) => {
+    message.loading('正在连线...');
+    this.props.dispatch({
+      type: 'chat/initSession',
+      expertAccid: accid,
+      callback: () => {
+        message.destroy();
+        this.props.dispatch({
+          type: 'im/showChat',
+        });
+      },
+    });
   };
 
   showSchedule = (scheduleVisible = true) => {
@@ -298,9 +309,9 @@ export default class Professor extends React.Component {
                                 navigation:
                                   item.images.length > 3
                                     ? {
-                                        nextEl: '.swiper-button-next',
-                                        prevEl: '.swiper-button-prev',
-                                      }
+                                      nextEl: '.swiper-button-next',
+                                      prevEl: '.swiper-button-prev',
+                                    }
                                     : {},
                               }}
                             >
@@ -320,22 +331,22 @@ export default class Professor extends React.Component {
                 </TabPane>
               </Tabs>
             ) : (
-              // 文章详情
-              <div className="article-detail grey-shadow">
-                {/* 返回按钮 */}
-                <img
-                  className="back-btn"
-                  src="/images/ic_header_leadback.png"
-                  onClick={this.backFromArticleDetail}
-                />
-                <h1 className="article-title">{articleDetail.title}</h1>
-                <h2 className="article-brief">{articleDetail.brief}</h2>
-                <div
-                  className="article-rich-text"
-                  dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
-                />
-              </div>
-            )}
+                // 文章详情
+                <div className="article-detail grey-shadow">
+                  {/* 返回按钮 */}
+                  <img
+                    className="back-btn"
+                    src="/images/ic_header_leadback.png"
+                    onClick={this.backFromArticleDetail}
+                  />
+                  <h1 className="article-title">{articleDetail.title}</h1>
+                  <h2 className="article-brief">{articleDetail.brief}</h2>
+                  <div
+                    className="article-rich-text"
+                    dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
+                  />
+                </div>
+              )}
           </div>
         </div>
         <div className="con-pro-l">
@@ -398,3 +409,5 @@ export default class Professor extends React.Component {
     );
   }
 }
+
+export default connect(({ }) => ({}))(Professor);

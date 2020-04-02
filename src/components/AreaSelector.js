@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Button, Collapse, Empty } from 'antd';
+import { Button, Collapse, Empty, message } from 'antd';
 import {
   CaretRightOutlined,
   CaretDownOutlined,
@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { connect } from 'react-redux';
 import * as expertService from '../services/expert';
 import './AreaSelector.less';
 
@@ -20,7 +21,7 @@ const text = `
   it can be found as a welcome guest in many households across the world.
 `;
 
-export default class extends Component {
+class AreaSelector extends Component {
   state = {
     expand: true,
     infoExpand: false,
@@ -105,6 +106,20 @@ export default class extends Component {
       });
     }
   };
+
+  startChat = (accid) => {
+    message.loading('正在连线...');
+    this.props.dispatch({
+      type: 'chat/initSession',
+      expertAccid: accid,
+      callback: () => {
+        message.destroy();
+        this.props.dispatch({
+          type: 'im/showChat',
+        });
+      },
+    });
+  }
 
   render() {
     const {
@@ -279,20 +294,22 @@ export default class extends Component {
                     <div className="btns flex flex-justifyBetween">
                       <div>
                         <Link href={`/professor?id=${expertList[currentExpertIndex].userId}`}>
-                          <a>专家主页</a>
+                          <a style={{ color: 'white' }}>专家主页</a>
                         </Link>
                       </div>
-                      <div className="active">立即沟通</div>
+                      <div className="goto-im active" onClick={() => this.startChat(expertList[currentExpertIndex].accid)}>立即沟通</div>
                     </div>
                   </Fragment>
                 ) : null}
               </Fragment>
             ) : (
-              <Empty />
-            )}
+                <Empty />
+              )}
           </div>
         </div>
       </div>
     );
   }
 }
+
+export default connect(({ }) => ({}))(AreaSelector);
