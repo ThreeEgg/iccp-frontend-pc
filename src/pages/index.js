@@ -1,16 +1,16 @@
 import React from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { Button } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import Map from '../components/Map';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import * as expertService from '../services/expert';
 import * as commonService from '../services/common';
 import api from '../services/api';
 import { platformContentType } from '../common/enum';
-import './index.less';
 import AreaSelector from '../components/AreaSelector';
+import './index.less';
 
 export default class extends React.Component {
   static async getInitialProps({ req, query }) {

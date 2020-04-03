@@ -5,7 +5,16 @@ export default {
     canShowChat: false,
   },
   effects: {
-    *showChat({ }, { put }) {
+    *showChat({}, { put, select }) {
+      const { imLogin, userLogin } = yield select(({ chat, user }) => ({
+        imLogin: chat.isLogin,
+        userLogin: user.isLogin,
+      }));
+      if (!imLogin) {
+        return;
+      }
+      // 如果是游客打开的话，检测是否申请到accid，是则弹起，否则
+
       yield put({
         type: 'save',
         payload: {
@@ -15,7 +24,7 @@ export default {
       });
     },
 
-    *hideChat({ }, { put }) {
+    *hideChat({}, { put }) {
       yield put({
         type: 'save',
         payload: {
