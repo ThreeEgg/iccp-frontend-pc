@@ -14,9 +14,20 @@ import './article.less';
 
 export class Article extends Component {
   static async getInitialProps({ req, query }) {
-    const { cookie } = req.headers;
+    let userId;
+    if (req) {
+      // SSR
+      const { cookie } = req.headers;
 
-    const { userId } = cookieToJson(cookie);
+      userId = cookieToJson(cookie).userId;
+    } else {
+      // 客户端
+      if (localStorage.userInfo) {
+        userId = JSON.parse(localStorage.userInfo).userId;
+      } else {
+        window.location.href = '/expert/login';
+      }
+    }
 
     const { pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');
@@ -116,7 +127,7 @@ export class Article extends Component {
     editor.create(); //创建
     editor.txt.html(this.state.content); //设置富文本默认内容
     // FIXME: 2020.4.1 校验图片大小的提示需要改成message
-    editor.customConfig.customAlert = function (info) {
+    editor.customConfig.customAlert = function(info) {
       // info 是需要提示的内容
       message.error(info);
     };
@@ -169,9 +180,9 @@ export class Article extends Component {
   add = () => {
     this.setState({
       edit: true,
-      targetArticleId: null
+      targetArticleId: null,
     });
-  }
+  };
 
   remove = id => {
     Modal.confirm({
@@ -192,7 +203,7 @@ export class Article extends Component {
     });
   };
 
-  editArticle = (articleId) => {
+  editArticle = articleId => {
     const articleData = this.props.articles.find(item => item.id === articleId);
 
     if (!articleData) {
@@ -202,17 +213,20 @@ export class Article extends Component {
 
     const { title, brief, article } = articleData;
 
-    this.setState({
-      edit: true,
-      targetArticleId: articleId,
-    }, () => {
-      this.editor.txt.html(article);
+    this.setState(
+      {
+        edit: true,
+        targetArticleId: articleId,
+      },
+      () => {
+        this.editor.txt.html(article);
 
-      this.formRef.current.setFieldsValue({
-        title,
-        brief,
-      });
-    });
+        this.formRef.current.setFieldsValue({
+          title,
+          brief,
+        });
+      },
+    );
   };
 
   componentDidUpdate = (prevProps, prevState) => {
@@ -245,11 +259,7 @@ export class Article extends Component {
               title="My Article"
               image="/images/ic_professor_article.png"
               actions={
-                <Button
-                  type="link"
-                  icon={<PlusOutlined />}
-                  onClick={this.add}
-                >
+                <Button type="link" icon={<PlusOutlined />} onClick={this.add}>
                   新增文章
                 </Button>
               }
@@ -259,11 +269,7 @@ export class Article extends Component {
                 <div className="article-item" key={article.id}>
                   <div className="article-title flex flex-align">
                     <div className="flex-1">{article.title}</div>
-                    <span>
-                      {
-                        moment(new Date(article.updateTime)).format('YYYY/MM/DD')
-                      }
-                    </span>
+                    <span>{moment(new Date(article.updateTime)).format('YYYY/MM/DD')}</span>
                     <i className="iconfont" onClick={() => this.editArticle(article.id)}>
                       &#xe6a3;
                     </i>
@@ -286,69 +292,69 @@ export class Article extends Component {
             </div>
           </div>
         ) : (
-            <div className="rich-text-editor">
-              <div className="editor-navigator flex flex-justifyBetween">
-                <div
-                  className="editor-navigator-back flex flex-align"
-                  onClick={() => this.setState({ edit: false })}
-                >
-                  <img src="/images/ic_header_leadback.png" />
+          <div className="rich-text-editor">
+            <div className="editor-navigator flex flex-justifyBetween">
+              <div
+                className="editor-navigator-back flex flex-align"
+                onClick={() => this.setState({ edit: false })}
+              >
+                <img src="/images/ic_header_leadback.png" />
                 &nbsp; 返回
               </div>
-                <Button type="primary" size="small" onClick={this.save}>
-                  Save
+              <Button type="primary" size="small" onClick={this.save}>
+                Save
               </Button>
-              </div>
-              {/* 编辑器 */}
-              {/* FIXME: 2020.3.31 需要替换为TinyMCE */}
-              <Form ref={this.formRef}>
-                <Form.Item
-                  label="标题"
-                  name="title"
-                  rules={[
-                    { required: true, message: '请输入标题' },
-                    { max: 50, message: '最多输入50个字符' },
-                  ]}
-                >
-                  <Input type="text" />
-                </Form.Item>
-                <Form.Item
-                  label="简介"
-                  name="brief"
-                  rules={[
-                    { required: true, message: '请输入简介' },
-                    { max: 400, message: '最多输入400个字符' },
-                  ]}
-                >
-                  <Input.TextArea />
-                </Form.Item>
-                <Form.Item
-                  label="详情"
-                  name="article"
-                  rules={[
-                    { required: true, message: '请输入详情' },
-                    // 字节数不超过2M
-                    ({ getFieldValue }) => ({
-                      validator: (rule, value) => {
-                        const article = this.editor.txt.html();
-                        // 字节数不超过2M
-                        const sizeOfArticleRichContent = sizeofString(article);
-                        if (sizeOfArticleRichContent <= 2048) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject('内容不超过2M');
-                      },
-                    }),
-                  ]}
-                >
-                  {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
-                  <div className="editor" ref={this.editorElem}>
-                    <div />
-                  </div>
-                </Form.Item>
-              </Form>
             </div>
-          )}
+            {/* 编辑器 */}
+            {/* FIXME: 2020.3.31 需要替换为TinyMCE */}
+            <Form ref={this.formRef}>
+              <Form.Item
+                label="标题"
+                name="title"
+                rules={[
+                  { required: true, message: '请输入标题' },
+                  { max: 50, message: '最多输入50个字符' },
+                ]}
+              >
+                <Input type="text" />
+              </Form.Item>
+              <Form.Item
+                label="简介"
+                name="brief"
+                rules={[
+                  { required: true, message: '请输入简介' },
+                  { max: 400, message: '最多输入400个字符' },
+                ]}
+              >
+                <Input.TextArea />
+              </Form.Item>
+              <Form.Item
+                label="详情"
+                name="article"
+                rules={[
+                  { required: true, message: '请输入详情' },
+                  // 字节数不超过2M
+                  ({ getFieldValue }) => ({
+                    validator: (rule, value) => {
+                      const article = this.editor.txt.html();
+                      // 字节数不超过2M
+                      const sizeOfArticleRichContent = sizeofString(article);
+                      if (sizeOfArticleRichContent <= 2048) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject('内容不超过2M');
+                    },
+                  }),
+                ]}
+              >
+                {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
+                <div className="editor" ref={this.editorElem}>
+                  <div />
+                </div>
+              </Form.Item>
+            </Form>
+          </div>
+        )}
       </ContentLayoutExpert>
     );
   }

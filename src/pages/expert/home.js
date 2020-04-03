@@ -17,9 +17,20 @@ const { TextArea } = Input;
 
 export default class extends Component {
   static async getInitialProps({ req, query }) {
-    const { cookie } = req.headers;
+    let userId;
+    if (req) {
+      // SSR
+      const { cookie } = req.headers;
 
-    const { userId } = cookieToJson(cookie);
+      userId = cookieToJson(cookie).userId;
+    } else {
+      // 客户端
+      if (localStorage.userInfo) {
+        userId = JSON.parse(localStorage.userInfo).userId;
+      } else {
+        window.location.href = '/expert/login';
+      }
+    }
 
     const fetch = require('isomorphic-unfetch');
 
