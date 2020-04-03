@@ -40,5 +40,9 @@
       background: transparent !important;
       border-color: #d8d8d8 !important;
     }
+    // 处理富文本框层级比IMLayout高的问题
+    .ant-form-item-control-input-content {
+      z-index: 1;
+    }
   }
 }

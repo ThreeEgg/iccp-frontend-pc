@@ -14,7 +14,7 @@ export default class Cooperative extends React.Component {
     //
     const cooperativeContentRes = await fetch(
       `${requestUrl}?languageId=0&pageNum=${pageNum}&pageSize=10&type=${
-        platformContentType.PARTNER
+      platformContentType.PARTNER
       }`,
     );
     const cooperativeContent = await cooperativeContentRes.json();
@@ -32,7 +32,7 @@ export default class Cooperative extends React.Component {
   render() {
     const { pageNum, pageInfo } = this.props;
     return (
-      <ContentLayout title="problems" url="/images/ic_header_problems.png">
+      <ContentLayout title="Cooperative Partner" url="/images/ic_header_classcase.png">
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">

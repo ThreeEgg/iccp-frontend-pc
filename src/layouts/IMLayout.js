@@ -60,9 +60,9 @@ export class IMLayout extends Component {
     return (
       <>
         {this.props.children}
-        <Badge count={unreadCount}>
-          <div className='im-entry' onClick={this.showChat}></div>
-        </Badge>
+        <div className='im-entry' onClick={this.showChat}>
+          <Badge count={unreadCount} />
+        </div>
         {
           chatVisible ?
             <div className={classNames('chat-global-container flex')}>

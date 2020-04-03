@@ -22,7 +22,7 @@ export default class Business extends React.Component {
 
   render() {
     return (
-      <ContentLayout title="Platform Introduce" url="/images/ic_header_introduce.png">
+      <ContentLayout title="Business Introduce" url="/images/ic_header_business.png">
         <div className="content-t flex flex-align">
           <p />
           <div className="flex flex-align">
