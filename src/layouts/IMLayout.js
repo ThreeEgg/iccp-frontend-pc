@@ -57,17 +57,28 @@ export class IMLayout extends Component {
   render() {
     const { unreadCount, canShowChat, chatVisible } = this.props;
 
+    // FIXME: 此处根据路由隐藏逻辑不好维护，需要处理
+    let chatIconVisible = true;
+    if (typeof window !== 'undefined') {
+      if (window.location.href.match(/login|retrievePWD|changePWD|modifyPWD|setProfile/)) {
+        chatIconVisible = false;
+      }
+    }
+
     return (
       <>
         {this.props.children}
-        <div className='im-entry' onClick={this.showChat}>
-          <Badge count={unreadCount} />
-        </div>
+        {
+          chatIconVisible ?
+            <div className='im-entry' onClick={this.showChat}>
+              <Badge count={unreadCount} />
+            </div> : null
+        }
         {
           chatVisible ?
             <div className={classNames('chat-global-container flex')}>
               <div className='chat-global-body flex-1'>
-                {/* FIXME: 2020.4.2 此处 */}
+                {/* FIXME: 2020.4.2 此处需要做缓存，提高性能 */}
                 {
                   canShowChat ? <NIMChat /> : null
                 }

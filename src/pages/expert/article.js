@@ -169,7 +169,8 @@ export class Article extends Component {
     if (res.code === '0') {
       message.success('已添加');
 
-      router.replace('/expert/article?pageNum=1');
+      // FIXME: 2020.4.3 此处考虑不在第一页的话，刷新页面会导致看不到自己刚刚新增的文章
+      router.reload();
     }
   };
 

@@ -70,12 +70,13 @@ export const getExpertArticleById = async ({ activityId }) => {
   });
 };
 
-export const saveExpertArticle = async ({ article, brief, title }) => {
+export const saveExpertArticle = async ({ article, brief, title, id }) => {
   return request.post(api.saveExpertArticle, {
     data: {
       article,
       brief,
       title,
+      id,
     },
   });
 };
