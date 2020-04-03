@@ -7,7 +7,7 @@ import ContentHeader from '../../components/ContentHeader';
 import api from '../../services/api';
 import * as commonService from '../../services/common';
 import * as expertService from '../../services/expert';
-import { importFile, cookieToJson } from '../../utils';
+import { cookieToJson, sizeofString } from '../../utils';
 
 import './article.less';
 
@@ -73,9 +73,9 @@ export class Article extends Component {
       'redo', // 重复
     ];
 
-    // 最大同时上传数限制
+    // 最大同时上传数限制，不超过2M
     editor.customConfig.uploadImgMaxLength = 1;
-    editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
+    editor.customConfig.uploadImgMaxSize = 2 * 1024 * 1024;
     editor.customConfig.customUploadImg = async (files, insert) => {
       const res = await commonService.fileUpload({
         file: files[0],
@@ -114,7 +114,7 @@ export class Article extends Component {
     editor.create(); //创建
     editor.txt.html(this.state.content); //设置富文本默认内容
     // FIXME: 2020.4.1 校验图片大小的提示需要改成message
-    editor.customConfig.customAlert = function(info) {
+    editor.customConfig.customAlert = function (info) {
       // info 是需要提示的内容
       message.error(info);
     };
@@ -125,14 +125,18 @@ export class Article extends Component {
   save = async () => {
     const form = this.formRef.current;
     const article = this.editor.txt.html();
+
+    // 默认空白，富文本的html为<p><br></p>，去掉这种情况
     form.setFieldsValue({ article: article.replace('<p><br></p>', '') });
     await form.validateFields();
-    const fieldError = form.getFieldsError();
+
     // 查看是否没有异常
+    const fieldError = form.getFieldsError();
     const hasError = fieldError.find(item => item.errors.length >= 1);
     if (hasError) {
       return;
     }
+    return;
 
     const { title, brief } = form.getFieldsValue();
 
@@ -236,49 +240,69 @@ export class Article extends Component {
             </div>
           </div>
         ) : (
-          <div className="rich-text-editor">
-            <div className="editor-navigator flex flex-justifyBetween">
-              <div
-                className="editor-navigator-back flex flex-align"
-                onClick={() => this.setState({ edit: false })}
-              >
-                <img src="/images/ic_header_leadback.png" />
+            <div className="rich-text-editor">
+              <div className="editor-navigator flex flex-justifyBetween">
+                <div
+                  className="editor-navigator-back flex flex-align"
+                  onClick={() => this.setState({ edit: false })}
+                >
+                  <img src="/images/ic_header_leadback.png" />
                 &nbsp; 返回
               </div>
-              <Button type="primary" size="small" onClick={this.save}>
-                Save
+                <Button type="primary" size="small" onClick={this.save}>
+                  Save
               </Button>
+              </div>
+              {/* 编辑器 */}
+              {/* FIXME: 2020.3.31 需要替换为TinyMCE */}
+              <Form ref={this.formRef}>
+                <Form.Item
+                  label="标题"
+                  name="title"
+                  rules={[
+                    { required: true, message: '请输入标题' },
+                    { max: 50, message: '最多输入50个字符' },
+                  ]}
+                >
+                  <Input type="text" />
+                </Form.Item>
+                <Form.Item
+                  label="简介"
+                  name="brief"
+                  rules={[
+                    { required: true, message: '请输入简介' },
+                    { max: 400, message: '最多输入400个字符' },
+                  ]}
+                >
+                  <Input.TextArea />
+                </Form.Item>
+                <Form.Item
+                  label="详情"
+                  name="article"
+                  rules={[
+                    { required: true, message: '请输入详情' },
+                    // 字节数不超过2M
+                    ({ getFieldValue }) => ({
+                      validator: (rule, value) => {
+                        const article = this.editor.txt.html();
+                        // 字节数不超过2M
+                        const sizeOfArticleRichContent = sizeofString(article);
+                        if (sizeOfArticleRichContent <= 2048) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject('内容不超过2M');
+                      },
+                    }),
+                  ]}
+                >
+                  {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
+                  <div className="editor" ref={this.editorElem}>
+                    <div />
+                  </div>
+                </Form.Item>
+              </Form>
             </div>
-            {/* 编辑器 */}
-            {/* FIXME: 2020.3.31 需要替换为TinyMCE */}
-            <Form ref={this.formRef}>
-              <Form.Item
-                label="标题"
-                name="title"
-                rules={[{ required: true, message: '请输入标题' }]}
-              >
-                <Input type="text" />
-              </Form.Item>
-              <Form.Item
-                label="简介"
-                name="brief"
-                rules={[{ required: true, message: '请输入简介' }]}
-              >
-                <Input.TextArea />
-              </Form.Item>
-              <Form.Item
-                label="详情"
-                name="article"
-                rules={[{ required: true, message: '请输入详情' }]}
-              >
-                {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
-                <div className="editor" ref={this.editorElem}>
-                  <div />
-                </div>
-              </Form.Item>
-            </Form>
-          </div>
-        )}
+          )}
       </ContentLayoutExpert>
     );
   }
