@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 19:05:54
+ * @LastEditTime: 2020-04-03 19:30:38
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\customFunction.js
  */
 import { message } from 'antd'
@@ -24,9 +24,9 @@ export function* checkFirstChatForCustomerService({ serviceAccid }, { call, sele
 export function* updateUsers({ callback }, { put, call, select }) {
   const accid = yield select(state => state.chat.userUID);
   if (callback) {
-    const serviceInfoOld = yield select(state => state.chat.serviceInfo);
-    const iccpUserListOld = yield select(state => state.chat.iccpUserList);
-    if (Object.keys(serviceInfoOld).length > 0 || iccpUserListOld.length > 0) {
+    const serviceInfo = yield select(state => state.chat.serviceInfo);
+    const iccpUserInfos= yield select(state => state.chat.iccpUserInfos);
+    if (Object.keys(serviceInfo).length > 0 || Object.keys(iccpUserInfos).length > 0) {
       callback();
     }
   }
@@ -36,12 +36,14 @@ export function* updateUsers({ callback }, { put, call, select }) {
     yield put({ type: 'updateServiceInfo', serviceInfo });
     const iccpUserList = res.data.pagedItems && res.data.pagedItems.items;
     yield put({ type: 'updateiccpUserInfos', iccpUserList });
-    // 若客服会话为空则主动触发一次会话
-    const hasServiceSession = yield select(state => state.chat.hasServiceSession);
-    if (!hasServiceSession && serviceInfo) {
-      yield put({ type: 'checkFirstChatForCustomerService', serviceAccid: serviceInfo.accid });
+    if (callback) {
+      // 若客服会话为空则主动触发一次会话
+      const hasServiceSession = yield select(state => state.chat.hasServiceSession);
+      if (!hasServiceSession && serviceInfo) {
+        yield put({ type: 'checkFirstChatForCustomerService', serviceAccid: serviceInfo.accid });
+      }
+      callback();
     }
-    callback && callback();
   } else {
     // message.error(res.errorInfo);
   }
