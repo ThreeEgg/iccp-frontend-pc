@@ -11,9 +11,20 @@ import './activity.less';
 
 export class Activity extends Component {
   static async getInitialProps({ req, query }) {
-    const { cookie } = req.headers;
+    let userId;
+    if (req) {
+      // SSR
+      const { cookie } = req.headers;
 
-    const { userId } = cookieToJson(cookie);
+      userId = cookieToJson(cookie).userId;
+    } else {
+      // 客户端
+      if (localStorage.userInfo) {
+        userId = JSON.parse(localStorage.userInfo).userId;
+      } else {
+        router.replace('/expert/login');
+      }
+    }
 
     const { pageNum = 1 } = query;
     const fetch = require('isomorphic-unfetch');

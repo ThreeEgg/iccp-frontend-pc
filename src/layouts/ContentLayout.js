@@ -21,8 +21,7 @@ export default class ContentLayout extends React.Component {
                 {this.props.title}
               </div>
               <div>
-                {/* <span className="iconfont ic_header_leadback"></span> */}
-                <a href="/">返回首页</a>
+                <a href="/"><i className="iconfont">&#xe684;</i>返回首页</a>
               </div>
             </div>
           </div>
@@ -35,8 +34,8 @@ export default class ContentLayout extends React.Component {
                 <div className="content-c-r">{this.props.children}</div>
               </Fragment>
             ) : (
-              this.props.children
-            )}
+                this.props.children
+              )}
           </div>
         </div>
         <Footer />

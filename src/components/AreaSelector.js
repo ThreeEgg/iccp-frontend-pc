@@ -3,6 +3,7 @@ import { Button, Collapse, Empty, message } from 'antd';
 import {
   CaretRightOutlined,
   CaretDownOutlined,
+  CaretLeftOutlined,
   LeftOutlined,
   RightOutlined,
   CloseOutlined,
@@ -23,7 +24,7 @@ const text = `
 
 class AreaSelector extends Component {
   state = {
-    expand: true,
+    expand: false,
     infoExpand: false,
 
     activeKey: ['continent'],
@@ -48,6 +49,7 @@ class AreaSelector extends Component {
   toggleExpand = () => {
     this.setState({
       expand: !this.state.expand,
+      infoExpand: false,
     });
   };
 
@@ -135,21 +137,22 @@ class AreaSelector extends Component {
     const { continentList, countryList, serviceList } = this.props;
 
     return (
-      <div className={classNames(['as-container flex', { expand }])}>
+      <div className={classNames(['as-container flex flex-justifyCenter', { expand }])}>
         {/* 展开文本 */}
         <div
-          className={classNames([
-            'flex flex-justifyCenter as-expand-text flex-alignCenter',
-            { hide: expand },
-          ])}
-          onClick={this.toggleExpand}
+          className='flex flex-justifyCenter as-expand-text flex-align' onClick={this.toggleExpand}
         >
-          <span>展&nbsp;&nbsp;开&nbsp;&nbsp;筛&nbsp;&nbsp;选</span>
+          <span dangerouslySetInnerHTML={{ __html: !expand ? '展&nbsp;&nbsp;开&nbsp;&nbsp;筛&nbsp;&nbsp;选' : '收&nbsp;&nbsp;起&nbsp;&nbsp;筛&nbsp;&nbsp;选' }}></span>
           &nbsp;&nbsp;
-          <i className="iconfont as-expand-icon">&#xe68d;</i>
+          {
+            !expand ? <CaretRightOutlined className='as-expand-icon' /> : <CaretLeftOutlined className='as-expand-icon' />
+          }
         </div>
 
-        <div className="flex-column area-selector">
+        <div className={classNames([
+          'area-selector flex flex-column',
+          { active: expand },
+        ])}>
           <div className="flex flex-align flex-justifyBetween title">
             <span>选择地区</span>
             <Button
@@ -201,7 +204,7 @@ class AreaSelector extends Component {
               key="country"
               header={
                 <div className="flex flex-justifyBetween expand-title" style={{ paddingRight: 20 }}>
-                  <span>选择国家</span>
+                  <span>选择国家/地区</span>
                   <span>{country['cname']}</span>
                 </div>
               }

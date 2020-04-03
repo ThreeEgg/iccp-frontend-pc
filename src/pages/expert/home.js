@@ -16,10 +16,28 @@ import './home.less';
 const { TextArea } = Input;
 
 export default class extends Component {
-  static async getInitialProps({ req, query }) {
-    const { cookie } = req.headers;
+  static async getInitialProps({ req, res, query }) {
+    let userId;
+    if (req) {
+      // SSR
+      const { cookie } = req.headers;
 
-    const { userId } = cookieToJson(cookie);
+      userId = cookieToJson(cookie).userId;
+
+      if (!userId) {
+        // 301 重定向
+        res.statusCode = 301;
+        res.headers.location = 'http://baidu.com';
+      }
+    } else {
+      // 客户端
+      if (localStorage.userInfo) {
+        userId = JSON.parse(localStorage.userInfo).userId;
+      } else {
+        router.replace('/expert/login');
+        return;
+      }
+    }
 
     const fetch = require('isomorphic-unfetch');
 
@@ -337,8 +355,8 @@ export default class extends Component {
       serviceTagModalVisible,
       introduction,
       editIntroduction,
-      serviceTag,
-      information,
+      serviceTag = [],
+      information = [],
     } = this.state;
     const {
       userInfo: { name, image },
@@ -445,13 +463,13 @@ export default class extends Component {
                 pressDelay={300}
               />
             ) : (
-              <div className="edit">
-                <div className="add" onClick={() => this.addInformation(0)}>
-                  <i className="iconfont">&#xe694;</i>
+                <div className="edit">
+                  <div className="add" onClick={() => this.addInformation(0)}>
+                    <i className="iconfont">&#xe694;</i>
                   &nbsp; ADD
                 </div>
-              </div>
-            )}
+                </div>
+              )}
             {/* <div className="common-pagination">
               <Pagination current={1} onChange={this.onChange} size="small" total={50} />
             </div> */}

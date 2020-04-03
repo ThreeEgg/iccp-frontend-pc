@@ -30,7 +30,7 @@
   },
   "lint-staged": {
     "**/*.less": [
-      "stylelint --fix \"src/**/*.less\" --syntax less",
+      "stylelint --fix --syntax less",
       "git add"
     ],
     "**/*.{js,jsx,less,md,json}": [
