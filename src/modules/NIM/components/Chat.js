@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 18:37:16
+ * @LastEditTime: 2020-04-03 09:24:59
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -100,6 +100,8 @@ class Chat extends React.Component {
           }
         }
       }
+      hasCaseInfo = true
+
       this.setState({
         scene,
         to,

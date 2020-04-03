@@ -68,7 +68,7 @@ export function* initNimSDK({ loginInfo }, { put, select }) {
     onerror: function onError(event) {
       // alert(JSON.stringify(event))
       message.error('网络连接状态异常');
-      location.href = config.loginUrl;
+      // location.href = config.loginUrl;
     },
     onwillreconnect: function onWillReconnect() {
       console.log(event);
@@ -93,7 +93,8 @@ export function* initNimSDK({ loginInfo }, { put, select }) {
           let str = error.from;
           let errorMsg = `你的帐号于${util.formatDate(new Date())}被${map[str] ||
             '其他端'}踢出下线，请确定帐号信息安全!`;
-          pageUtil.turnPage(errorMsg, 'login');
+            message.error(errorMsg);
+          // pageUtil.turnPage(errorMsg, 'login');
           break;
         default:
           break;

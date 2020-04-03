@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 18:38:42
+ * @LastEditTime: 2020-04-03 14:12:26
  * @FilePath: \PC端-前端\src\modules\NIM\components\CaseInfo.js
  */
 import React from 'react';
@@ -97,6 +97,31 @@ class CaseInfo extends React.Component {
     });
   };
 
+  downloadCaseBatch = () => {
+    let caseId = this.state.caseInfo.caseId
+    // let caseId = '39ffc00816344654969da7825ee3fb46'
+    if (caseId) {
+      this.props.dispatch({
+        type: 'chat/downloadCaseBatch',
+        caseId,
+        callback: (res) => {
+          console.log(res);
+          const blobUrl = window.URL.createObjectURL(res)
+          const eleLink = document.createElement('a')
+          eleLink.download = '案件附件.zip'
+          eleLink.style.display = 'none'
+          eleLink.href = blobUrl
+          // 触发点击
+          document.body.appendChild(eleLink)
+          eleLink.click()
+          // 然后移除
+          document.body.removeChild(eleLink)
+        }
+      });
+    }
+
+  };
+
   saveCaseInfo = () => {
     this.props.dispatch({
       type: 'chat/saveCaseInfo',
@@ -152,7 +177,7 @@ class CaseInfo extends React.Component {
         theme='light'
         width='280'
         style={{
-          
+
         }}
         collapsed={collapsed}
         collapsedWidth={0}
@@ -321,7 +346,7 @@ class CaseInfo extends React.Component {
             />
           </Form.Item>
           <span className='form-title-4'> 案件附件 </span>
-          <span className='file-download'>下载全部</span>
+          {caseInfo.iccpCaseEnclosureList && (<span className='file-download' onClick={this.downloadCaseBatch}>下载全部</span>)}
           <div className='clear'></div>
           {caseInfo.iccpCaseEnclosureList && caseInfo.iccpCaseEnclosureList.map((file, index) => {
             return file.isValid === 1 && (

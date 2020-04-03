@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-03-31 15:56:53
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-04-03 11:19:40
+ * @FilePath: \PC端-前端\src\config.js
+ */
 const apiEnv = process.env.API_ENV;
 
 let baseUrl = 'http://172.16.1.161';

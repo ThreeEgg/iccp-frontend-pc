@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 18:51:12
+ * @LastEditTime: 2020-04-03 14:23:27
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatList.js
  */
 import React, { createRef } from 'react';
@@ -59,7 +59,7 @@ export default class ChatList extends React.Component {
       this.props.msgsLoaded();
     }, 20);
   };
-  renderItem = (msg, index) => {
+  renderItem = (msg, index, measure) => {
     return <ChatItem
       type={this.props.type}
       rawMsg={msg}
@@ -67,6 +67,7 @@ export default class ChatList extends React.Component {
       myInfo={this.props.myInfo}
       key={msg.idClient || index}
       isHistory={this.props.isHistory}
+      measure={measure}
       msgLoaded={this.msgLoaded}
     />
   }
