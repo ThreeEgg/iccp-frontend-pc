@@ -37,10 +37,10 @@ export class Timeline extends Component {
 
     return (
       <div className="timeline">
-        {Object.entries(timelineGroup).map(([yearName, yearItems], timeLineIndex) => {
+        {Object.entries(timelineGroup).map(([yearName, yearItems]) => {
           return (
             <div className="pro-statu-item" key={yearName}>
-              {Object.entries(yearItems).map(([dayTimestamp, dayItems]) => {
+              {Object.entries(yearItems).map(([dayTimestamp, dayItems], timeLineIndex) => {
                 const day = moment(dayTimestamp * 1).format('DD');
                 const month = moment(dayTimestamp * 1).format('MMM');
                 return dayItems.map((item, index) => {
