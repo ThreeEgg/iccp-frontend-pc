@@ -52,6 +52,9 @@ export const blobToFile = function (theBlob, fileName) {
 
 // cookie转json
 export const cookieToJson = cookie => {
+  if (!cookie) {
+    return {};
+  }
   let cookieArr = cookie.split(';');
   let obj = {};
   cookieArr.forEach(i => {

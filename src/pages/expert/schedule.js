@@ -22,7 +22,7 @@ export class Schedule extends Component {
       if (localStorage.userInfo) {
         userId = JSON.parse(localStorage.userInfo).userId;
       } else {
-        window.location.href = '/expert/login';
+        router.replace('/expert/login');
       }
     }
 
