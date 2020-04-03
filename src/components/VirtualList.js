@@ -59,13 +59,15 @@ class VirtualList extends Component {
         parent={parent}
         rowIndex={index}
       >
-        <div
-          key={key}
-          style={{ ...style, ...itemLineStyle }}
-          onClick={() => onItemClick(data[index], index)}
-        >
-          {itemRender(data[index], index)}
-        </div>
+        {({ measure }) => (
+          <div
+            key={key}
+            style={{ ...style, ...itemLineStyle }}
+            onClick={() => onItemClick(data[index], index)}
+          >
+            {itemRender(data[index], index, measure)}
+          </div>
+        )}
       </CellMeasurer>
     );
   }

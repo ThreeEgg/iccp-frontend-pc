@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 17:35:46
+ * @LastEditTime: 2020-04-03 14:44:25
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -76,6 +76,27 @@ class ChatItem extends React.Component {
       media = new Image()
       media.className = 'custom-image'
       media.src = item.imgUrl
+      let width = item.width / 16
+      let height = item.height / 16
+      if (width > height) {
+        if (width > 12.5) {
+          height = 12.5 * height / width;
+          width = 12.5
+          this.setState({
+            isFullImgShow: true,
+          })
+        }
+      } else {
+        if (height > 12.5) {
+          width = 12.5 * width / height;
+          height = 12.5
+          this.setState({
+            isFullImgShow: true,
+          })
+        }
+      }
+      this.refs.mediaMsg.style.width = width + 'rem'
+      this.refs.mediaMsg.style.height = height + 'rem'
     } else if (item.type === 'video') {
       if (/(mov|mp4|ogg|webm)/i.test(item.file.ext)) {
         media = document.createElement('video')
@@ -107,6 +128,7 @@ class ChatItem extends React.Component {
     } else {
       this.props.msgLoaded();
     }
+    this.props.measure();
   }
   componentWillUnmount() {
   }
@@ -209,7 +231,10 @@ class ChatItem extends React.Component {
       else if (content.type === 12) {
         item.type = 'custom-image'
         // 原始图片全屏显示
+        item.originLink = content.data.webUrl
         item.imgUrl = content.data.webUrl
+        item.width = content.data.width
+        item.height = content.data.height
       }
       // 13视频信息
       else if (content.type === 13) {
@@ -282,10 +307,10 @@ class ChatItem extends React.Component {
     }
   }
   showFullImg = (src) => {
-    this.props.dispatch({
-      type: 'chat/showFullscreenImg',
-      src
-    })
+    let newwin = window.open()
+    let myimg = newwin.document.createElement("img")
+    myimg.src = src
+    newwin.document.body.appendChild(myimg)
   }
   getTranslate = (idClient) => {
     this.props.dispatch({
