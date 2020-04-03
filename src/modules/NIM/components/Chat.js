@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 09:24:59
+ * @LastEditTime: 2020-04-03 18:29:14
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -100,8 +100,6 @@ class Chat extends React.Component {
           }
         }
       }
-      hasCaseInfo = true
-
       this.setState({
         scene,
         to,
@@ -150,6 +148,20 @@ class Chat extends React.Component {
       caseInfoShow: !this.state.caseInfoShow
     })
   }
+  saveOrder = () => {
+    this.props.dispatch({
+      type: 'chat/saveOrder',
+      clientUserId: this.props.myInfo.userId,
+      expertExplain:'',
+      callback: (res) => {
+        if (res.code === '0') {
+          message.success(res.msg)
+        } else {
+          message.error(res.msg)
+        }
+      },
+    })
+  }
   render() {
     const { userInfo, isExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow } = this.state;
     const { chat, user } = this.props;
@@ -193,6 +205,8 @@ class Chat extends React.Component {
           {isExpert && <span className='expert-info'>
             专家信息
           </span>}
+          {hasCaseInfo &&
+            <span className='expert-order' onClick={this.saveOrder}>生成订单</span>}
           {hasCaseInfo &&
             <span className='expert-case' onClick={this.toggleCaseInfo}>案件信息表</span>}
         </div>

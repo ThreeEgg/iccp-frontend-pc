@@ -4,15 +4,15 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 10:24:28
+ * @LastEditTime: 2020-04-03 17:58:03
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
-// 更改 dva 的 store 中的状态的唯一方法是提交 reducers
+// 更改 dva 的 state 中的状态的唯一方法是提交 reducers
 // put({ type: 'caculate', delta });
 
-import store from '..'
 import util from '../../utils'
 import config from '../../configs'
+import state from '../state'
 
 export default {
   updateLogin(state, { isLogin }) {
@@ -24,13 +24,125 @@ export default {
   updateNim(state, { nim }) {
     return { ...state, nim };
   },
+  initState(state) {
+    return {
+      ...state,
+      // 登录状态
+      isLogin: false,
+      // 正在加载中
+      isLoading: true,
+      // 操作是否是刷新页面，刷新初始没有nim实例，会导致时序问题
+      isRefresh: true,
+      // 全屏显示的原图
+      isFullscreenImgShow: false,
+      fullscreenImgSrc: '',
+      // 切页动画 forward，backward
+      transitionName: 'forward',
+      // 登录账户ID
+      userUID: null,
+      // 用户名片
+      myInfo: {},
+      // 好友/黑名单/陌生人名片, 数据结构如：{cid: {attr: ...}, ...}
+      userInfos: {},
+      // 用户订阅的事件同步, 数据结构如：{cid: {typeid: {...}, ...}, ...}
+      userSubscribes: {},
+
+      // 好友列表
+      friendslist: [],
+      // 机器人列表
+      robotslist: [],
+      // 用于判定帐号是否是robots
+      robotInfos: {},
+      robotInfosByNick: {},
+      // 黑名单列表
+      blacklist: [],
+      // 禁言列表
+      // mutelist: [],
+
+      teamlist: [],
+      // 群自身的属性，数据结构如：{tid: {attr: ...}, ...}
+      // teamAttrs: {},
+      // 群对象的成员列表，数据结构如：{tid: {members: [...], ...}, ...}
+      teamMembers: {},
+      // 关闭群提醒的群id列表
+      muteTeamIds: [],
+      // 群设置传递数据
+      teamSettingConfig: {},
+
+      // 已发送群消息回执Map,key为群Id
+      sentReceipedMap: {},
+      // 当前群消息回执查询的群id
+      currReceiptQueryTeamId: null,
+      // 群消息回执查询的消息列表
+      receiptQueryList: [],
+      // 群消息回执查询结果列表
+      teamMsgReads: [],
+      // 群消息已读未读账号列表
+      teamMsgReadsDetail: {
+        readAccounts: [],
+        unreadAccounts: []
+      },
+
+      // 消息列表
+      msgs: {}, // 以sessionId作为key
+      msgsMap: {}, // 以idClient作为key，诸如消息撤回等的消息查找
+      // 会话列表
+      sessionlist: [],
+      sessionMap: {},
+      // 当前会话ID（即当前聊天列表，只有单聊群聊采用，可用于判别）
+      currSessionId: null,
+      currSessionMsgs: [],
+      // 是否有更多历史消息，用于上拉加载更多
+      noMoreHistoryMsgs: false,
+      // 继续对话的机器人id
+      continueRobotAccid: '',
+
+      // 系统消息
+      sysMsgs: [],
+      customSysMsgs: [],
+      sysMsgUnread: {
+        total: 0
+      },
+      customSysMsgUnread: 0,
+
+      // 临时变量
+      // 缓存需要获取的用户信息账号,如searchUser
+      searchedUsers: [],
+      // 缓存需要获取的群组账号
+      searchedTeams: [],
+
+      // 聊天室相关
+      // 聊天室sdk实例
+      chatroomInsts: {},
+      chatroomInfos: {},
+      // 聊天室分房间消息集合
+      chatroomMsgs: {},
+      // 当前聊天室实例及id
+      currChatroom: null,
+      currChatroomId: null,
+      currChatroomMsgs: [],
+      currChatroomInfo: {},
+      // 聊天室成员列表
+      currChatroomMembers: [],
+
+      //  自定义信息
+      // 所有会话未读消息数
+      unreadCount: 0,
+      // 客服信息
+      serviceInfo: {},
+      // 平台用户列表
+      iccpUserInfos: {},
+      // 当前会话的用户ID
+      currUserInfo: {},
+    }
+  },
   disconnect(state) {
     let { nim } = state;
     if (nim) {
       nim.disconnect();
     }
     nim = window.nim = null;
-    return { ...state, nim };
+    return { ...state, nim, };
   },
   updateCurrSession(state, { currSessionId }) {
     return { ...state, currSessionId };
@@ -157,8 +269,8 @@ export default {
       teamlist,
       sessionlist: sessionlistOld,
       sessionMap: sessionMapOld } = state;
-    let sessionlist = [...sessionlistOld],
-      sessionMap = { ...sessionMapOld },
+    let sessionlist = [...sessionlistOld] || [],
+      sessionMap = { ...sessionMapOld } || {},
       unreadCount = 0;
     // 更新会话列表
     sessions = sessions.filter(item => {
@@ -227,7 +339,9 @@ export default {
       return a.isService ? -1 : 1
     })
     sessionlist.forEach(item => {
-      unreadCount += item.unread;
+      if(item.show){
+        unreadCount += item.unread;
+      }
       sessionMap[item.id] = item
     })
     return { ...state, sessionlist, sessionMap, unreadCount };
@@ -268,7 +382,8 @@ export default {
     const { msgs } = state;
     let sessionId = msg.sessionId
     let msgsNew = { ...msgs };
-    let msgNew = (Object.keys(msgsNew).length > 0 && [...msgsNew[sessionId]]) || []
+    let temp = Object.keys(msgsNew).length > 0 && msgsNew[sessionId]
+    let msgNew = temp ? [...temp] : []
     let lastMsgIndex = msgNew.length - 1
     if (msgNew.length === 0 || msg.time >= msgNew[lastMsgIndex].time) {
       msgNew.push(msg)
@@ -578,8 +693,8 @@ export default {
   },
   updateTeamList(state, teams) {
     const { nim } = state;
-    store.state.teamlist = nim.mergeTeams(store.state.teamlist, teams)
-    store.state.teamlist = nim.cutTeams(store.state.teamlist, teams.invalid)
+    // store.state.teamlist = nim.mergeTeams(store.state.teamlist, teams)
+    // store.state.teamlist = nim.cutTeams(store.state.teamlist, teams.invalid)
   },
   updateTeamMembers(state, obj) {
     const { nim } = state;
@@ -651,7 +766,7 @@ export default {
       state.receiptQueryList.push(...needQuery)
     }
     if (needQuery.length > 0) {
-      store.dispatch('getTeamMsgReads', needQuery)
+      // store.dispatch('getTeamMsgReads', needQuery)
     }
   },
   updateTeamMsgReads(state, obj) {

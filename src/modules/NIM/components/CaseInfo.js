@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 14:12:26
+ * @LastEditTime: 2020-04-03 18:16:51
  * @FilePath: \PC端-前端\src\modules\NIM\components\CaseInfo.js
  */
 import React from 'react';
@@ -94,6 +94,14 @@ class CaseInfo extends React.Component {
     ipt.click()
     this.setState({
       deleteFileIndex: index,
+    });
+  };
+
+  deleteFile = (index) => {
+    let caseInfo = this.state.caseInfo;
+    caseInfo.iccpCaseEnclosureList[index].isValid = 0;
+    this.setState({
+      caseInfo,
     });
   };
 
@@ -354,6 +362,7 @@ class CaseInfo extends React.Component {
                 <div className='file-box'><img className='file-icon' src='/im/ic_im_file.svg' /><span>{file.oldFileName}</span></div>
                 <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>
                 <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>
+                <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/im/ic_im_delete.svg' />删除</span>
                 <div className='clear'></div>
               </div>
             );

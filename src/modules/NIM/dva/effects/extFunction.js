@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-31 16:24:41
+ * @LastEditTime: 2020-04-03 16:53:15
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\extFunction.js
  */
 export function* updateLoginExt({ isLogin }, { put }) {
@@ -27,8 +27,12 @@ export function* updateMyInfoExt({ myInfo }, { put }) {
 }
 export function* updateSessionsExt({ sessions }, { put }) {
   // 更新客服信息及专家列表
-  yield put({ type: 'updateUsers' });
-  yield put({ type: 'updateSessions', sessions });
+  yield put({
+    type: 'updateUsers',
+    callback: () => {
+      window.dispatch({ type: 'chat/updateSessions', sessions });
+    }
+  });
 }
 export function* onRobotsExt({ robots }, { put }) {
   yield put({ type: 'updateRobots', robots });

@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 14:44:25
+ * @LastEditTime: 2020-04-03 18:05:45
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -145,6 +145,9 @@ class ChatItem extends React.Component {
     }
     if (prevProps.userInfo !== this.props.userInfo) {
       this.computedItem()
+    }
+    if (prevState.translate !== this.state.translate) {
+      this.props.measure();
     }
   }
 

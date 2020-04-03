@@ -81,8 +81,8 @@ export default {
   // 用户触发的登出逻辑
   *logout(action, { put, select }) {
     localStorage.imInfo = '{}'
+    yield put({ type: 'initState' });
     yield put({ type: 'disconnect' });
-    yield put({ type: 'updateLogin', isLogin:false });
     // pageUtil.turnPage('', 'login');
   },
 

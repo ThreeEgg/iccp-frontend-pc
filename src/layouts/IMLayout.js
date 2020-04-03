@@ -1,3 +1,12 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: 毛翔宇
+ * @Date: 2020-04-02 18:58:04
+ * @LastEditors: 毛翔宇
+ * @LastEditTime: 2020-04-03 17:20:13
+ * @FilePath: \PC端-前端\src\layouts\IMLayout.js
+ */
 import React, { Component } from 'react';
 import { Badge } from 'antd';
 import { connect } from 'react-redux';

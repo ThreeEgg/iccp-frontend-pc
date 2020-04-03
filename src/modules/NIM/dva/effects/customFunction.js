@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 13:45:38
+ * @LastEditTime: 2020-04-03 18:26:32
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\customFunction.js
  */
 import { message } from 'antd'
@@ -21,26 +21,35 @@ export function* checkFirstChatForCustomerService({ serviceAccid }, { call, sele
     // message.error(res.errorInfo);
   }
 }
-export function* updateUsers(action, { put, call, select }) {
+export function* updateUsers({ callback }, { put, call, select }) {
   const accid = yield select(state => state.chat.userUID);
+  if (callback) {
+    const serviceInfoOld = yield select(state => state.chat.serviceInfo);
+    const iccpUserListOld = yield select(state => state.chat.iccpUserList);
+    if (Object.keys(serviceInfoOld).length > 0 || iccpUserListOld.length > 0) {
+      callback();
+    }
+  }
   const res = yield call(im.recentChatList, { accid, pageNum: 0, pageSize: 100000 });
   if (res.code === '0') {
     const serviceInfo = res.data.serviceChatInfo;
     yield put({ type: 'updateServiceInfo', serviceInfo });
     const iccpUserList = res.data.pagedItems && res.data.pagedItems.items;
     yield put({ type: 'updateiccpUserInfos', iccpUserList });
-    // 若客服信息不为空且客服会话为空则主动触发一次会话
-    if (serviceInfo && !serviceInfo.lastChatTime) {
-      // yield put({ type: 'checkFirstChatForCustomerService', serviceAccid: serviceInfo.accid });
-    }
     // 若会话为空且客服信息不为空则主动触发一次会话
     const sessionlist = yield select(state => state.chat.sessionlist);
     if (sessionlist.length === 0 && serviceInfo) {
       yield put({ type: 'checkFirstChatForCustomerService', serviceAccid: serviceInfo.accid });
     }
+    callback && callback();
   } else {
     // message.error(res.errorInfo);
   }
+}
+
+export function* saveOrder({ clientUserId, expertExplain, callback }, { call }) {
+  const res = yield call(im.saveOrder, { clientUserId, expertExplain });
+  callback && callback(res);
 }
 
 export function* getTranslate({ idClient, callback }, { call }) {

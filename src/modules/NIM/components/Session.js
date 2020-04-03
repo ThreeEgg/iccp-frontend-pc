@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 18:52:12
+ * @LastEditTime: 2020-04-03 16:18:12
  * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
  */
 import React from 'react';
@@ -62,7 +62,7 @@ class Session extends React.Component {
         mode="inline"
         defaultSelectedKeys={['-1']}
       >
-        {sessionlist.map((session, index) => (
+        {sessionlist && sessionlist.map((session, index) => (
           session.show &&
           <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
             <img className='nav-avatar' src={session.avatar || config.defaultUserIcon} />
