@@ -15,7 +15,6 @@ import './index.less';
 export default class extends React.Component {
   static async getInitialProps({ req, query }) {
     const fetch = require('isomorphic-unfetch');
-
     const requestUrl = `${api.baseUrl}/api${api.listPlatformContent}`;
 
     const aboutUsContentRes = await fetch(

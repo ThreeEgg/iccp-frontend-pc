@@ -1,25 +1,25 @@
 .as-container {
   position: relative;
-  width: 56px;
   height: 400px;
   background: rgba(67, 73, 94, 0.8);
-  transition: all 0.3s;
   span,
   div {
     color: white;
   }
   &.expand {
-    width: 200px;
+    .as-expand-text {
+      border-right-color: rgba(255,255,255, 0.3);
+    }
   }
   .as-expand-text {
+    width: 56px;
     color: white;
     font-size: 16px;
     writing-mode: vertical-lr;
     transition: opacity 0.3s;
-    &.hide {
-      display: absolute;
-      opacity: 0;
-    }
+    border-right: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
   }
   .as-expand-icon {
     font-size: 10px;
@@ -45,13 +45,23 @@
     color: rgba(255, 255, 255, 0.8) !important;
     font-size: 12px;
   }
+  .ant-collapse-borderless > .ant-collapse-item {
+    border-bottom: 1px solid rgba(255,255,255, 0.3);
+  }
   .area-selector {
-    width: 100%;
+    width: 0px;
     color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+    overflow: hidden;
+    &.active {
+      width: 200px;
+      opacity: 1;
+    }
     .title {
       padding: 10px 12px;
       font-size: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
     .expand-title {
       color: rgba(255, 255, 255, 0.8);
@@ -78,12 +88,17 @@
   .expert-info {
     position: absolute;
     top: 0;
-    right: -320px;
+    left: 256px;
     width: 0;
     height: 100%;
     background-color: rgba(67, 73, 94, 0.7);
     opacity: 0;
     transition: opacity 0.3s;
+    overflow: hidden;
+    &.active {
+      width: 320px;
+      opacity: 1;
+    }
     .ant-empty {
       position: absolute;
       top: 50%;
@@ -94,10 +109,6 @@
       p {
         color: white;
       }
-    }
-    &.active {
-      width: 320px;
-      opacity: 1;
     }
     .expert-select {
       flex-shrink: 0;

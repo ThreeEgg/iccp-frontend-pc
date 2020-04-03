@@ -89,7 +89,7 @@ export default {
         },
       });
       if (localStorage.platform === 'expert') {
-        return router.replace('/expert/home');
+        return router.replace('/expert/login');
       }
       router.replace('/');
     },

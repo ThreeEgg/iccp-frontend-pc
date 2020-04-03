@@ -3,7 +3,7 @@ import { Button, Switch, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { connect } from 'react-redux';
-import router from 'next/router';
+import router, { withRouter } from 'next/router';
 import './Header.less';
 
 class Header extends React.Component {
@@ -26,7 +26,14 @@ class Header extends React.Component {
   };
 
   render() {
-    const { isLogin, userInfo } = this.props;
+    const { isLogin, userInfo, pathname = '' } = this.props;
+
+    let isExpertPage = false;
+    // TODO: 需要获取到pathname
+    // // 如果专家端，则隐藏注册按钮
+    // if (pathname.match('/expert')) {
+    //   isExpertPage = true;
+    // }
 
     return (
       <div className="header flex flex-align flex-justifyBetween">
@@ -43,23 +50,26 @@ class Header extends React.Component {
                   <a>登录</a>
                 </Link>
               </Button>
-              <Button type="primary">
-                <Link href="/login?register=1">
-                  <a>注册</a>
-                </Link>
-              </Button>
+              {
+                !isExpertPage ?
+                  <Button type="primary">
+                    <Link href="/login?register=1">
+                      <a>注册</a>
+                    </Link>
+                  </Button> : null
+              }
             </Fragment>
           ) : (
-            <>
-              <span>你好, {userInfo.name}</span>
+              <>
+                <span>你好, {userInfo.name}</span>
               &nbsp; &nbsp;
               <Link href="/modifyPWD">
-                <a>修改密码</a>
-              </Link>
+                  <a>修改密码</a>
+                </Link>
               &nbsp; &nbsp;
               <a onClick={this.logout}>退出登录</a>
-            </>
-          )}
+              </>
+            )}
           <div className="line" />
           <span className="en">En</span>
           <Switch size="small" defaultChecked />
@@ -73,4 +83,4 @@ class Header extends React.Component {
 export default connect(({ user }) => ({
   isLogin: user.isLogin,
   userInfo: user.userInfo,
-}))(Header);
+}))(withRouter(Header));

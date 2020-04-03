@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react';
 import { Button, message, Form, Input, Pagination, Modal } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import router from 'next/router';
+import moment from 'moment';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import ContentHeader from '../../components/ContentHeader';
 import api from '../../services/api';
@@ -39,6 +40,7 @@ export class Article extends Component {
   state = {
     edit: false,
     content: '',
+    targetArticleId: null,
   };
 
   editorElem = createRef();
@@ -114,7 +116,7 @@ export class Article extends Component {
     editor.create(); //创建
     editor.txt.html(this.state.content); //设置富文本默认内容
     // FIXME: 2020.4.1 校验图片大小的提示需要改成message
-    editor.customConfig.customAlert = function(info) {
+    editor.customConfig.customAlert = function (info) {
       // info 是需要提示的内容
       message.error(info);
     };
@@ -123,6 +125,7 @@ export class Article extends Component {
   };
 
   save = async () => {
+    const { targetArticleId } = this.state;
     const form = this.formRef.current;
     const article = this.editor.txt.html();
 
@@ -139,11 +142,18 @@ export class Article extends Component {
 
     const { title, brief } = form.getFieldsValue();
 
-    const res = await expertService.saveExpertArticle({
+    const body = {
       article,
       title,
       brief,
-    });
+    };
+
+    // 如果有id，则传id
+    if (targetArticleId) {
+      body.id = targetArticleId;
+    }
+
+    const res = await expertService.saveExpertArticle(body);
 
     if (res.code === '0') {
       message.success('已添加');
@@ -155,6 +165,13 @@ export class Article extends Component {
   onChange = page => {
     router.push('/expert/article?pageNum=' + page);
   };
+
+  add = () => {
+    this.setState({
+      edit: true,
+      targetArticleId: null
+    });
+  }
 
   remove = id => {
     Modal.confirm({
@@ -172,6 +189,29 @@ export class Article extends Component {
           window.location.reload();
         }
       },
+    });
+  };
+
+  editArticle = (articleId) => {
+    const articleData = this.props.articles.find(item => item.id === articleId);
+
+    if (!articleData) {
+      console.log('article not find');
+      return;
+    }
+
+    const { title, brief, article } = articleData;
+
+    this.setState({
+      edit: true,
+      targetArticleId: articleId,
+    }, () => {
+      this.editor.txt.html(article);
+
+      this.formRef.current.setFieldsValue({
+        title,
+        brief,
+      });
     });
   };
 
@@ -197,7 +237,7 @@ export class Article extends Component {
       <ContentLayoutExpert
         className="expert-article"
         title="My Article"
-        url="/images/ic_professor_article.png"
+        url="/images/ic_header_classcase1.png"
       >
         {!edit ? (
           <div className="expert-article-list">
@@ -208,7 +248,7 @@ export class Article extends Component {
                 <Button
                   type="link"
                   icon={<PlusOutlined />}
-                  onClick={() => this.setState({ edit: true })}
+                  onClick={this.add}
                 >
                   新增文章
                 </Button>
@@ -219,6 +259,14 @@ export class Article extends Component {
                 <div className="article-item" key={article.id}>
                   <div className="article-title flex flex-align">
                     <div className="flex-1">{article.title}</div>
+                    <span>
+                      {
+                        moment(new Date(article.updateTime)).format('YYYY/MM/DD')
+                      }
+                    </span>
+                    <i className="iconfont" onClick={() => this.editArticle(article.id)}>
+                      &#xe6a3;
+                    </i>
                     <i className="iconfont" onClick={() => this.remove(article.id)}>
                       &#xe695;
                     </i>
@@ -238,69 +286,69 @@ export class Article extends Component {
             </div>
           </div>
         ) : (
-          <div className="rich-text-editor">
-            <div className="editor-navigator flex flex-justifyBetween">
-              <div
-                className="editor-navigator-back flex flex-align"
-                onClick={() => this.setState({ edit: false })}
-              >
-                <img src="/images/ic_header_leadback.png" />
+            <div className="rich-text-editor">
+              <div className="editor-navigator flex flex-justifyBetween">
+                <div
+                  className="editor-navigator-back flex flex-align"
+                  onClick={() => this.setState({ edit: false })}
+                >
+                  <img src="/images/ic_header_leadback.png" />
                 &nbsp; 返回
               </div>
-              <Button type="primary" size="small" onClick={this.save}>
-                Save
+                <Button type="primary" size="small" onClick={this.save}>
+                  Save
               </Button>
+              </div>
+              {/* 编辑器 */}
+              {/* FIXME: 2020.3.31 需要替换为TinyMCE */}
+              <Form ref={this.formRef}>
+                <Form.Item
+                  label="标题"
+                  name="title"
+                  rules={[
+                    { required: true, message: '请输入标题' },
+                    { max: 50, message: '最多输入50个字符' },
+                  ]}
+                >
+                  <Input type="text" />
+                </Form.Item>
+                <Form.Item
+                  label="简介"
+                  name="brief"
+                  rules={[
+                    { required: true, message: '请输入简介' },
+                    { max: 400, message: '最多输入400个字符' },
+                  ]}
+                >
+                  <Input.TextArea />
+                </Form.Item>
+                <Form.Item
+                  label="详情"
+                  name="article"
+                  rules={[
+                    { required: true, message: '请输入详情' },
+                    // 字节数不超过2M
+                    ({ getFieldValue }) => ({
+                      validator: (rule, value) => {
+                        const article = this.editor.txt.html();
+                        // 字节数不超过2M
+                        const sizeOfArticleRichContent = sizeofString(article);
+                        if (sizeOfArticleRichContent <= 2048) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject('内容不超过2M');
+                      },
+                    }),
+                  ]}
+                >
+                  {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
+                  <div className="editor" ref={this.editorElem}>
+                    <div />
+                  </div>
+                </Form.Item>
+              </Form>
             </div>
-            {/* 编辑器 */}
-            {/* FIXME: 2020.3.31 需要替换为TinyMCE */}
-            <Form ref={this.formRef}>
-              <Form.Item
-                label="标题"
-                name="title"
-                rules={[
-                  { required: true, message: '请输入标题' },
-                  { max: 50, message: '最多输入50个字符' },
-                ]}
-              >
-                <Input type="text" />
-              </Form.Item>
-              <Form.Item
-                label="简介"
-                name="brief"
-                rules={[
-                  { required: true, message: '请输入简介' },
-                  { max: 400, message: '最多输入400个字符' },
-                ]}
-              >
-                <Input.TextArea />
-              </Form.Item>
-              <Form.Item
-                label="详情"
-                name="article"
-                rules={[
-                  { required: true, message: '请输入详情' },
-                  // 字节数不超过2M
-                  ({ getFieldValue }) => ({
-                    validator: (rule, value) => {
-                      const article = this.editor.txt.html();
-                      // 字节数不超过2M
-                      const sizeOfArticleRichContent = sizeofString(article);
-                      if (sizeOfArticleRichContent <= 2048) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('内容不超过2M');
-                    },
-                  }),
-                ]}
-              >
-                {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
-                <div className="editor" ref={this.editorElem}>
-                  <div />
-                </div>
-              </Form.Item>
-            </Form>
-          </div>
-        )}
+          )}
       </ContentLayoutExpert>
     );
   }

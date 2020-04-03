@@ -234,7 +234,7 @@ class Professor extends React.Component {
           </div>
           <div className="con-pro-r-name">{userInfo.name}</div>
           {onlineTime ? <div className="con-pro-r-status">最近在线：{onlineTime}</div> : null}
-          <Button onClick={this.goToCommunication}>立即沟通</Button>
+          <Button onClick={() => this.goToCommunication(imUser.accid)}>立即沟通</Button>
           <div className="con-pro-r-title">本月日程</div>
           <div className="con-pro-r-time">
             <div className="time-date">Mar 2020</div>
