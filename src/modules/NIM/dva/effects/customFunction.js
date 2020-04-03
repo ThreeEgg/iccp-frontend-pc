@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 14:28:42
+ * @LastEditTime: 2020-04-03 13:45:38
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\customFunction.js
  */
 import { message } from 'antd'
@@ -12,15 +12,6 @@ import { message } from 'antd'
 import * as im from '../../../../services/im';
 import * as common from '../../../../services/common';
 
-export function* computedSessionlist({ serviceAccid }, { call, select }) {
-  const accid = yield select(state => state.chat.userUID);
-  const res = yield call(im.checkFirstChatForCustomerService, { accid, serviceAccid });
-  if (res.code === '0') {
-    console.log(res.data.msg);
-  } else {
-    // message.error(res.errorInfo);
-  }
-}
 export function* checkFirstChatForCustomerService({ serviceAccid }, { call, select }) {
   const accid = yield select(state => state.chat.userUID);
   const res = yield call(im.checkFirstChatForCustomerService, { accid, serviceAccid });
@@ -100,6 +91,11 @@ export function* fileUpload({
   const res = yield call(common.fileUpload, {
     clientUserId, expertUserId, file, fileName, type: filetype,
   });
+  callback && callback(res);
+}
+
+export function* downloadCaseBatch({ caseId, callback }, { call }) {
+  const res = yield call(im.downloadCaseBatch, { caseId, });
   callback && callback(res);
 }
 

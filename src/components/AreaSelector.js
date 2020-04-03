@@ -108,6 +108,7 @@ class AreaSelector extends Component {
   };
 
   startChat = (accid) => {
+    debugger
     message.loading('正在连线...');
     this.props.dispatch({
       type: 'chat/initSession',

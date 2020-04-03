@@ -87,6 +87,7 @@ export const downloadCaseBatch = async ({ caseId }) => {
     params: {
       caseId,
     },
+    responseType:'blob',
   });
 };
 
