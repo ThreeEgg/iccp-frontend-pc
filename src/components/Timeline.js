@@ -40,13 +40,18 @@ export class Timeline extends Component {
         {Object.entries(timelineGroup).map(([yearName, yearItems]) => {
           return (
             <div className="pro-statu-item" key={yearName}>
-              {Object.entries(yearItems).map(([dayTimestamp, dayItems]) => {
+              {Object.entries(yearItems).map(([dayTimestamp, dayItems], timeLineIndex) => {
                 const day = moment(dayTimestamp * 1).format('DD');
                 const month = moment(dayTimestamp * 1).format('MMM');
                 return dayItems.map((item, index) => {
                   const time = moment(item.updateTime).format('HH:mm');
                   return (
-                    <div className="statu-con">
+                    <div
+                      className={classNames('statu-con', {
+                        'section-head': index === 0,
+                        head: timeLineIndex === 0,
+                      })}
+                    >
                       {index === 0 ? (
                         <div className="statu-title flex flex-align">
                           <span className="statu-year">{yearName}</span>

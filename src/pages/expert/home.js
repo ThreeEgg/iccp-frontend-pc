@@ -177,9 +177,11 @@ export default class extends Component {
 
   modifyIntroduction = async () => {
     const { editIntroduction } = this.state;
+    if (!editIntroduction) {
+      return message.error('个人简介不能为空');
+    }
     const res = await expertService.saveExpertIndividualIntroduce({
-      // FIXME：2020.4.1 此处对于空数据，会导致直接不传body，通过空字符串解决
-      introduction: editIntroduction || ' ',
+      introduction: editIntroduction,
     });
 
     if (res.code === '0') {
@@ -463,13 +465,13 @@ export default class extends Component {
                 pressDelay={300}
               />
             ) : (
-                <div className="edit">
-                  <div className="add" onClick={() => this.addInformation(0)}>
-                    <i className="iconfont">&#xe694;</i>
+              <div className="edit">
+                <div className="add" onClick={() => this.addInformation(0)}>
+                  <i className="iconfont">&#xe694;</i>
                   &nbsp; ADD
                 </div>
-                </div>
-              )}
+              </div>
+            )}
             {/* <div className="common-pagination">
               <Pagination current={1} onChange={this.onChange} size="small" total={50} />
             </div> */}
