@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 18:26:32
+ * @LastEditTime: 2020-04-03 19:05:54
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\customFunction.js
  */
 import { message } from 'antd'
@@ -36,9 +36,9 @@ export function* updateUsers({ callback }, { put, call, select }) {
     yield put({ type: 'updateServiceInfo', serviceInfo });
     const iccpUserList = res.data.pagedItems && res.data.pagedItems.items;
     yield put({ type: 'updateiccpUserInfos', iccpUserList });
-    // 若会话为空且客服信息不为空则主动触发一次会话
-    const sessionlist = yield select(state => state.chat.sessionlist);
-    if (sessionlist.length === 0 && serviceInfo) {
+    // 若客服会话为空则主动触发一次会话
+    const hasServiceSession = yield select(state => state.chat.hasServiceSession);
+    if (!hasServiceSession && serviceInfo) {
       yield put({ type: 'checkFirstChatForCustomerService', serviceAccid: serviceInfo.accid });
     }
     callback && callback();

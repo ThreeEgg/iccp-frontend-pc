@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 17:58:03
+ * @LastEditTime: 2020-04-03 19:08:23
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 state 中的状态的唯一方法是提交 reducers
@@ -269,6 +269,7 @@ export default {
       teamlist,
       sessionlist: sessionlistOld,
       sessionMap: sessionMapOld } = state;
+    let { hasServiceSession, } = state;
     let sessionlist = [...sessionlistOld] || [],
       sessionMap = { ...sessionMapOld } || {},
       unreadCount = 0;
@@ -338,13 +339,21 @@ export default {
     sessionlist.sort((a, b) => {
       return a.isService ? -1 : 1
     })
+    if (!hasServiceSession) {
+      sessionlist.some(item => {
+        if (item.isService) {
+          hasServiceSession = true
+          return hasServiceSession
+        }
+      })
+    }
     sessionlist.forEach(item => {
-      if(item.show){
+      if (item.show) {
         unreadCount += item.unread;
       }
       sessionMap[item.id] = item
     })
-    return { ...state, sessionlist, sessionMap, unreadCount };
+    return { ...state, sessionlist, sessionMap, unreadCount, hasServiceSession };
   },
   updateServiceInfo(state, { serviceInfo }) {
     serviceInfo.image = `/im/ic_im_service.svg`

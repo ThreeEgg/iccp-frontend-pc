@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-13 14:53:30
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-01 14:46:50
+ * @LastEditTime: 2020-04-03 18:57:13
  * @FilePath: \PC端-前端\src\modules\NIM\dva\state.js
  */
 export default {
@@ -113,6 +113,8 @@ export default {
   //  自定义信息
   // 所有会话未读消息数
   unreadCount: 0,
+  // 是否有客服会话
+  hasServiceSession: false,
   // 客服信息
   serviceInfo: {},
   // 平台用户列表

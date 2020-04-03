@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-06 16:48:06
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 18:29:14
+ * @LastEditTime: 2020-04-03 18:51:09
  * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
  */
 import React from 'react';
@@ -149,9 +149,10 @@ class Chat extends React.Component {
     })
   }
   saveOrder = () => {
+    // TODO
     this.props.dispatch({
       type: 'chat/saveOrder',
-      clientUserId: this.props.myInfo.userId,
+      clientUserId: this.state.userInfo.userId,
       expertExplain:'',
       callback: (res) => {
         if (res.code === '0') {
