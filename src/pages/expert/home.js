@@ -337,8 +337,8 @@ export default class extends Component {
       serviceTagModalVisible,
       introduction,
       editIntroduction,
-      serviceTag,
-      information,
+      serviceTag = [],
+      information = [],
     } = this.state;
     const {
       userInfo: { name, image },
