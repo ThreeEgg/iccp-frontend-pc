@@ -5,7 +5,7 @@ import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import ContentHeader from '../../components/ContentHeader';
 import Timeline from '../../components/Timeline';
 import api from '../../services/api';
-import * as expertService from '../../services/expert';
+import * as expertService from '@/services/expert';
 import { cookieToJson } from '../../utils';
 import './activity.less';
 
