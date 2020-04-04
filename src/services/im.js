@@ -49,12 +49,12 @@ export const getCaseInfo = async ({ caseId, clientUserId, expertUserId }) => {
 
 export const saveCaseInfo = async (extIccpCase) => {
   return request.post(api.saveCaseInfo, {
-    extIccpCase ,
+    data: extIccpCase,
   });
 };
 
 export const saveOrder = async ({ clientUserId, expertExplain }) => {
-  return request(api.saveOrder, {
+  return request.post(api.saveOrder, {
     params: {
       clientUserId,
       expertExplain,
@@ -87,7 +87,7 @@ export const downloadCaseBatch = async ({ caseId }) => {
     params: {
       caseId,
     },
-    responseType:'blob',
+    responseType: 'blob',
   });
 };
 

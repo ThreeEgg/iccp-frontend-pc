@@ -4,11 +4,12 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 18:16:51
+ * @LastEditTime: 2020-04-04 18:34:59
  * @FilePath: \PC端-前端\src\modules\NIM\components\CaseInfo.js
  */
-import React from 'react';
+import React, { createRef } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import { Layout, Form, Input, Button, message } from 'antd';
 const { TextArea } = Input;
 const { Sider } = Layout;
@@ -16,11 +17,13 @@ import PropTypes from 'prop-types';
 class CaseInfo extends React.Component {
   static propTypes = {
     collapsed: PropTypes.bool,
+    canSave: PropTypes.bool,
     userInfo: PropTypes.object,
     myInfo: PropTypes.object,
   };
 
   static defaultProps = {
+    canSave: false,
     collapsed: true,
     userInfo: {},
     myInfo: {},
@@ -29,10 +32,13 @@ class CaseInfo extends React.Component {
   state = {
     clientUserId: '',
     expertUserId: '',
-    canSave: false,
+    isEdit: false,
     caseInfo: {},
     deleteFileIndex: null,
   };
+  // 表单
+  formRef = createRef();
+
   // 进入该页面，文档被挂载
   async componentDidMount() {
     this.initCaseInfo()
@@ -43,22 +49,22 @@ class CaseInfo extends React.Component {
     //     collapsed,
     //   });
     // }
-    if (prevProps.iccpUserInfo !== this.props.iccpUserInfo) {
+    if (prevProps.userInfo !== this.props.userInfo) {
       this.initCaseInfo()
     }
   };
 
   initCaseInfo = () => {
+    const form = this.formRef.current;
     let clientUserId = ''
     let expertUserId = ''
+    let expertUserName = ''
     if (this.props.myInfo.type === 'user' || this.props.myInfo.type === 'guest') {
       clientUserId = this.props.myInfo.userId
     }
     else if (this.props.myInfo.type === 'expert') {
       expertUserId = this.props.myInfo.userId
-      this.setState({
-        canSave: true
-      })
+      expertUserName = this.props.myInfo.name
     }
 
     if (this.props.userInfo.userType === 'user' || this.props.userInfo.userType === 'guest') {
@@ -66,6 +72,7 @@ class CaseInfo extends React.Component {
     }
     else if (this.props.userInfo.userType === 'expert') {
       expertUserId = this.props.userInfo.userId
+      expertUserName = this.props.userInfo.name
     }
     this.setState({
       clientUserId,
@@ -78,6 +85,10 @@ class CaseInfo extends React.Component {
         expertUserId,
         callback: (res) => {
           if (res.code === '0') {
+            res.data.clientUserId = clientUserId;
+            res.data.expertUserId = expertUserId;
+            res.data.expertUserName = expertUserName;
+            form.setFieldsValue(res.data)
             this.setState({
               caseInfo: res.data
             })
@@ -130,18 +141,45 @@ class CaseInfo extends React.Component {
 
   };
 
-  saveCaseInfo = () => {
-    this.props.dispatch({
-      type: 'chat/saveCaseInfo',
-      extIccpCase: this.state.caseInfo,
-      callback: (res) => {
-        if (res.code === '0') {
-          console.log(res);
-        } else {
-          // message.error(res.errorInfo);
-        }
-      },
-    })
+  saveCaseInfo = async () => {
+    const form = this.formRef.current;
+    try {
+      if (this.state.isEdit) {
+        const values = await form.validateFields();
+        this.props.dispatch({
+          type: 'chat/saveCaseInfo',
+          extIccpCase: this.state.caseInfo,
+          callback: (res) => {
+            if (res.code === '0') {
+              this.setState({
+                isEdit: false,
+              });
+              this.props.dispatch({
+                type: 'chat/getCaseInfo',
+                clientUserId: this.state.clientUserId,
+                expertUserId: this.state.expertUserId,
+                callback: (res) => {
+                  if (res.code === '0') {
+                    this.setState({
+                      caseInfo: res.data
+                    })
+                  } else {
+                    // message.error(res.errorInfo);
+                  }
+                }
+              });
+            } else {
+              // message.error(res.errorInfo);
+            }
+          },
+        })
+      } else {
+        this.setState({
+          isEdit: true,
+        });
+      }
+    } catch (errorInfo) {
+    }
   };
 
   addFile = () => {
@@ -153,6 +191,7 @@ class CaseInfo extends React.Component {
         type: 'chat/fileUpload',
         clientUserId: this.state.clientUserId,
         expertUserId: this.state.expertUserId,
+        uploadUserId: this.state.expertUserId,
         file: ipt.files[0],
         fileName: ipt.files[0].name,
         fileType: 1,
@@ -178,15 +217,12 @@ class CaseInfo extends React.Component {
   };
 
   render() {
-    const { caseInfo, canSave, saveCaseInfo } = this.state;
-    const { collapsed, toggleCaseInfo } = this.props;
+    const { caseInfo, isEdit } = this.state;
+    const { collapsed, toggleCaseInfo, canSave } = this.props;
     return (
       <Sider
         theme='light'
         width='280'
-        style={{
-
-        }}
         collapsed={collapsed}
         collapsedWidth={0}
         collapsible={true}
@@ -199,17 +235,17 @@ class CaseInfo extends React.Component {
             返回消息列表
       </Button>
           {canSave &&
-            <Button className='csae-save' type="primary" onClick={saveCaseInfo}>保存</Button>
+            <Button className='csae-save' type="primary" onClick={this.saveCaseInfo}>{isEdit ? '保存' : '编辑'}</Button>
           }
         </div>
-        {Object.keys(caseInfo).length > 0 && <Form name="caseForm" className="case-form" initialValues={{ remember: true }}>
+        <Form name="caseForm" className="case-form" ref={this.formRef} layout="vertical">
           <div className='form-title'> 案件信息表 </div>
-          <div className='form-title-2'> 最后更新 </div>
-          <div className='form-title-2'> 法务专家 </div>
+          {caseInfo.updateTime && <div className='form-title-2'> 最后更新 {moment(new Date(caseInfo.updateTime)).format('YYYY/MM/DD HH:mm')}</div>}
+          <div className='form-title-2'> 法务专家 {caseInfo.expertUserName}</div>
           <div className='form-title-3'> 案件基本信息 </div>
           <Form.Item label={`债权人`} name="creditor" rules={[{ required: true, message: '请输入债权人!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入债权人"
               value={caseInfo.creditor}
               onChange={e => {
@@ -222,7 +258,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`公司名称`} name="companyName" rules={[{ required: true, message: '请输入公司名称!' }]}>
             <TextArea
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               rows={3}
               placeholder="请输入公司名称"
               value={caseInfo.companyName}
@@ -232,11 +268,11 @@ class CaseInfo extends React.Component {
                   caseInfo,
                 })
               }}
-            />
+            > {caseInfo.companyName} </TextArea>
           </Form.Item>
           <Form.Item label={`公司地址`} name="companyAddress" rules={[{ required: true, message: '请输入公司地址!' }]}>
             <TextArea
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               rows={3}
               placeholder="请输入公司地址"
               value={caseInfo.companyAddress}
@@ -250,7 +286,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`国家`} name="country" rules={[{ required: true, message: '请输入国家!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入国家"
               value={caseInfo.country}
               onChange={e => {
@@ -263,7 +299,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`联系方式`} name="contactInformation" rules={[{ required: true, message: '请输入联系方式!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入联系方式"
               value={caseInfo.contactInformation}
               onChange={e => {
@@ -276,7 +312,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`债务人`} name="obligor" rules={[{ required: true, message: '请输入债务人!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入债务人"
               value={caseInfo.obligor}
               onChange={e => {
@@ -289,7 +325,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`国家/地区`} name="obligorCountry" rules={[{ required: true, message: '请输入国家/地区!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入国家/地区"
               value={caseInfo.obligorCountry}
               onChange={e => {
@@ -302,7 +338,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`账龄`} name="ageOfAccount" rules={[{ required: true, message: '请输入账龄!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入账龄"
               value={caseInfo.ageOfAccount}
               onChange={e => {
@@ -315,7 +351,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`债务金额`} name="debtOfAmount" rules={[{ required: true, message: '请输入债务金额!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入债务金额"
               value={caseInfo.debtOfAmount}
               onChange={e => {
@@ -328,7 +364,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`货币类型`} name="currencyType" rules={[{ required: true, message: '请输入货币类型!' }]}>
             <Input
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               placeholder="请输入货币类型"
               value={caseInfo.currencyType}
               onChange={e => {
@@ -341,7 +377,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`案情简介`} name="caseIntroduction" rules={[{ required: true, message: '请输入案情简介!' }]}>
             <TextArea
-              disabled={!canSave}
+              disabled={!canSave || !isEdit}
               rows={3}
               placeholder="请输入案情简介"
               value={caseInfo.caseIntroduction}
@@ -354,7 +390,7 @@ class CaseInfo extends React.Component {
             />
           </Form.Item>
           <span className='form-title-4'> 案件附件 </span>
-          {caseInfo.iccpCaseEnclosureList && (<span className='file-download' onClick={this.downloadCaseBatch}>下载全部</span>)}
+          {!isEdit && caseInfo.iccpCaseEnclosureList && (<span className='file-download' onClick={this.downloadCaseBatch}>下载全部</span>)}
           <div className='clear'></div>
           {caseInfo.iccpCaseEnclosureList && caseInfo.iccpCaseEnclosureList.map((file, index) => {
             return file.isValid === 1 && (
@@ -367,14 +403,13 @@ class CaseInfo extends React.Component {
               </div>
             );
           })}
-          {canSave && <div className='file-item' >
+          {canSave && isEdit && <div className='file-item' >
             <div className='file-box'>
               <img className='file-add' src='/im/ic_im_add.svg' />
               <input className='add-file' type="file" ref="fileToSent" onChange={this.addFile} />
             </div>
           </div>}
         </Form>
-        }
       </Sider>
     );
   }

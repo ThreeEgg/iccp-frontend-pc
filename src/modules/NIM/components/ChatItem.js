@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-18 13:42:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 18:05:45
+ * @LastEditTime: 2020-04-04 19:22:59
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
  */
 
@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 
 import { Modal } from 'antd';
 const { confirm } = Modal;
+import Link from 'next/link';
 
 import util from '../utils'
 import config from '../configs'
@@ -342,7 +343,7 @@ class ChatItem extends React.Component {
 
   render() {
     const { msg, msgUnRead, translate, icon1 } = this.state;
-    const { type } = this.props;
+    const { type, userInfo } = this.props;
     return (
       msg.flow === 'onmore' ?
         <div className="item-more"> ---- 已无更多记录 ---- </div> :
@@ -364,9 +365,12 @@ class ChatItem extends React.Component {
             >
               {/* 信息来源 */}
               {msg.avatar && msg.type !== 'notification' &&
-                <span className="msg-head">
-                  <img src={msg.avatar} />
-                </span>
+                <Link href={`/professor?id=${userInfo.userId}`}>
+                  <span className="msg-head">
+                    <img src={msg.avatar} />
+                  </span>
+                </Link>
+
               }
               {msg.name &&
                 <span className="msg-name" >{msg.name}</span>

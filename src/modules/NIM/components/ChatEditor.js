@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-12 18:04:56
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-02 17:50:22
+ * @LastEditTime: 2020-04-04 19:14:54
  * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
  */
 import React from 'react';
@@ -129,15 +129,21 @@ class ChatEditor extends React.Component {
     }
     let ipt = this.refs.fileToSent;
     if (ipt.value) {
+      let file = ipt.files[0]
+      // 大于50Mb不可上传
+      if(file.size>52,428,800){
+        message.error('上传文件不要大于50Mb');
+        return
+      }
       if (this.props.type === 'session') {
         this.props.dispatch({
           type: 'chat/fileUpload',
-          file: ipt.files[0],
-          fileName: ipt.files[0].name,
+          file,
+          fileName: file.name,
           callback: (res) => {
             if (res.code === '0') {
               let type = 11 //'file'
-              let pushContent = '[文件]' //'file'
+              let pushContent = '[文件]' 
               let data = res.data;
               if (/(png|jpg|bmp|jpeg|gif)$/i.test(res.data.fileSuffix)) {
                 type = 12 //'image'

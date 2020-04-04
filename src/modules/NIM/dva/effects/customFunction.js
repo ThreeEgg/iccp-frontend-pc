@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 19:30:38
+ * @LastEditTime: 2020-04-04 17:02:14
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\customFunction.js
  */
 import { message } from 'antd'
@@ -25,7 +25,7 @@ export function* updateUsers({ callback }, { put, call, select }) {
   const accid = yield select(state => state.chat.userUID);
   if (callback) {
     const serviceInfo = yield select(state => state.chat.serviceInfo);
-    const iccpUserInfos= yield select(state => state.chat.iccpUserInfos);
+    const iccpUserInfos = yield select(state => state.chat.iccpUserInfos);
     if (Object.keys(serviceInfo).length > 0 || Object.keys(iccpUserInfos).length > 0) {
       callback();
     }
@@ -90,17 +90,17 @@ export function* getCaseInfo({
 
 export function* saveCaseInfo({
   extIccpCase, callback }, { call }) {
-  const res = yield call(im.saveCaseInfo, {
+  const res = yield call(im.saveCaseInfo,
     extIccpCase,
-  });
+  );
   callback && callback(res);
 }
 
 export function* fileUpload({
-  clientUserId, expertUserId, file, fileName, filetype,
+  clientUserId, expertUserId, file, fileName, fileType,
   callback }, { call }) {
   const res = yield call(common.fileUpload, {
-    clientUserId, expertUserId, file, fileName, type: filetype,
+    clientUserId, expertUserId, file, fileName, type: fileType,
   });
   callback && callback(res);
 }

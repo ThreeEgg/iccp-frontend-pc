@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-16 15:56:52
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 19:08:23
+ * @LastEditTime: 2020-04-04 17:02:33
  * @FilePath: \PC端-前端\src\modules\NIM\dva\reducers\index.js
  */
 // 更改 dva 的 state 中的状态的唯一方法是提交 reducers
@@ -128,6 +128,8 @@ export default {
       //  自定义信息
       // 所有会话未读消息数
       unreadCount: 0,
+      // 是否有客服会话
+      hasServiceSession: false,
       // 客服信息
       serviceInfo: {},
       // 平台用户列表
