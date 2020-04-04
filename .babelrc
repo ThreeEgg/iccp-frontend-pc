@@ -4,6 +4,19 @@
   ],
   "plugins": [
     [
+      "module-resolver",
+      {
+        "alias": {
+          "@/components": "./src/components",
+          "@/pages": "./src/pages",
+          "@/common": "./src/common",
+          "@/services": "./src/services",
+          "@/layouts": "./src/layouts",
+          "@/utils": "./src/utils"
+        }
+      }
+    ],
+    [
       "import",
       {
         "libraryName": "antd",
