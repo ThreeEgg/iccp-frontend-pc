@@ -1,5 +1,6 @@
 import React, { Component, createRef } from 'react';
 import { Button, Avatar, Pagination, Modal, Input, message, Form } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import shortId from 'shortid';
@@ -115,7 +116,7 @@ export default class extends Component {
           <Form.Item
             name="title"
             rules={[
-              { max: 80, message: '不超过80个字符' },
+              { max: 80, message: '标题在1-80个字符之间' },
               { required: true, message: '请输入标题' },
             ]}
           >
@@ -134,8 +135,8 @@ export default class extends Component {
           <Form.Item
             name="content"
             rules={[
-              { max: 2000, message: '不超过2000个字符' },
-              { required: true, message: '请输入内容' },
+              { max: 2000, message: '介绍在1-2000个字符之间' },
+              { required: true, message: '请输入介绍' },
             ]}
           >
             <TextArea
@@ -208,11 +209,15 @@ export default class extends Component {
     for (let id in this.formsRef) {
       // 主动触发验证
       const form = this.formsRef[id].current;
+      if (!form) {
+        continue;
+      }
       await form.validateFields();
       const fieldError = form.getFieldsError();
       // 查看是否没有异常
       const hasError = fieldError.find(item => item.errors.length >= 1);
       if (hasError) {
+        message.warn('请按照提示检查您输入的内容');
         return;
       }
     }
@@ -335,10 +340,25 @@ export default class extends Component {
   };
 
   removeInformation = targeIndex => {
-    const information = this.state.information.filter((item, index) => index !== targeIndex);
+    Modal.confirm({
+      title: '警告',
+      icon: <ExclamationCircleOutlined />,
+      content: '确认要删除该条详情吗？',
+      okText: '是的',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        const information = this.state.information.filter((item, index) => {
+          // 删除引用，避免内存残留
+          delete this.formsRef[item.id];
 
-    this.setState({
-      information,
+          return index !== targeIndex;
+        });
+
+        this.setState({
+          information,
+        });
+      },
     });
   };
 
