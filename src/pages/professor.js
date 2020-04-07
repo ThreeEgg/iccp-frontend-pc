@@ -36,7 +36,7 @@ class Professor extends React.Component {
       // 专家动态
       const activityRes = await fetch(
         `${api.baseUrl}/api${
-        api.getExpertActivityList
+          api.getExpertActivityList
         }?userId=${id}&pageSize=10&pageNum=${pageNum}`,
       );
       const activityContent = await activityRes.json();
@@ -156,7 +156,7 @@ class Professor extends React.Component {
     router.push(targetUrl);
   };
 
-  goToCommunication = (accid) => {
+  goToCommunication = accid => {
     message.loading('正在连线...');
     this.props.dispatch({
       type: 'chat/initSession',
@@ -309,9 +309,9 @@ class Professor extends React.Component {
                                 navigation:
                                   item.images.length > 3
                                     ? {
-                                      nextEl: '.swiper-button-next',
-                                      prevEl: '.swiper-button-prev',
-                                    }
+                                        nextEl: '.swiper-button-next',
+                                        prevEl: '.swiper-button-prev',
+                                      }
                                     : {},
                               }}
                             >
@@ -320,6 +320,13 @@ class Professor extends React.Component {
                                   key={url}
                                   className="swiper-img-container"
                                   style={{ backgroundImage: `url(${url})` }}
+                                  onClick={() => {
+                                    if (typeof window !== undefined) {
+                                      const Zmage = require('react-zmage');
+                                      console.log(Zmage);
+                                      Zmage.default.browsing({ src: url });
+                                    }
+                                  }}
                                 />
                               ))}
                             </Swiper>
@@ -331,22 +338,22 @@ class Professor extends React.Component {
                 </TabPane>
               </Tabs>
             ) : (
-                // 文章详情
-                <div className="article-detail grey-shadow">
-                  {/* 返回按钮 */}
-                  <img
-                    className="back-btn"
-                    src="/images/ic_header_leadback.png"
-                    onClick={this.backFromArticleDetail}
-                  />
-                  <h1 className="article-title">{articleDetail.title}</h1>
-                  <h2 className="article-brief">{articleDetail.brief}</h2>
-                  <div
-                    className="article-rich-text"
-                    dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
-                  />
-                </div>
-              )}
+              // 文章详情
+              <div className="article-detail grey-shadow">
+                {/* 返回按钮 */}
+                <img
+                  className="back-btn"
+                  src="/images/ic_header_leadback.png"
+                  onClick={this.backFromArticleDetail}
+                />
+                <h1 className="article-title">{articleDetail.title}</h1>
+                <h2 className="article-brief">{articleDetail.brief}</h2>
+                <div
+                  className="article-rich-text"
+                  dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="con-pro-l">
@@ -410,4 +417,4 @@ class Professor extends React.Component {
   }
 }
 
-export default connect(({ }) => ({}))(Professor);
+export default connect(({}) => ({}))(Professor);

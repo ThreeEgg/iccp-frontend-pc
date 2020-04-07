@@ -45,6 +45,7 @@ export class Timeline extends Component {
                 const month = moment(dayTimestamp * 1).format('MMM');
                 return dayItems.map((item, index) => {
                   let title, brief, notice, isArticle;
+
                   // 尝试解析item为文章动态，无法解析则为正常的动态
                   try {
                     item.activity = JSON.parse(item.activity);
@@ -52,10 +53,16 @@ export class Timeline extends Component {
                     title = item.activity.title;
                     brief = item.activity.brief;
                     notice = item.activity.notice;
-                  } catch (error) {}
+                  } catch (error) {
+                    isArticle = false;
+                  }
+
+                  console.log(isArticle, item.activity);
+
                   const time = moment(item.updateTime).format('HH:mm');
                   return (
                     <div
+                      key={index}
                       className={classNames('statu-con', {
                         'section-head': index === 0,
                         head: timeLineIndex === 0,
@@ -73,7 +80,7 @@ export class Timeline extends Component {
 
                       <div className="statu-text">
                         {!isArticle ? (
-                          item.activity
+                          JSON.stringify(item.activity)
                         ) : (
                           <div class="article-activity">
                             <h2>{notice}</h2>
