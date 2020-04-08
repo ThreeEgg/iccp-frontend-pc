@@ -10,7 +10,6 @@
 import React, { createRef } from 'react';
 import PropTypes from 'prop-types';
 import ChatItem from './ChatItem';
-import './ChatList.less';
 import VirtualList from '../../../components/VirtualList';
 import { Button } from 'antd';
 

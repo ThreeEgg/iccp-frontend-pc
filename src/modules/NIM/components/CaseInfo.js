@@ -124,7 +124,6 @@ class CaseInfo extends React.Component {
         type: 'chat/downloadCaseBatch',
         caseId,
         callback: (res) => {
-          console.log(res);
           const blobUrl = window.URL.createObjectURL(res)
           const eleLink = document.createElement('a')
           eleLink.download = '案件附件.zip'
