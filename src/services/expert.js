@@ -54,18 +54,18 @@ export const saveExpertActivity = async ({ activity }) => {
   });
 };
 
-export const deleteExpertActivity = async ({ activityId }) => {
+export const deleteExpertActivity = async ({ id }) => {
   return request(api.deleteExpertActivity, {
     params: {
-      activityId,
+      id,
     },
   });
 };
 
-export const getExpertArticleById = async ({ activityId }) => {
+export const getExpertArticleById = async ({ id }) => {
   return request(api.getExpertArticleById, {
     params: {
-      activityId,
+      id,
     },
   });
 };

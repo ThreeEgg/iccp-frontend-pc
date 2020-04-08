@@ -5,7 +5,7 @@ import './Timeline.less';
 
 export class Timeline extends Component {
   render() {
-    const { data = [], onArticleClick } = this.props;
+    const { data = [], onArticleClick, onRemoveClick } = this.props;
     // 对activity进行分组，同一年、同一天的分同一组
     const timelineGroup = {};
     let currentYear;
@@ -45,7 +45,7 @@ export class Timeline extends Component {
                 const month = moment(dayTimestamp * 1).format('MMM');
                 return dayItems.map((item, index) => {
                   let title, brief, notice, isArticle, activity;
-                  const { type } = item;
+                  const { type, id } = item;
                   activity = item.activity;
                   if (type == 'article') {
                     isArticle = true;
@@ -89,7 +89,7 @@ export class Timeline extends Component {
                           activity
                         ) : (
                           <div
-                            class="article-activity"
+                            className="article-activity"
                             onClick={() => onArticleClick && onArticleClick(activity)}
                           >
                             <h2>{notice}</h2>
@@ -98,6 +98,11 @@ export class Timeline extends Component {
                           </div>
                         )}
                         <span>{time}</span>
+                        {onRemoveClick && (
+                          <i className="iconfont" onClick={() => onRemoveClick(id)}>
+                            &#xe6a5;
+                          </i>
+                        )}
                         <div
                           className={classNames({
                             'statu-circle-big': index === 0,
