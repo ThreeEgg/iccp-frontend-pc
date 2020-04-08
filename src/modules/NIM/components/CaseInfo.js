@@ -124,7 +124,7 @@ class CaseInfo extends React.Component {
         type: 'chat/downloadCaseBatch',
         caseId,
         callback: (res) => {
-          if(res instanceof Blob){
+          if (res instanceof Blob) {
             const blobUrl = window.URL.createObjectURL(res)
             const eleLink = document.createElement('a')
             eleLink.download = '案件附件.zip'
@@ -252,6 +252,7 @@ class CaseInfo extends React.Component {
           <div className='form-title-3'> 案件基本信息 </div>
           <Form.Item label={`债权人`} name="creditor" rules={[{ required: false, message: '请输入债权人!' }]}>
             <Input
+              maxLength='100'
               disabled={!canSave || !isEdit}
               placeholder="请输入债权人"
               value={caseInfo.creditor}
@@ -265,6 +266,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`公司名称`} name="companyName" rules={[{ required: false, message: '请输入公司名称!' }]}>
             <TextArea
+              maxLength='1000'
               disabled={!canSave || !isEdit}
               rows={3}
               placeholder="请输入公司名称"
@@ -279,6 +281,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`公司地址`} name="companyAddress" rules={[{ required: false, message: '请输入公司地址!' }]}>
             <TextArea
+              maxLength='1000'
               disabled={!canSave || !isEdit}
               rows={3}
               placeholder="请输入公司地址"
@@ -293,6 +296,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`国家`} name="country" rules={[{ required: false, message: '请输入国家!' }]}>
             <Input
+              maxLength='100'
               disabled={!canSave || !isEdit}
               placeholder="请输入国家"
               value={caseInfo.country}
@@ -306,6 +310,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`联系方式`} name="contactInformation" rules={[{ required: false, message: '请输入联系方式!' }]}>
             <Input
+              maxLength='100'
               disabled={!canSave || !isEdit}
               placeholder="请输入联系方式"
               value={caseInfo.contactInformation}
@@ -319,6 +324,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`债务人`} name="obligor" rules={[{ required: false, message: '请输入债务人!' }]}>
             <Input
+              maxLength='100'
               disabled={!canSave || !isEdit}
               placeholder="请输入债务人"
               value={caseInfo.obligor}
@@ -332,6 +338,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`国家/地区`} name="obligorCountry" rules={[{ required: false, message: '请输入国家/地区!' }]}>
             <Input
+              maxLength='100'
               disabled={!canSave || !isEdit}
               placeholder="请输入国家/地区"
               value={caseInfo.obligorCountry}
@@ -345,6 +352,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`账龄`} name="ageOfAccount" rules={[{ required: false, message: '请输入账龄!' }]}>
             <Input
+              maxLength='100'
               disabled={!canSave || !isEdit}
               placeholder="请输入账龄"
               value={caseInfo.ageOfAccount}
@@ -372,6 +380,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`货币类型`} name="currencyType" rules={[{ required: false, message: '请输入货币类型!' }]}>
             <Input
+              maxLength='100'
               disabled={!canSave || !isEdit}
               placeholder="请输入货币类型"
               value={caseInfo.currencyType}
@@ -385,6 +394,7 @@ class CaseInfo extends React.Component {
           </Form.Item>
           <Form.Item label={`案情简介`} name="caseIntroduction" rules={[{ required: false, message: '请输入案情简介!' }]}>
             <TextArea
+              maxLength='1000'
               disabled={!canSave || !isEdit}
               rows={3}
               placeholder="请输入案情简介"
