@@ -4,9 +4,11 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-23 16:35:03
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 16:53:15
+ * @LastEditTime: 2020-04-07 16:05:45
  * @FilePath: \PC端-前端\src\modules\NIM\dva\effects\extFunction.js
  */
+import { formatUserInfo } from './userInfo'
+
 export function* updateLoginExt({ isLogin }, { put }) {
   yield put({ type: 'updateLogin', isLogin });
 }
@@ -83,12 +85,12 @@ export function* updateMsgsExt({ msgs }, { put, select }) {
       }
       return a.time - b.time
     })
-    if (sessionId === currSessionId) {
+    if (currSessionId && sessionId === currSessionId) {
       yield put({ type: 'updateCurrSessionMsgs', method: 'init' });
     }
   }
 }
-export function* sendTipMsgDoneExt({ msg, tipMsg }, { put }) {
+export function* sendTipMsgDoneExt({ msg, tipMsg }, { put, select }) {
   let idClient = msg.deletedIdClient || msg.idClient
   yield put({
     type: 'replaceMsg',

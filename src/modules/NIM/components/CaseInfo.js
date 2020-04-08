@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-04 18:34:59
+ * @LastEditTime: 2020-04-07 18:13:39
  * @FilePath: \PC端-前端\src\modules\NIM\components\CaseInfo.js
  */
 import React, { createRef } from 'react';
@@ -187,13 +187,19 @@ class CaseInfo extends React.Component {
     caseInfo.iccpCaseEnclosureList = caseInfo.iccpCaseEnclosureList || []
     let ipt = this.refs.fileToSent;
     if (ipt.value) {
+      let file = ipt.files[0]
+      // 大于50Mb不可上传
+      if(file.size>52,428,800){
+        message.error('上传文件不要大于50Mb');
+        return
+      }
       this.props.dispatch({
         type: 'chat/fileUpload',
         clientUserId: this.state.clientUserId,
         expertUserId: this.state.expertUserId,
         uploadUserId: this.state.expertUserId,
-        file: ipt.files[0],
-        fileName: ipt.files[0].name,
+        file,
+        fileName: file.name,
         fileType: 1,
         callback: (res) => {
           if (res.code === '0') {
@@ -243,7 +249,7 @@ class CaseInfo extends React.Component {
           {caseInfo.updateTime && <div className='form-title-2'> 最后更新 {moment(new Date(caseInfo.updateTime)).format('YYYY/MM/DD HH:mm')}</div>}
           <div className='form-title-2'> 法务专家 {caseInfo.expertUserName}</div>
           <div className='form-title-3'> 案件基本信息 </div>
-          <Form.Item label={`债权人`} name="creditor" rules={[{ required: true, message: '请输入债权人!' }]}>
+          <Form.Item label={`债权人`} name="creditor" rules={[{ required: false, message: '请输入债权人!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入债权人"
@@ -256,7 +262,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`公司名称`} name="companyName" rules={[{ required: true, message: '请输入公司名称!' }]}>
+          <Form.Item label={`公司名称`} name="companyName" rules={[{ required: false, message: '请输入公司名称!' }]}>
             <TextArea
               disabled={!canSave || !isEdit}
               rows={3}
@@ -270,7 +276,7 @@ class CaseInfo extends React.Component {
               }}
             > {caseInfo.companyName} </TextArea>
           </Form.Item>
-          <Form.Item label={`公司地址`} name="companyAddress" rules={[{ required: true, message: '请输入公司地址!' }]}>
+          <Form.Item label={`公司地址`} name="companyAddress" rules={[{ required: false, message: '请输入公司地址!' }]}>
             <TextArea
               disabled={!canSave || !isEdit}
               rows={3}
@@ -284,7 +290,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`国家`} name="country" rules={[{ required: true, message: '请输入国家!' }]}>
+          <Form.Item label={`国家`} name="country" rules={[{ required: false, message: '请输入国家!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入国家"
@@ -352,6 +358,7 @@ class CaseInfo extends React.Component {
           <Form.Item label={`债务金额`} name="debtOfAmount" rules={[{ required: true, message: '请输入债务金额!' }]}>
             <Input
               disabled={!canSave || !isEdit}
+              type='number'
               placeholder="请输入债务金额"
               value={caseInfo.debtOfAmount}
               onChange={e => {
@@ -396,8 +403,8 @@ class CaseInfo extends React.Component {
             return file.isValid === 1 && (
               <div className='file-item' key={index}>
                 <div className='file-box'><img className='file-icon' src='/im/ic_im_file.svg' /><span>{file.oldFileName}</span></div>
-                <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>
-                <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>
+                {canSave && <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>}
+                {canSave && <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>}
                 <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/im/ic_im_delete.svg' />删除</span>
                 <div className='clear'></div>
               </div>

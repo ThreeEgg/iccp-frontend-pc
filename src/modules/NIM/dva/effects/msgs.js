@@ -245,7 +245,6 @@ export function* sendMsgReceipt(action, { select }) {
   if (currSessionId) {
     // 只有点对点消息才发已读回执
     if (util.parseSession(currSessionId).scene === 'p2p') {
-      const currSessionMsgs = yield select(state => state.chat.currSessionMsgs);
       const nim = yield select(state => state.chat.nim);
       const sessionMap = yield select(state => state.chat.sessionMap);
       if (sessionMap[currSessionId]) {
@@ -262,6 +261,7 @@ export function* sendMsgReceipt(action, { select }) {
 
 export function* getHistoryMsgs(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
+  const currSessionLastMsg = yield select((state) => state.im.currSessionLastMsg);
   if (nim) {
     let { scene, to } = paylord
     let options = {
@@ -287,11 +287,11 @@ export function* getHistoryMsgs(paylord, { put, select }) {
         }
       }
     }
-    if (state.currSessionLastMsg) {
+    if (currSessionLastMsg) {
       options = Object.assign(options, {
-        lastMsgId: state.currSessionLastMsg.idServer,
-        endTime: state.currSessionLastMsg.time,
-      })
+        lastMsgId: currSessionLastMsg.idServer,
+        endTime: currSessionLastMsg.time,
+      });
     }
     nim.getHistoryMsgs(options)
   }

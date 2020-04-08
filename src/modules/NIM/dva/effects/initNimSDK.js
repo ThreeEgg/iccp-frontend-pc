@@ -149,11 +149,6 @@ export function* initNimSDK({ loginInfo }, { put, select }) {
     oncustomsysmsg: onCustomSysMsgs,
     // // 同步完成
     onsyncdone: function onSyncDone() {
-      // 说明在聊天列表页
-      const currSessionId = select(state => state.chat.currSessionId);
-      if (currSessionId) {
-        window.dispatch({ type: 'chat/setCurrSession', currSessionId });
-      }
     },
   });
   yield put({ type: 'updateNim', nim: window.nim });
