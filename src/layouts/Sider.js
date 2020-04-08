@@ -64,7 +64,7 @@ class Sider extends React.Component {
 
   render() {
     return (
-      <div class="sider-component">
+      <div className="sider-component">
         <Menu
           mode="inline"
           onClick={this.onClick}

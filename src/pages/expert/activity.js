@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button, message, Input, Pagination } from 'antd';
+import { Button, message, Input, Pagination, Modal } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import router from 'next/router';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import ContentHeader from '../../components/ContentHeader';
@@ -67,6 +68,25 @@ export class Activity extends Component {
     }
   };
 
+  removeActivity = id => {
+    Modal.confirm({
+      title: '警告',
+      icon: <ExclamationCircleOutlined />,
+      content: '确认要删除该动态吗？',
+      okText: '是的',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        const res = await expertService.deleteExpertActivity({ id });
+
+        if (res.code === '0') {
+          message.success('已删除');
+          window.location.reload();
+        }
+      },
+    });
+  };
+
   onPublishContentChange = e => {
     let str = e.target.value;
     if (str.length > 140) {
@@ -110,7 +130,7 @@ export class Activity extends Component {
           </div>
         </div>
         <div className="dynamic-list flex flex-column flex-align">
-          <Timeline data={activity} />
+          <Timeline data={activity} onRemoveClick={this.removeActivity} />
         </div>
         {/* 分页器 */}
         <div className="common-pagination">

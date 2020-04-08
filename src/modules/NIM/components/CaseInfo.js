@@ -188,7 +188,7 @@ class CaseInfo extends React.Component {
     if (ipt.value) {
       let file = ipt.files[0]
       // 大于50Mb不可上传
-      if(file.size>52428800){
+      if (file.size > 52428800) {
         message.error('上传文件不要大于50Mb');
         return
       }
@@ -236,11 +236,11 @@ class CaseInfo extends React.Component {
         className='case-info'
       >
         <div className='case-header'>
-          <Button className='csae-back' type="primary" onClick={toggleCaseInfo}>
+          <Button className='case-back' type="primary" onClick={toggleCaseInfo}>
             返回消息列表
       </Button>
           {canSave &&
-            <Button className='csae-save' type="primary" onClick={this.saveCaseInfo}>{isEdit ? '保存' : '编辑'}</Button>
+            <Button className='case-save' type="primary" onClick={this.saveCaseInfo}>{isEdit ? '保存' : '编辑'}</Button>
           }
         </div>
         <Form name="caseForm" className="case-form" ref={this.formRef} layout="vertical">
