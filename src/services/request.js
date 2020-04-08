@@ -81,7 +81,10 @@ request.interceptors.request.use((url, options) => {
 request.interceptors.response.use(async (response, options) => {
   // 文件类型的请求，不处理请求体
   if (options.responseType === 'blob') {
-    return response;
+    // 如果是json数据，则直接走下面的逻辑；不是，就直接返回
+    if (!response.clone) {
+      return response;
+    }
   }
   const data = await response.clone().json();
   if (!data) {
