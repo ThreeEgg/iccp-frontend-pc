@@ -118,13 +118,13 @@ class CaseInfo extends React.Component {
 
   downloadCaseBatch = () => {
     let caseId = this.state.caseInfo.caseId
-    // let caseId = '39ffc00816344654969da7825ee3fb46'
+    // let caseId = '39ffc00816344654969da7825ee3fb4'
     if (caseId) {
       this.props.dispatch({
         type: 'chat/downloadCaseBatch',
         caseId,
         callback: (res) => {
-          if(Object.keys(res).length > 0){
+          if(res instanceof Blob){
             const blobUrl = window.URL.createObjectURL(res)
             const eleLink = document.createElement('a')
             eleLink.download = '案件附件.zip'

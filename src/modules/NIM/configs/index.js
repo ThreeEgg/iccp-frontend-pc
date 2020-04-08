@@ -18,6 +18,8 @@ let config = {
   resourceUrl: 'http://yx-web.nos.netease.com/webdoc/h5',
   // 用户logo地址
   logo: 'http://yx-web.nos.netease.com/webdoc/h5/im/logo.png',
+  // 默认客服头像
+  defaultServiceIcon: '/im/ic_im_service.svg',
   // 默认用户头像
   defaultUserIcon: '/im/ic_im_default.svg',
   // 默认本人头像

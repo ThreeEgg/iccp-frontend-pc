@@ -3,7 +3,7 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { notification, message } from 'antd';
 import { getAuthorityToken } from '../common/authority';
 import { getCommonHeader } from '../common';
 
@@ -79,10 +79,15 @@ request.interceptors.request.use((url, options) => {
  * 2. 错误码提示
  */
 request.interceptors.response.use(async (response, options) => {
-  // 文件类型的请求，不处理请求体
+
+  // 文件类型的请求且返回体是Blob直接返回，不处理请求体
+  // if (options.responseType === 'blob' && data instanceof Blob) {
+  //   return response;
+  // }  
   if (options.responseType === 'blob') {
-    // 如果是json数据，则直接走下面的逻辑；不是，就直接返回
-    if (!response.clone) {
+    try {
+      await response.clone().json();
+    } catch (error) {
       return response;
     }
   }
@@ -96,6 +101,8 @@ request.interceptors.response.use(async (response, options) => {
     // 12000 需要人机验证
     if (data.code === '16000') {
       message.error('登录失效');
+    } else if (data.code === '13000') {
+      message.error('查无此案件');
     } else {
       notification.error({
         description: data.errorInfo,

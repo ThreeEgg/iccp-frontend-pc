@@ -358,7 +358,6 @@ export default {
     return { ...state, sessionlist, sessionMap, unreadCount, hasServiceSession };
   },
   updateServiceInfo(state, { serviceInfo }) {
-    serviceInfo.image = `/im/ic_im_service.svg`;
     return { ...state, serviceInfo };
   },
   updateiccpUserInfos(state, { iccpUserList }) {

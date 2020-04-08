@@ -65,7 +65,7 @@ class Session extends React.Component {
         {sessionlist && sessionlist.map((session, index) => (
           session.show &&
           <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
-            <img className='nav-avatar' src={session.avatar || config.defaultUserIcon} />
+            <img className='nav-avatar' src={session.avatar || (session.isService ? config.defaultServiceIcon : config.defaultUserIcon)} />
             <span className='nav-info' >
               <span className='nav-name' >
                 {session.name}
