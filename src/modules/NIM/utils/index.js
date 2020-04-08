@@ -42,7 +42,7 @@ Utils.escape = (function () {
 })();
 
 Utils.object2query = function (obj) {
-  let keys = Object.keys(obj)
+  let keys = keys(Object.obj)
   let queryArray = keys.map(item => {
     return `${item}=${encodeURIComponent(obj[item])}`
   })
