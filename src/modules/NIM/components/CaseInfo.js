@@ -189,7 +189,7 @@ class CaseInfo extends React.Component {
     if (ipt.value) {
       let file = ipt.files[0]
       // 大于50Mb不可上传
-      if(file.size>52,428,800){
+      if(file.size>52428800){
         message.error('上传文件不要大于50Mb');
         return
       }
@@ -403,9 +403,9 @@ class CaseInfo extends React.Component {
             return file.isValid === 1 && (
               <div className='file-item' key={index}>
                 <div className='file-box'><img className='file-icon' src='/im/ic_im_file.svg' /><span>{file.oldFileName}</span></div>
-                {canSave && <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>}
-                {canSave && <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>}
-                <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/im/ic_im_delete.svg' />删除</span>
+                <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>
+                {canSave && isEdit && <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>}
+                {canSave && isEdit && <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/im/ic_im_delete.svg' />删除</span>}
                 <div className='clear'></div>
               </div>
             );

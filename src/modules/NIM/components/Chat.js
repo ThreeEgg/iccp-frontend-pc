@@ -176,7 +176,8 @@ class Chat extends React.Component {
         expertExplain: values.expertExplain,
         callback: (res) => {
           if (res.code === '0') {
-            message.success(res.msg)
+            console.log(res.msg);
+            message.success('已向平台发送订单生成请求，请等待平台工作人员与您联系')
           } else {
             // message.error(res.msg)
           }
@@ -237,7 +238,7 @@ class Chat extends React.Component {
             {hasCaseInfo && <span className='expert-case' onClick={this.toggleCaseInfo}>案件信息表</span>}
             {orderInfoShow && <Form name="orderForm" className="order-form" ref={this.formRef}>
               <Form.Item name="expertExplain" rules={[{ required: true, message: '请输入专家说明!' }]}>
-                <Input onPressEnter={this.saveOrder} placeholder="请输入专家说明" addonAfter={<span className='save-order' onClick={this.saveOrder} >生成</span>} />
+                <Input maxLength='2000' onPressEnter={this.saveOrder} placeholder="请输入专家说明" addonAfter={<span className='save-order' onClick={this.saveOrder} >生成</span>} />
               </Form.Item>
             </Form>
             }

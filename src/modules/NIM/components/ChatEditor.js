@@ -131,7 +131,7 @@ class ChatEditor extends React.Component {
     if (ipt.value) {
       let file = ipt.files[0]
       // 大于50Mb不可上传
-      if(file.size>52,428,800){
+      if(file.size>52428800){
         message.error('上传文件不要大于50Mb');
         return
       }
