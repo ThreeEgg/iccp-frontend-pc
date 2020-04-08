@@ -304,7 +304,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`联系方式`} name="contactInformation" rules={[{ required: true, message: '请输入联系方式!' }]}>
+          <Form.Item label={`联系方式`} name="contactInformation" rules={[{ required: false, message: '请输入联系方式!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入联系方式"
@@ -317,7 +317,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`债务人`} name="obligor" rules={[{ required: true, message: '请输入债务人!' }]}>
+          <Form.Item label={`债务人`} name="obligor" rules={[{ required: false, message: '请输入债务人!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入债务人"
@@ -330,7 +330,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`国家/地区`} name="obligorCountry" rules={[{ required: true, message: '请输入国家/地区!' }]}>
+          <Form.Item label={`国家/地区`} name="obligorCountry" rules={[{ required: false, message: '请输入国家/地区!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入国家/地区"
@@ -343,7 +343,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`账龄`} name="ageOfAccount" rules={[{ required: true, message: '请输入账龄!' }]}>
+          <Form.Item label={`账龄`} name="ageOfAccount" rules={[{ required: false, message: '请输入账龄!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入账龄"
@@ -356,7 +356,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`债务金额`} name="debtOfAmount" rules={[{ required: true, message: '请输入债务金额!' }]}>
+          <Form.Item label={`债务金额`} name="debtOfAmount" rules={[{ required: false, message: '请输入债务金额!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               type='number'
@@ -370,7 +370,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`货币类型`} name="currencyType" rules={[{ required: true, message: '请输入货币类型!' }]}>
+          <Form.Item label={`货币类型`} name="currencyType" rules={[{ required: false, message: '请输入货币类型!' }]}>
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入货币类型"
@@ -383,7 +383,7 @@ class CaseInfo extends React.Component {
               }}
             />
           </Form.Item>
-          <Form.Item label={`案情简介`} name="caseIntroduction" rules={[{ required: true, message: '请输入案情简介!' }]}>
+          <Form.Item label={`案情简介`} name="caseIntroduction" rules={[{ required: false, message: '请输入案情简介!' }]}>
             <TextArea
               disabled={!canSave || !isEdit}
               rows={3}
