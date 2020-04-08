@@ -71,83 +71,100 @@
       padding: 29px 24px;
       font-weight: bold;
       font-size: 16px;
+      .bar-tip {
+        font-size: 12px;
+        font-weight: normal;
+      }
     }
-    .edit {
-      padding: 24px;
-      .title {
-        padding-bottom: 16px;
-        border-bottom: 1px solid rgba(238, 238, 238, 0.8);
-        .title-edit {
-          margin-right: 20px;
-          font-weight: bold;
-          font-size: 16px;
-          line-height: 22px;
-          border: none;
-          // overflow: scroll;
-          outline: none;
-          box-shadow: none;
-        }
-        i {
-          color: rgba(0, 0, 0, 0.3);
-          font-size: 16px;
-        }
-      }
+  }
+}
 
-      .edit-content {
-        margin-top: 10px;
-        margin-bottom: 24px;
-        color: #666;
-        font-size: 16px;
-        line-height: 22px;
-        border: none;
-        box-shadow: none;
+// 由于可拖拽，需要将类名设置为全局
+.expert-home-edit-item {
+  padding: 24px;
+  background-color: white;
+  transition: opacity .3s;
+  &.dragging {
+    opacity: .6;
+  }
+  .title {
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(238, 238, 238, 0.8);
+    .title-edit {
+      margin-right: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 22px;
+      border: none;
+      // overflow: scroll;
+      outline: none;
+      box-shadow: none;
+    }
+    i {
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 16px;
+      cursor: pointer;
+      transition: all .3s;
+      user-select: none;
+      &:hover {
+        opacity: .8;
       }
-      .add {
-        color: #1b2857;
+    }
+  }
+
+  .edit-content {
+    margin-top: 10px;
+    margin-bottom: 24px;
+    color: #666;
+    font-size: 16px;
+    line-height: 22px;
+    border: none;
+    box-shadow: none;
+  }
+  .add {
+    color: #1b2857;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid rgba(27, 40, 87, 0.3);
+    border-radius: 24px;
+    cursor: pointer;
+    i {
+      font-size: 12px;
+    }
+  }
+
+  .img {
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    .img-item {
+      position: relative;
+      width: 173px;
+      height: 173px;
+      margin: 0 5px 5px 0;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      &:last-of-type {
+        margin-right: 0;
+        margin-bottom: 0;
+      }
+      .close {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 18px;
+        height: 18px;
+        color: white;
         font-size: 14px;
-        text-align: center;
-        border: 1px solid rgba(27, 40, 87, 0.3);
-        border-radius: 24px;
+        background: red;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      &-add {
         cursor: pointer;
         i {
-          font-size: 12px;
-        }
-      }
-
-      .img {
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-        .img-item {
-          position: relative;
-          width: 173px;
-          height: 173px;
-          margin: 0 5px 5px 0;
-          background-repeat: no-repeat;
-          background-position: center center;
-          background-size: cover;
-          &:last-of-type {
-            margin-right: 0;
-            margin-bottom: 0;
-          }
-          .close {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 18px;
-            height: 18px;
-            color: white;
-            font-size: 14px;
-            background: red;
-            border-radius: 50%;
-            cursor: pointer;
-          }
-          &-add {
-            cursor: pointer;
-            i {
-              color: #999;
-              font-size: 30px;
-            }
-          }
+          color: #999;
+          font-size: 30px;
         }
       }
     }

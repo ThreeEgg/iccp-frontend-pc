@@ -224,7 +224,7 @@ class Chat extends React.Component {
               <span className='expert-name'>
                 {userInfo.name}
               </span>
-              {hasEvaluation && <Popconfirm placement="bottom" title={
+              {hasEvaluation && <Popconfirm overlayClassName='chat-expert-evaluation-popover' placement="bottom" title={
                 Evaluation} onConfirm={this.confirmEvaluation} okText="保存评分" icon={<i />}>
                 <img className="expert-evaluate" src={icon1} alt="" />
               </Popconfirm>}
