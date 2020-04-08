@@ -4,7 +4,7 @@
  * @Author: 毛翔宇
  * @Date: 2020-03-19 14:11:19
  * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-04 18:34:59
+ * @LastEditTime: 2020-04-07 18:13:39
  * @FilePath: \PC端-前端\src\modules\NIM\components\CaseInfo.js
  */
 import React, { createRef } from 'react';
@@ -41,7 +41,7 @@ class CaseInfo extends React.Component {
 
   // 进入该页面，文档被挂载
   async componentDidMount() {
-    this.initCaseInfo()
+    this.initCaseInfo();
   }
   componentDidUpdate = (prevProps, prevState) => {
     // if (prevProps.collapsed !== this.props.collapsed) {
@@ -50,65 +50,63 @@ class CaseInfo extends React.Component {
     //   });
     // }
     if (prevProps.userInfo !== this.props.userInfo) {
-      this.initCaseInfo()
+      this.initCaseInfo();
     }
   };
 
   initCaseInfo = () => {
     const form = this.formRef.current;
-    let clientUserId = ''
-    let expertUserId = ''
-    let expertUserName = ''
+    let clientUserId = '';
+    let expertUserId = '';
+    let expertUserName = '';
     if (this.props.myInfo.type === 'user' || this.props.myInfo.type === 'guest') {
-      clientUserId = this.props.myInfo.userId
-    }
-    else if (this.props.myInfo.type === 'expert') {
-      expertUserId = this.props.myInfo.userId
-      expertUserName = this.props.myInfo.name
+      clientUserId = this.props.myInfo.userId;
+    } else if (this.props.myInfo.type === 'expert') {
+      expertUserId = this.props.myInfo.userId;
+      expertUserName = this.props.myInfo.name;
     }
 
     if (this.props.userInfo.userType === 'user' || this.props.userInfo.userType === 'guest') {
-      clientUserId = this.props.userInfo.userId
-    }
-    else if (this.props.userInfo.userType === 'expert') {
-      expertUserId = this.props.userInfo.userId
-      expertUserName = this.props.userInfo.name
+      clientUserId = this.props.userInfo.userId;
+    } else if (this.props.userInfo.userType === 'expert') {
+      expertUserId = this.props.userInfo.userId;
+      expertUserName = this.props.userInfo.name;
     }
     this.setState({
       clientUserId,
       expertUserId,
-    })
+    });
     if (clientUserId && expertUserId) {
       this.props.dispatch({
         type: 'chat/getCaseInfo',
         clientUserId,
         expertUserId,
-        callback: (res) => {
+        callback: res => {
           if (res.code === '0') {
             res.data.clientUserId = clientUserId;
             res.data.expertUserId = expertUserId;
             res.data.expertUserName = expertUserName;
-            form.setFieldsValue(res.data)
+            form.setFieldsValue(res.data);
             this.setState({
-              caseInfo: res.data
-            })
+              caseInfo: res.data,
+            });
           } else {
             // message.error(res.errorInfo);
           }
-        }
+        },
       });
     }
   };
 
-  replaceFile = (index) => {
+  replaceFile = index => {
     let ipt = this.refs.fileToSent;
-    ipt.click()
+    ipt.click();
     this.setState({
       deleteFileIndex: index,
     });
   };
 
-  deleteFile = (index) => {
+  deleteFile = index => {
     let caseInfo = this.state.caseInfo;
     caseInfo.iccpCaseEnclosureList[index].isValid = 0;
     this.setState({
@@ -117,28 +115,27 @@ class CaseInfo extends React.Component {
   };
 
   downloadCaseBatch = () => {
-    let caseId = this.state.caseInfo.caseId
+    let caseId = this.state.caseInfo.caseId;
     // let caseId = '39ffc00816344654969da7825ee3fb46'
     if (caseId) {
       this.props.dispatch({
         type: 'chat/downloadCaseBatch',
         caseId,
-        callback: (res) => {
+        callback: res => {
           console.log(res);
-          const blobUrl = window.URL.createObjectURL(res)
-          const eleLink = document.createElement('a')
-          eleLink.download = '案件附件.zip'
-          eleLink.style.display = 'none'
-          eleLink.href = blobUrl
+          const blobUrl = window.URL.createObjectURL(res);
+          const eleLink = document.createElement('a');
+          eleLink.download = '案件附件.zip';
+          eleLink.style.display = 'none';
+          eleLink.href = blobUrl;
           // 触发点击
-          document.body.appendChild(eleLink)
-          eleLink.click()
+          document.body.appendChild(eleLink);
+          eleLink.click();
           // 然后移除
-          document.body.removeChild(eleLink)
-        }
+          document.body.removeChild(eleLink);
+        },
       });
     }
-
   };
 
   saveCaseInfo = async () => {
@@ -149,7 +146,7 @@ class CaseInfo extends React.Component {
         this.props.dispatch({
           type: 'chat/saveCaseInfo',
           extIccpCase: this.state.caseInfo,
-          callback: (res) => {
+          callback: res => {
             if (res.code === '0') {
               this.setState({
                 isEdit: false,
@@ -158,46 +155,51 @@ class CaseInfo extends React.Component {
                 type: 'chat/getCaseInfo',
                 clientUserId: this.state.clientUserId,
                 expertUserId: this.state.expertUserId,
-                callback: (res) => {
+                callback: res => {
                   if (res.code === '0') {
                     this.setState({
-                      caseInfo: res.data
-                    })
+                      caseInfo: res.data,
+                    });
                   } else {
                     // message.error(res.errorInfo);
                   }
-                }
+                },
               });
             } else {
               // message.error(res.errorInfo);
             }
           },
-        })
+        });
       } else {
         this.setState({
           isEdit: true,
         });
       }
-    } catch (errorInfo) {
-    }
+    } catch (errorInfo) {}
   };
 
   addFile = () => {
     let caseInfo = this.state.caseInfo;
-    caseInfo.iccpCaseEnclosureList = caseInfo.iccpCaseEnclosureList || []
+    caseInfo.iccpCaseEnclosureList = caseInfo.iccpCaseEnclosureList || [];
     let ipt = this.refs.fileToSent;
     if (ipt.value) {
+      let file = ipt.files[0];
+      // 大于50Mb不可上传
+      if ((file.size > 52, 428, 800)) {
+        message.error('上传文件不要大于50Mb');
+        return;
+      }
       this.props.dispatch({
         type: 'chat/fileUpload',
         clientUserId: this.state.clientUserId,
         expertUserId: this.state.expertUserId,
         uploadUserId: this.state.expertUserId,
-        file: ipt.files[0],
-        fileName: ipt.files[0].name,
+        file,
+        fileName: file.name,
         fileType: 1,
-        callback: (res) => {
+        callback: res => {
           if (res.code === '0') {
-            caseInfo.iccpCaseEnclosureList.push(res.data)
+            caseInfo.iccpCaseEnclosureList.push(res.data);
             this.setState({
               caseInfo,
             });
@@ -212,7 +214,7 @@ class CaseInfo extends React.Component {
             // message.error(res.errorInfo);
           }
         },
-      })
+      });
     }
   };
 
@@ -221,29 +223,40 @@ class CaseInfo extends React.Component {
     const { collapsed, toggleCaseInfo, canSave } = this.props;
     return (
       <Sider
-        theme='light'
-        width='280'
+        theme="light"
+        width="280"
         collapsed={collapsed}
         collapsedWidth={0}
         collapsible={true}
         defaultCollapsed={true}
         trigger={null}
-        className='case-info'
+        className="case-info"
       >
-        <div className='case-header'>
-          <Button className='csae-back' type="primary" onClick={toggleCaseInfo}>
+        <div className="case-header">
+          <Button className="csae-back" type="primary" onClick={toggleCaseInfo}>
             返回消息列表
-      </Button>
-          {canSave &&
-            <Button className='csae-save' type="primary" onClick={this.saveCaseInfo}>{isEdit ? '保存' : '编辑'}</Button>
-          }
+          </Button>
+          {canSave && (
+            <Button className="csae-save" type="primary" onClick={this.saveCaseInfo}>
+              {isEdit ? '保存' : '编辑'}
+            </Button>
+          )}
         </div>
         <Form name="caseForm" className="case-form" ref={this.formRef} layout="vertical">
-          <div className='form-title'> 案件信息表 </div>
-          {caseInfo.updateTime && <div className='form-title-2'> 最后更新 {moment(new Date(caseInfo.updateTime)).format('YYYY/MM/DD HH:mm')}</div>}
-          <div className='form-title-2'> 法务专家 {caseInfo.expertUserName}</div>
-          <div className='form-title-3'> 案件基本信息 </div>
-          <Form.Item label={`债权人`} name="creditor" rules={[{ required: true, message: '请输入债权人!' }]}>
+          <div className="form-title"> 案件信息表 </div>
+          {caseInfo.updateTime && (
+            <div className="form-title-2">
+              {' '}
+              最后更新 {moment(new Date(caseInfo.updateTime)).format('YYYY/MM/DD HH:mm')}
+            </div>
+          )}
+          <div className="form-title-2"> 法务专家 {caseInfo.expertUserName}</div>
+          <div className="form-title-3"> 案件基本信息 </div>
+          <Form.Item
+            label={`债权人`}
+            name="creditor"
+            rules={[{ required: false, message: '请输入债权人!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入债权人"
@@ -252,11 +265,15 @@ class CaseInfo extends React.Component {
                 caseInfo.creditor = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`公司名称`} name="companyName" rules={[{ required: true, message: '请输入公司名称!' }]}>
+          <Form.Item
+            label={`公司名称`}
+            name="companyName"
+            rules={[{ required: false, message: '请输入公司名称!' }]}
+          >
             <TextArea
               disabled={!canSave || !isEdit}
               rows={3}
@@ -266,11 +283,18 @@ class CaseInfo extends React.Component {
                 caseInfo.companyName = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
-            > {caseInfo.companyName} </TextArea>
+            >
+              {' '}
+              {caseInfo.companyName}{' '}
+            </TextArea>
           </Form.Item>
-          <Form.Item label={`公司地址`} name="companyAddress" rules={[{ required: true, message: '请输入公司地址!' }]}>
+          <Form.Item
+            label={`公司地址`}
+            name="companyAddress"
+            rules={[{ required: false, message: '请输入公司地址!' }]}
+          >
             <TextArea
               disabled={!canSave || !isEdit}
               rows={3}
@@ -280,11 +304,15 @@ class CaseInfo extends React.Component {
                 caseInfo.companyAddress = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`国家`} name="country" rules={[{ required: true, message: '请输入国家!' }]}>
+          <Form.Item
+            label={`国家`}
+            name="country"
+            rules={[{ required: false, message: '请输入国家!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入国家"
@@ -293,11 +321,15 @@ class CaseInfo extends React.Component {
                 caseInfo.country = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`联系方式`} name="contactInformation" rules={[{ required: true, message: '请输入联系方式!' }]}>
+          <Form.Item
+            label={`联系方式`}
+            name="contactInformation"
+            rules={[{ required: true, message: '请输入联系方式!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入联系方式"
@@ -306,11 +338,15 @@ class CaseInfo extends React.Component {
                 caseInfo.contactInformation = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`债务人`} name="obligor" rules={[{ required: true, message: '请输入债务人!' }]}>
+          <Form.Item
+            label={`债务人`}
+            name="obligor"
+            rules={[{ required: true, message: '请输入债务人!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入债务人"
@@ -319,11 +355,15 @@ class CaseInfo extends React.Component {
                 caseInfo.obligor = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`国家/地区`} name="obligorCountry" rules={[{ required: true, message: '请输入国家/地区!' }]}>
+          <Form.Item
+            label={`国家/地区`}
+            name="obligorCountry"
+            rules={[{ required: true, message: '请输入国家/地区!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入国家/地区"
@@ -332,11 +372,15 @@ class CaseInfo extends React.Component {
                 caseInfo.obligorCountry = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`账龄`} name="ageOfAccount" rules={[{ required: true, message: '请输入账龄!' }]}>
+          <Form.Item
+            label={`账龄`}
+            name="ageOfAccount"
+            rules={[{ required: true, message: '请输入账龄!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入账龄"
@@ -345,24 +389,33 @@ class CaseInfo extends React.Component {
                 caseInfo.ageOfAccount = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`债务金额`} name="debtOfAmount" rules={[{ required: true, message: '请输入债务金额!' }]}>
+          <Form.Item
+            label={`债务金额`}
+            name="debtOfAmount"
+            rules={[{ required: true, message: '请输入债务金额!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
+              type="number"
               placeholder="请输入债务金额"
               value={caseInfo.debtOfAmount}
               onChange={e => {
                 caseInfo.debtOfAmount = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`货币类型`} name="currencyType" rules={[{ required: true, message: '请输入货币类型!' }]}>
+          <Form.Item
+            label={`货币类型`}
+            name="currencyType"
+            rules={[{ required: true, message: '请输入货币类型!' }]}
+          >
             <Input
               disabled={!canSave || !isEdit}
               placeholder="请输入货币类型"
@@ -371,11 +424,15 @@ class CaseInfo extends React.Component {
                 caseInfo.currencyType = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <Form.Item label={`案情简介`} name="caseIntroduction" rules={[{ required: true, message: '请输入案情简介!' }]}>
+          <Form.Item
+            label={`案情简介`}
+            name="caseIntroduction"
+            rules={[{ required: true, message: '请输入案情简介!' }]}
+          >
             <TextArea
               disabled={!canSave || !isEdit}
               rows={3}
@@ -385,30 +442,57 @@ class CaseInfo extends React.Component {
                 caseInfo.caseIntroduction = e.target.value;
                 this.setState({
                   caseInfo,
-                })
+                });
               }}
             />
           </Form.Item>
-          <span className='form-title-4'> 案件附件 </span>
-          {!isEdit && caseInfo.iccpCaseEnclosureList && (<span className='file-download' onClick={this.downloadCaseBatch}>下载全部</span>)}
-          <div className='clear'></div>
-          {caseInfo.iccpCaseEnclosureList && caseInfo.iccpCaseEnclosureList.map((file, index) => {
-            return file.isValid === 1 && (
-              <div className='file-item' key={index}>
-                <div className='file-box'><img className='file-icon' src='/im/ic_im_file.svg' /><span>{file.oldFileName}</span></div>
-                <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>
-                <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>
-                <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/im/ic_im_delete.svg' />删除</span>
-                <div className='clear'></div>
+          <span className="form-title-4"> 案件附件 </span>
+          {!isEdit && caseInfo.iccpCaseEnclosureList && (
+            <span className="file-download" onClick={this.downloadCaseBatch}>
+              下载全部
+            </span>
+          )}
+          <div className="clear" />
+          {caseInfo.iccpCaseEnclosureList &&
+            caseInfo.iccpCaseEnclosureList.map((file, index) => {
+              return (
+                file.isValid === 1 && (
+                  <div className="file-item" key={index}>
+                    <div className="file-box">
+                      <img className="file-icon" src="/im/ic_im_file.svg" />
+                      <span>{file.oldFileName}</span>
+                    </div>
+                    {canSave && (
+                      <span className="file-tool">
+                        <a href={file.webUrl} target="_blank">
+                          <img src="/im/ic_im_download.svg" />
+                          下载
+                        </a>
+                      </span>
+                    )}
+                    {canSave && (
+                      <span className="file-tool" onClick={this.replaceFile.bind(this, index)}>
+                        <img src="/im/ic_im_replace.svg" />
+                        替换
+                      </span>
+                    )}
+                    <span className="file-tool" onClick={this.deleteFile.bind(this, index)}>
+                      <img src="/im/ic_im_delete.svg" />
+                      删除
+                    </span>
+                    <div className="clear" />
+                  </div>
+                )
+              );
+            })}
+          {canSave && isEdit && (
+            <div className="file-item">
+              <div className="file-box">
+                <img className="file-add" src="/im/ic_im_add.svg" />
+                <input className="add-file" type="file" ref="fileToSent" onChange={this.addFile} />
               </div>
-            );
-          })}
-          {canSave && isEdit && <div className='file-item' >
-            <div className='file-box'>
-              <img className='file-add' src='/im/ic_im_add.svg' />
-              <input className='add-file' type="file" ref="fileToSent" onChange={this.addFile} />
             </div>
-          </div>}
+          )}
         </Form>
       </Sider>
     );

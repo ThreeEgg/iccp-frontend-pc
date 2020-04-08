@@ -1,83 +1,83 @@
 import { message } from 'antd';
-import store from '..'
-import config from '../../configs'
-import util from '../../utils'
+import store from '..';
+import config from '../../configs';
+import util from '../../utils';
 
 export function formatMsg(msg) {
-  const nim = store.state.nim
+  const nim = store.state.nim;
   if (msg.type === 'robot') {
     if (msg.content && msg.content.flag === 'bot') {
       if (msg.content.message) {
         msg.content.message = msg.content.message.map(item => {
           switch (item.type) {
             case 'template':
-              item.content = nim.parseRobotTemplate(item.content)
-              break
+              item.content = nim.parseRobotTemplate(item.content);
+              break;
             case 'text':
             case 'image':
             case 'answer':
-              break
+              break;
           }
-          return item
-        })
+          return item;
+        });
       }
     }
   }
-  return msg
+  return msg;
 }
 
 export function onRoamingMsgs(obj) {
   let msgs = obj.msgs.map(msg => {
-    return formatMsg(msg)
-  })
+    return formatMsg(msg);
+  });
   window.dispatch({ type: 'chat/updateMsgsExt', msgs });
 }
 
 export function onOfflineMsgs(obj) {
   let msgs = obj.msgs.map(msg => {
-    return formatMsg(msg)
-  })
+    return formatMsg(msg);
+  });
   window.dispatch({ type: 'chat/updateMsgsExt', msgs });
 }
 
 export function onMsg(msg) {
-  msg = formatMsg(msg)
-  window.dispatch({ type: 'chat/onMsgExt', msg })
+  msg = formatMsg(msg);
+  window.dispatch({ type: 'chat/onMsgExt', msg });
 }
 
 function onSendMsgDone(error, msg) {
   if (error) {
     // 被拉黑
     if (error.code === 7101) {
-      msg.status = 'success'
-      message.error(error.message)
+      msg.status = 'success';
+      message.error(error.message);
     } else {
-      message.error(error.message)
+      message.error(error.message);
     }
   }
-  onMsg(msg)
+  onMsg(msg);
 }
 
 // 消息撤回
 export function onRevocateMsg(error, msg) {
-  const nim = store.state.nim
+  const nim = store.state.nim;
   if (error) {
     if (error.code === 508) {
-      alert('发送时间超过2分钟的消息，不能被撤回')
+      alert('发送时间超过2分钟的消息，不能被撤回');
     } else {
-      alert(error)
+      alert(error);
     }
-    return
+    return;
   }
-  let tip = ''
+  let tip = '';
   if (msg.from === store.state.userUID) {
-    tip = '你撤回了一条消息'
+    tip = '你撤回了一条消息';
   } else {
-    let userInfo = store.state.userInfos[msg.from]
+    let userInfo = store.state.userInfos[msg.from];
     if (userInfo) {
-      tip = `${util.getFriendAlias(userInfo)}撤回了一条消息`
+      tip = `${util.getFriendAlias(userInfo)}撤回了一条消息`;
     } else {
-      tip = '对方撤回了一条消息'
+      tip = '对方撤回了一条消息';
     }
   }
   nim.sendTipMsg({
@@ -90,50 +90,49 @@ export function onRevocateMsg(error, msg) {
       window.dispatch({
         type: 'chat/sendTipMsgDoneExt',
         tipMsg,
-        msg
-      })
-
-    }
-  })
+        msg,
+      });
+    },
+  });
 }
 
 export function revocateMsg({ state, commit }, msg) {
-  const nim = state.nim
-  let { idClient } = msg
-  msg = Object.assign(msg, state.msgsMap[idClient])
+  const nim = state.nim;
+  let { idClient } = msg;
+  msg = Object.assign(msg, state.msgsMap[idClient]);
   nim.deleteMsg({
     msg,
     done: function deleteMsgDone(error) {
-      onRevocateMsg(error, msg)
-    }
-  })
+      onRevocateMsg(error, msg);
+    },
+  });
 }
 export function* updateLocalMsg({ msg }, { put, select }) {
   yield put({
     type: 'chat/updateCurrSessionMsgs',
     method: 'replace',
     idClient: msg.idClient,
-    msg: msg
-  })
+    msg: msg,
+  });
   const nim = yield select(state => state.chat.nim);
   nim.updateLocalMsg({
     idClient: msg.idClient,
-    localCustom: msg.localCustom
-  })
+    localCustom: msg.localCustom,
+  });
   yield put({
     type: 'replaceMsg',
     sessionId: msg.sessionId,
     idClient: msg.idClient,
-    msg
+    msg,
   });
 }
 
 // 发送普通消息
 export function* sendMsg(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
-  let { method, scene, to, pushContent, content, text, needMsgReceipt } = paylord
-  method = method || ''
-  needMsgReceipt = needMsgReceipt || true
+  let { method, scene, to, pushContent, content, text, needMsgReceipt } = paylord;
+  method = method || '';
+  needMsgReceipt = needMsgReceipt || true;
   switch (method) {
     case 'text':
       nim.sendText({
@@ -141,61 +140,64 @@ export function* sendMsg(paylord, { put, select }) {
         to,
         text,
         done: onSendMsgDone,
-        needMsgReceipt
-      })
-      break
+        needMsgReceipt,
+      });
+      break;
     case 'custom':
       nim.sendCustomMsg({
         scene,
         to,
         pushContent,
         content: JSON.stringify(content),
-        done: onSendMsgDone
-      })
+        done: onSendMsgDone,
+      });
   }
 }
 
 // 发送文件消息
 export function* sendFileMsg(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
-  let { method: type, fileInput } = paylord
+  let { method: type, fileInput } = paylord;
   if (!type && fileInput) {
-    paylord.type = 'file'
+    paylord.type = 'file';
     if (/\.(png|jpg|bmp|jpeg|gif)$/i.test(fileInput.value)) {
-      paylord.type = 'image'
+      paylord.type = 'image';
     } else if (/\.(mov|mp4|ogg|webm)$/i.test(fileInput.value)) {
-      paylord.type = 'video'
+      paylord.type = 'video';
     }
   }
-  const data = Object.assign({
-    uploadprogress: function (data) {
-      // console.log(data.percentageText)
+  const data = Object.assign(
+    {
+      uploadprogress: function(data) {
+        // console.log(data.percentageText)
+      },
+      uploaderror: function() {
+        fileInput.value = '';
+        console && console.log('上传失败');
+      },
+      uploaddone: function(error, file) {
+        fileInput.value = '';
+        // console.log(error);
+        // console.log(file);
+      },
+      beforesend: function(msg) {
+        // console && console.log('正在发送消息, id=', msg);
+      },
+      done: function(error, msg) {
+        onSendMsgDone(error, msg);
+      },
     },
-    uploaderror: function () {
-      fileInput.value = ''
-      console && console.log('上传失败')
-    },
-    uploaddone: function (error, file) {
-      fileInput.value = ''
-      // console.log(error);
-      // console.log(file);
-    },
-    beforesend: function (msg) {
-      // console && console.log('正在发送消息, id=', msg);
-    },
-    done: function (error, msg) {
-      onSendMsgDone(error, msg)
-    }
-  }, paylord)
-  nim.sendFile(data)
+    paylord,
+  );
+  nim.sendFile(data);
 }
 
 // 发送机器人消息
 export function* sendRobotMsg(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
-  let { method, scene, to, robotAccid, content, params, target, body } = paylord
-  method = method || ''
-  scene = scene || 'p2p'
+  let { method, scene, to, robotAccid, content, params, target, body } = paylord;
+  method = method || '';
+  scene = scene || 'p2p';
   switch (method) {
     case 'text':
       nim.sendRobotMsg({
@@ -207,9 +209,9 @@ export function* sendRobotMsg(paylord, { put, select }) {
           content,
         },
         body,
-        done: onSendMsgDone
-      })
-      break
+        done: onSendMsgDone,
+      });
+      break;
     case 'welcome':
       nim.sendRobotMsg({
         scene,
@@ -219,9 +221,9 @@ export function* sendRobotMsg(paylord, { put, select }) {
           type: 'welcome',
         },
         body,
-        done: onSendMsgDone
-      })
-      break
+        done: onSendMsgDone,
+      });
+      break;
     case 'link':
       nim.sendRobotMsg({
         scene,
@@ -230,11 +232,11 @@ export function* sendRobotMsg(paylord, { put, select }) {
         content: {
           type: 'link',
           params,
-          target
+          target,
         },
         body,
-        done: onSendMsgDone
-      })
+        done: onSendMsgDone,
+      });
   }
 }
 
@@ -245,7 +247,6 @@ export function* sendMsgReceipt(action, { select }) {
   if (currSessionId) {
     // 只有点对点消息才发已读回执
     if (util.parseSession(currSessionId).scene === 'p2p') {
-      const currSessionMsgs = yield select(state => state.chat.currSessionMsgs);
       const nim = yield select(state => state.chat.nim);
       const sessionMap = yield select(state => state.chat.sessionMap);
       if (sessionMap[currSessionId]) {
@@ -253,8 +254,8 @@ export function* sendMsgReceipt(action, { select }) {
           msg: sessionMap[currSessionId].lastMsg,
           done: function sendMsgReceiptDone(error, obj) {
             console.log('发送消息已读回执' + (!error ? '成功' : '失败'), error, obj);
-          }
-        })
+          },
+        });
       }
     }
   }
@@ -262,8 +263,9 @@ export function* sendMsgReceipt(action, { select }) {
 
 export function* getHistoryMsgs(paylord, { put, select }) {
   const nim = yield select(state => state.chat.nim);
+  const currSessionLastMsg = yield select(state => state.im.currSessionLastMsg);
   if (nim) {
-    let { scene, to } = paylord
+    let { scene, to } = paylord;
     let options = {
       scene,
       to,
@@ -273,27 +275,27 @@ export function* getHistoryMsgs(paylord, { put, select }) {
       done: function getHistoryMsgsDone(error, obj) {
         if (obj.msgs) {
           if (obj.msgs.length === 0) {
-            window.dispatch({ type: 'chat/setNoMoreHistoryMsgsExt' })
+            window.dispatch({ type: 'chat/setNoMoreHistoryMsgsExt' });
           } else {
             let msgs = obj.msgs.map(msg => {
-              return formatMsg(msg)
-            })
+              return formatMsg(msg);
+            });
             window.dispatch({
               type: 'chat/updateCurrSessionMsgs',
               method: 'concat',
-              msgs
-            })
+              msgs,
+            });
           }
         }
-      }
-    }
-    if (state.currSessionLastMsg) {
+      },
+    };
+    if (currSessionLastMsg) {
       options = Object.assign(options, {
-        lastMsgId: state.currSessionLastMsg.idServer,
-        endTime: state.currSessionLastMsg.time,
-      })
+        lastMsgId: currSessionLastMsg.idServer,
+        endTime: currSessionLastMsg.time,
+      });
     }
-    nim.getHistoryMsgs(options)
+    nim.getHistoryMsgs(options);
   }
 }
 
@@ -302,6 +304,6 @@ export function* resetNoMoreHistoryMsgs(action, { put }) {
 }
 
 // 继续与机器人会话交互
-export function* continueRobotMsg({robotAccid}, { put }) {
+export function* continueRobotMsg({ robotAccid }, { put }) {
   yield put({ type: 'resetNoMoreHistoryMsgs', robotAccid });
 }
