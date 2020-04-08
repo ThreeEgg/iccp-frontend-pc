@@ -146,6 +146,10 @@ class Professor extends React.Component {
     router.push(targetUrl);
   };
 
+  onArticleClick = articleInfo => {
+    this.gotoArticleDetail(articleInfo.id);
+  };
+
   backFromArticleDetail = () => {
     let targetUrl = window.location.pathname + window.location.search;
 
@@ -255,7 +259,7 @@ class Professor extends React.Component {
             {!articleDetail ? (
               <Tabs activeKey={tabName} onChange={this.changeTab}>
                 <TabPane tab="专家动态" key="activity">
-                  <Timeline data={activity} />
+                  <Timeline data={activity} onArticleClick={this.onArticleClick} />
                   <div className="common-pagination">
                     <Pagination
                       current={pageNum}

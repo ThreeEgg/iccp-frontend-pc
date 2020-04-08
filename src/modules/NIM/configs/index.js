@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: 毛翔宇
  * @Date: 2020-03-24 17:11:25
  * @LastEditors: 毛翔宇
@@ -34,24 +34,24 @@ let config = {
   myPhoneIcon: 'http://yx-web.nos.netease.com/webdoc/h5/im/my-phone.png',
   // 本地消息显示数量，会影响性能
   localMsglimit: 36,
-  useDb: false
-}
+  useDb: false,
+};
 
-const env = 'online'
+const env = 'online';
 
 let appConfig = {
   // 用户的appkey
   // 用于在web demo中注册账号异步请求demo 服务器中使用
   test: {
     appkey: 'aa1e4938eb76eb6533267b3adc303bd6',
-    postUrl: 'https://apptest.netease.im'
+    postUrl: 'https://apptest.netease.im',
   },
   online: {
     appkey: 'aa1e4938eb76eb6533267b3adc303bd6',
-    postUrl: 'https://app.netease.im'
-  }
-}
+    postUrl: 'https://app.netease.im',
+  },
+};
 
-config = Object.assign(config, appConfig[env])
+config = Object.assign(config, appConfig[env]);
 
-export default config
+export default config;

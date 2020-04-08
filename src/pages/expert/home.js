@@ -1,7 +1,7 @@
 import React, { Component, createRef } from 'react';
-import { Button, Avatar, Pagination, Modal, Input, message, Form } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { Button, Avatar, Pagination, Modal, Input, message, Form, Popconfirm } from 'antd';
+import { ExclamationCircleOutlined, ArrowRightOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import shortId from 'shortid';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
@@ -97,14 +97,17 @@ export default class extends Component {
 
   formsRef = {};
 
+  SortableHandlerItem = SortableHandle(() => <i className="iconfont drag-handler">&#xe6a4;</i>);
+
   SortableItem = SortableElement(({ value, itemIndex }) => {
+    const { SortableHandlerItem } = this;
     const { title, content, images, id } = value;
     if (!this.formsRef[id]) {
       this.formsRef[id] = createRef();
     }
     const formRef = this.formsRef[id];
     return (
-      <div className="edit">
+      <div className="expert-home-edit-item">
         <Form
           ref={formRef}
           initialValues={{
@@ -127,9 +130,15 @@ export default class extends Component {
                 onChange={e => this.changeTitle(itemIndex, e)}
                 placeholder="标题"
               />
-              <i className="iconfont" onClick={() => this.removeInformation(itemIndex)}>
-                &#xe695;
-              </i>
+              {/* 移动锚点 */}
+              <SortableHandlerItem />
+              &nbsp;
+              &nbsp;
+              <Popconfirm title="确认删除？" overlayClassName='expert-home-edit-popover' icon={<QuestionCircleOutlined style={{ color: 'red' }} />} onConfirm={() => this.removeInformation(itemIndex)}>
+                <i className="iconfont">
+                  &#xe695;
+                </i>
+              </Popconfirm>
             </div>
           </Form.Item>
           <Form.Item
@@ -340,25 +349,15 @@ export default class extends Component {
   };
 
   removeInformation = targeIndex => {
-    Modal.confirm({
-      title: '警告',
-      icon: <ExclamationCircleOutlined />,
-      content: '确认要删除该条详情吗？',
-      okText: '是的',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: async () => {
-        const information = this.state.information.filter((item, index) => {
-          // 删除引用，避免内存残留
-          delete this.formsRef[item.id];
+    const information = this.state.information.filter((item, index) => {
+      // 删除引用，避免内存残留
+      delete this.formsRef[item.id];
 
-          return index !== targeIndex;
-        });
+      return index !== targeIndex;
+    });
 
-        this.setState({
-          information,
-        });
-      },
+    this.setState({
+      information,
     });
   };
 
@@ -474,24 +473,37 @@ export default class extends Component {
           <div className="detail grey-shadow">
             <div className="bar flex flex-justifyBetween flex-align">
               专家详情
-              <Button type="primary" size="small" onClick={this.modifyExpertInformation}>
-                Save
-              </Button>
+              <div className='bar-tip flex flex-align'>
+                请保存您的更改
+                &nbsp;
+                &nbsp;
+                <ArrowRightOutlined />
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <Button type="primary" size="small" onClick={this.modifyExpertInformation}>
+                  Save
+                </Button>
+              </div>
             </div>
             {information.length ? (
               <SortableList
                 items={information}
                 onSortEnd={this.informationSortEnd}
                 pressDelay={300}
+                useDragHandle
+                lockAxis='y'
+                helperClass='dragging'
               />
             ) : (
-              <div className="edit">
-                <div className="add" onClick={() => this.addInformation(0)}>
-                  <i className="iconfont">&#xe694;</i>
-                  &nbsp; ADD
+                <div className="expert-home-edit-item">
+                  <div className="add" onClick={() => this.addInformation(0)}>
+                    <i className="iconfont">&#xe694;</i>
+                    &nbsp; ADD
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             {/* <div className="common-pagination">
               <Pagination current={1} onChange={this.onChange} size="small" total={50} />
             </div> */}

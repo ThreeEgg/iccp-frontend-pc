@@ -93,7 +93,7 @@ export function* initNimSDK({ loginInfo }, { put, select }) {
           let str = error.from;
           let errorMsg = `你的帐号于${util.formatDate(new Date())}被${map[str] ||
             '其他端'}踢出下线，请确定帐号信息安全!`;
-            message.error(errorMsg);
+          message.error(errorMsg);
           // pageUtil.turnPage(errorMsg, 'login');
           break;
         default:
@@ -148,8 +148,7 @@ export function* initNimSDK({ loginInfo }, { put, select }) {
     onofflinecustomsysmsgs: onCustomSysMsgs,
     oncustomsysmsg: onCustomSysMsgs,
     // // 同步完成
-    onsyncdone: function onSyncDone() {
-    },
+    onsyncdone: function onSyncDone() {},
   });
   yield put({ type: 'updateNim', nim: window.nim });
 
