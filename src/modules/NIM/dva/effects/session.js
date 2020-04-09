@@ -96,9 +96,9 @@ export function* setCurrSession({ sessionId }, { put, select }) {
         method: 'init',
         sessionId,
       });
-      // 发送已读回执
-      yield put({ type: 'sendMsgReceipt' });
     }
+    // 发送已读回执
+    yield put({ type: 'sendMsgReceipt' });
   }
 }
 

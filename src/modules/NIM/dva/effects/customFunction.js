@@ -110,6 +110,12 @@ export function* downloadCaseBatch({ caseId, callback }, { call }) {
   callback && callback(res);
 }
 
+export function* receiveMsg({ to, callback }, { call, select }) {
+  const from = yield select(state => state.chat.userUID);
+  const res = yield call(im.receiveMsg, { from, to, });
+  callback && callback(res);
+}
+
 export function* initSession({ expertAccid, callback }, { call, select }) {
   const userAccid = yield select(state => state.chat.userUID);
   const res = yield call(im.checkFirstChat, { expertAccid, userAccid });

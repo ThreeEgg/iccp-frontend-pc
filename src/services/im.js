@@ -37,6 +37,15 @@ export const recentChatList = async ({ accid, pageNum, pageSize }) => {
   });
 };
 
+export const receiveMsg = async ({ from, to }) => {
+  return request(api.receiveMsg, {
+    params: {
+      fromAccount: from,
+      toAccount: to,
+    },
+  });
+};
+
 export const getCaseInfo = async ({ caseId, clientUserId, expertUserId }) => {
   return request(api.getCaseInfo, {
     params: {

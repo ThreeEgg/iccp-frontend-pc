@@ -42,6 +42,7 @@ export default {
   checkFirstChat: '/im/check-welcome',
   checkFirstChatForCustomerService: '/im/check-welcome-service',
   recentChatList: '/im/recent-chat',
+  receiveMsg: '/im/receiveMsg',
   getCaseInfo: '/case/get',
   saveCaseInfo: '/case/update',
   saveOrder: '/order/create',

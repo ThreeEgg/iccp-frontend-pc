@@ -27,12 +27,19 @@ export function* updateUserInfoExt({ users }, { put }) {
 export function* updateMyInfoExt({ myInfo }, { put }) {
   yield put({ type: 'updateMyInfo', myInfo });
 }
-export function* updateSessionsExt({ sessions }, { put }) {
+export function* updateSessionsExt({ sessions }, { put, select }) {
+  const sessionMap = yield select(state => state.chat.sessionMap);
   // 更新客服信息及专家列表
   yield put({
     type: 'updateUsers',
     callback: () => {
       window.dispatch({ type: 'chat/updateSessions', sessions });
+      // 向后台更新会话已读状态
+      sessions.forEach(item => {
+        if (item.unread === 0 && sessionMap[item.id].unread !== 0) {
+          window.dispatch({ type: 'chat/receiveMsg', to: item.to });
+        }
+      });
     },
   });
 }
