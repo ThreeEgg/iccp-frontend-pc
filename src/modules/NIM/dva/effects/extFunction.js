@@ -36,7 +36,7 @@ export function* updateSessionsExt({ sessions }, { put, select }) {
       window.dispatch({ type: 'chat/updateSessions', sessions });
       // 向后台更新会话已读状态
       sessions.forEach(item => {
-        if (item.unread === 0 && sessionMap[item.id].unread !== 0) {
+        if (item.unread === 0 && sessionMap[item.id] && sessionMap[item.id].unread !== 0) {
           window.dispatch({ type: 'chat/receiveMsg', to: item.to });
         }
       });
