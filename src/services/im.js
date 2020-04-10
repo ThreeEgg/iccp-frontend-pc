@@ -38,7 +38,7 @@ export const recentChatList = async ({ accid, pageNum, pageSize }) => {
 };
 
 export const receiveMsg = async ({ from, to }) => {
-  return request(api.receiveMsg, {
+  return request.post(api.receiveMsg, {
     params: {
       fromAccount: from,
       toAccount: to,
@@ -67,16 +67,6 @@ export const saveOrder = async ({ clientUserId, expertExplain }) => {
     params: {
       clientUserId,
       expertExplain,
-    },
-  });
-};
-
-export const customerEvaluationToExpert = async ({ attitudeRating, expertUserId, skillRating }) => {
-  return request.post(api.customerEvaluationToExpert, {
-    params: {
-      attitudeRating,
-      expertUserId,
-      skillRating,
     },
   });
 };

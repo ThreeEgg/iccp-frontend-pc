@@ -46,7 +46,6 @@ export default {
   getCaseInfo: '/case/get',
   saveCaseInfo: '/case/update',
   saveOrder: '/order/create',
-  customerEvaluationToExpert: '/expert/user-rating/update',
   historyChatMsg: '/im/chat-history',
   getTranslate: '/support/translate',
   downloadCaseBatch: '/support/downloadBatch',

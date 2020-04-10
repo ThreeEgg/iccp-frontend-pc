@@ -53,7 +53,6 @@ class ChatItem extends React.Component {
   componentWillMount() {
     this.computedItem()
   }
-  timer = null;
   componentDidMount() {
     // window.stopPlayAudio = this.stopPlayAudio.bind(this)
     let item = this.state.msg
@@ -73,24 +72,25 @@ class ChatItem extends React.Component {
       media.className = 'emoji-big'
       media.src = item.imgUrl
     } else if (item.type === 'custom-image') {
+      let scale = 12.5
       // 自定义图片
       media = new Image()
       media.className = 'custom-image'
       media.src = item.imgUrl
-      let width = item.width / 16
-      let height = item.height / 16
+      let width = item.width
+      let height = item.height
       if (width > height) {
-        if (width > 12.5) {
-          height = 12.5 * height / width;
-          width = 12.5
+        if (width > scale) {
+          height = scale * height / width;
+          width = scale
           this.setState({
             isFullImgShow: true,
           })
         }
       } else {
-        if (height > 12.5) {
-          width = 12.5 * width / height;
-          height = 12.5
+        if (height > scale) {
+          width = scale * width / height;
+          height = scale
           this.setState({
             isFullImgShow: true,
           })
@@ -139,7 +139,7 @@ class ChatItem extends React.Component {
       if (!newCustom || !this.props.rawMsg || this.props.rawMsg.type !== 'audio') {
         return
       }
-      let oldCustom = prevProps.rawMsg && oldprevProps.rawMsgVal.localCustom
+      let oldCustom = prevProps.rawMsg && prevProps.rawMsg.localCustom
       if (newCustom !== oldCustom) {
         this.computedItem()
       }
@@ -311,10 +311,12 @@ class ChatItem extends React.Component {
     }
   }
   showFullImg = (src) => {
-    let newwin = window.open()
-    let myimg = newwin.document.createElement("img")
-    myimg.src = src
-    newwin.document.body.appendChild(myimg)
+    if(this.state.isFullImgShow){
+      let newwin = window.open()
+      let myimg = newwin.document.createElement("img")
+      myimg.src = src
+      newwin.document.body.appendChild(myimg)
+    }
   }
   getTranslate = (idClient) => {
     this.props.dispatch({
@@ -391,7 +393,7 @@ class ChatItem extends React.Component {
                   <div className={`msg-text msg-audio ${msg.unreadAudio && 'unreadAudio'}`} style={{ width: msg.width }} ref="mediaMsg" onClick={this.playAudio.bind(this, msg)} dangerouslySetInnerHTML={{ __html: msg.showText }}></div>
                 }
                 {(msg.type === 'file' || msg.type === 'custom-file') &&
-                  <div className="msg-text"><a href={msg.fileLink} target="_blank"><i className="u-icon icon-file"></i>{msg.showText}</a></div>
+                  <div className="msg-text"><a href={msg.fileLink} target="_blank">{msg.showText}</a></div>
                 }
                 {msg.type === 'robot' &&
                   <div className="msg-text">功能暂未开放</div>
