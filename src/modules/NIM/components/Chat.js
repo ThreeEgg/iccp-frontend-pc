@@ -185,8 +185,6 @@ class Chat extends React.Component {
       })
     } catch (errorInfo) {
     }
-
-
   }
   render() {
     const { userInfo, otherIsExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow, orderInfoShow, canCaseInfoSave } = this.state;
@@ -237,8 +235,8 @@ class Chat extends React.Component {
             {canCaseInfoSave && <span className='expert-order' onClick={this.openOrder}>生成订单</span>}
             {hasCaseInfo && <span className='expert-case' onClick={this.toggleCaseInfo}>案件信息表</span>}
             {orderInfoShow && <Form name="orderForm" className="order-form" ref={this.formRef}>
-              <Form.Item name="expertExplain" rules={[{ required: true, message: '请输入专家说明!' }]}>
-                <Input maxLength='2000' onPressEnter={this.saveOrder} placeholder="请输入专家说明" addonAfter={<span className='save-order' onClick={this.saveOrder} >生成</span>} />
+              <Form.Item name="expertExplain" rules={[{ required: true, message: '请填写说明信息!' }]}>
+                <Input maxLength='2000' onPressEnter={this.saveOrder} placeholder="请填写说明信息" addonAfter={<span className='save-order' onClick={this.saveOrder} >生成</span>} />
               </Form.Item>
             </Form>
             }
