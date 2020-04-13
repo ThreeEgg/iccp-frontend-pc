@@ -12,7 +12,8 @@
           "@/common": "./src/common",
           "@/services": "./src/services",
           "@/layouts": "./src/layouts",
-          "@/utils": "./src/utils"
+          "@/utils": "./src/utils",
+          "@/global": "./src/global"
         }
       }
     ],

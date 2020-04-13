@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: 毛翔宇
  * @Date: 2020-03-31 15:56:53
  * @LastEditors: 毛翔宇
@@ -9,7 +9,7 @@
  */
 const apiEnv = process.env.API_ENV;
 
-let baseUrl = 'http://172.16.1.161';
+let baseUrl = 'http://221.215.57.110:9821';
 
 switch (apiEnv) {
   case 'test':

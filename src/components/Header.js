@@ -4,6 +4,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import router, { withRouter } from 'next/router';
+import intl from 'react-intl-universal';
 import './Header.less';
 
 class Header extends React.Component {
@@ -25,8 +26,15 @@ class Header extends React.Component {
     router.push('/');
   };
 
+  changeLang = flag => {
+    this.props.dispatch({
+      type: 'app/setLang',
+      lang: flag ? 'zh-CN' : 'en',
+    });
+  };
+
   render() {
-    const { isLogin, userInfo, pathname = '' } = this.props;
+    const { isLogin, userInfo, pathname = '', lang } = this.props;
 
     let isExpertPage = false;
     // TODO: 需要获取到pathname
@@ -50,29 +58,28 @@ class Header extends React.Component {
                   <a>登录</a>
                 </Link>
               </Button>
-              {
-                !isExpertPage ?
-                  <Button type="primary">
-                    <Link href="/login?register=1">
-                      <a>注册</a>
-                    </Link>
-                  </Button> : null
-              }
+              {!isExpertPage ? (
+                <Button type="primary">
+                  <Link href="/login?register=1">
+                    <a>注册</a>
+                  </Link>
+                </Button>
+              ) : null}
             </Fragment>
           ) : (
-              <>
-                <span>你好, {userInfo.name}</span>
+            <>
+              <span>你好, {userInfo.name}</span>
               &nbsp; &nbsp;
               <Link href="/modifyPWD">
-                  <a>修改密码</a>
-                </Link>
+                <a>{intl.get('修改密码')}</a>
+              </Link>
               &nbsp; &nbsp;
-              <a onClick={this.logout}>退出登录</a>
-              </>
-            )}
+              <a onClick={this.logout}>{intl.get('退出登录')}</a>
+            </>
+          )}
           <div className="line" />
           <span className="en">En</span>
-          <Switch size="small" defaultChecked />
+          <Switch size="small" checked={lang !== 'en'} onChange={this.changeLang} />
           <span className="cn">简中</span>
         </div>
       </div>
@@ -80,7 +87,8 @@ class Header extends React.Component {
   }
 }
 
-export default connect(({ user }) => ({
+export default connect(({ user, app }) => ({
   isLogin: user.isLogin,
   userInfo: user.userInfo,
+  lang: app.lang,
 }))(withRouter(Header));

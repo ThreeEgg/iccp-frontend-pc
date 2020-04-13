@@ -3,8 +3,10 @@ import React from 'react';
 import intl from 'react-intl-universal';
 import { Provider } from 'react-redux';
 import { Badge, ConfigProvider } from 'antd';
-import zhCN from 'antd/lib/locale/zh_CN';
+import antdZhLocale from 'antd/lib/locale/zh_CN';
+import antdEnLocale from 'antd/lib/locale/zh_CN';
 import 'normalize.css';
+import global from '@/global';
 import AuthorityLayout from '../layouts/AuthorityLayout';
 import IMLayout from '../layouts/IMLayout';
 import withDva from '../utils/withDva';
@@ -14,7 +16,7 @@ const buildId = process.env.BUILD_ID;
 
 const locales = {
   'zh-CN': require('../locales/zh-CN.json'),
-  'en-US': require('../locales/en-US.json'),
+  en: require('../locales/en.json'),
 };
 
 const BuildInfo = () => {
@@ -50,35 +52,41 @@ const BuildInfo = () => {
 };
 
 class MainApp extends App {
-  state = { initDone: false };
+  state = { initDone: false, lang: 'en' };
 
   componentDidMount() {
-    // 手动设置默认的语言为英文
-    if (!localStorage.lang) {
-      localStorage.lang = intl.determineLocale({
-        urlLocaleKey: 'lang',
-        localStorageLocaleKey: 'lang',
+    const intl = require('react-intl-universal');
+    const initLang = intl.determineLocale({
+      urlLocaleKey: 'lang',
+      localStorageLocaleKey: 'lang',
+    });
+    global.lang = initLang;
+    if (this.props.dvaStore) {
+      this.props.dvaStore.dispatch({
+        type: 'app/save',
+        lang: initLang,
       });
     }
-    this.loadLocales();
+    this.loadLocales(initLang);
   }
 
   loadLocales() {
     intl
       .init({
-        currentLocale: localStorage.lang,
+        currentLocale: global.lang,
         locales,
       })
       .then(() => {
-        this.setState({ initDone: true });
+        this.setState({ initDone: true, lang: global.initLang });
       });
   }
 
   render() {
+    const { lang } = this.state;
     const { Component, pageProps, dvaStore } = this.props;
 
     return (
-      <ConfigProvider locale={zhCN}>
+      <ConfigProvider locale={lang === 'en' ? antdEnLocale : antdZhLocale}>
         <Provider store={dvaStore}>
           <IMLayout>
             <AuthorityLayout>
