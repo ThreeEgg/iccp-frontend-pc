@@ -277,7 +277,7 @@ class CaseInfo extends React.Component {
                   caseInfo,
                 })
               }}
-            > {caseInfo.companyName} </TextArea>
+            />
           </Form.Item>
           <Form.Item label={`公司地址`} name="companyAddress" rules={[{ required: false, message: '请输入公司地址!' }]}>
             <TextArea
@@ -413,7 +413,7 @@ class CaseInfo extends React.Component {
           {caseInfo.iccpCaseEnclosureList && caseInfo.iccpCaseEnclosureList.map((file, index) => {
             return file.isValid === 1 && (
               <div className='file-item' key={index}>
-                <div className='file-box'><img className='file-icon' src='/im/ic_im_file.svg' /><span>{file.oldFileName}</span></div>
+                <div className='file-box'><img className='file-icon' src='/im/ic_im_file.svg' /><span className='file-name'>{file.oldFileName}</span></div>
                 <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>
                 {canSave && isEdit && <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>}
                 {canSave && isEdit && <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/im/ic_im_delete.svg' />删除</span>}

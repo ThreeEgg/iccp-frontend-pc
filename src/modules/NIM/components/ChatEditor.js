@@ -148,11 +148,11 @@ class ChatEditor extends React.Component {
               if (/(png|jpg|bmp|jpeg|gif)$/i.test(res.data.fileSuffix)) {
                 type = 12 //'image'
                 pushContent = '[图片]'
-                let inmge = new Image();
-                inmge.src = data.webUrl;
-                inmge.onload = () => {
-                  data.width=inmge.width
-                  data.height=inmge.height
+                let image = new Image();
+                image.src = data.webUrl;
+                image.onload = () => {
+                  data.width=image.width
+                  data.height=image.height
                   this.props.dispatch({
                     type: 'chat/sendMsg',
                     method: 'custom',
@@ -165,7 +165,7 @@ class ChatEditor extends React.Component {
                     }
                   });
                 }
-                inmge.onerror = () => {
+                image.onerror = () => {
                   message.error('图片上传失败');
                 }
               } else if (/\.(mov|mp4|ogg|webm)$/i.test(res.data.fileSuffix)) {
