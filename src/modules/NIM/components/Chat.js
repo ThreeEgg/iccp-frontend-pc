@@ -14,7 +14,7 @@ import ChatEditor from './ChatEditor';
 import CaseInfo from './CaseInfo';
 import { Layout, Popconfirm, Form, Input, message, Button } from 'antd';
 const { Header, Footer, Content } = Layout;
-import util from '../utils';
+import util from 'iccp-frontend-im/dist/utils';
 import Link from 'next/link';
 class Chat extends React.Component {
   state = {

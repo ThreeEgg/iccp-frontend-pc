@@ -16,7 +16,7 @@ import { Modal } from 'antd';
 const { confirm } = Modal;
 import Link from 'next/link';
 
-import util from '../utils'
+import util from 'iccp-frontend-im/dist/utils'
 import config from '../configs'
 import emojiObj from '../configs/emoji'
 
