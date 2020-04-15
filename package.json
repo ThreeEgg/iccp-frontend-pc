@@ -52,6 +52,7 @@
     "echarts": "^4.7.0",
     "express": "^4.17.1",
     "http-proxy-middleware": "^1.0.3",
+    "iccp-frontend-im": "git+http://172.16.1.102/iccp/iccp-frontend-im",
     "isomorphic-unfetch": "^3.0.0",
     "js-cookie": "^2.2.1",
     "moment": "^2.24.0",
@@ -70,8 +71,7 @@
     "shortid": "^2.2.15",
     "swiper": "^5.3.6",
     "umi-request": "^1.2.19",
-    "wangeditor": "^3.1.1",
-    "iccp-frontend-im": "git+http://172.16.1.102/iccp/iccp-frontend-im"
+    "wangeditor": "^3.1.1"
   },
   "devDependencies": {
     "@umijs/fabric": "^2.0.3",

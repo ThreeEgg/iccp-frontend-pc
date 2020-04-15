@@ -10,7 +10,7 @@
 import homepage from './homepage';
 import app from './app';
 import user from './user';
-import im from 'iccp-frontend-im/model';
+import im from 'iccp-frontend-im/dist/model';
 
 const model = [app, homepage, user, im];
 
