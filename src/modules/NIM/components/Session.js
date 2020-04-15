@@ -24,7 +24,7 @@ class Session extends React.Component {
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {
-    // this.props.dispatch({ type: 'chat/resetCurrSession' });
+    // this.props.dispatch({ type: 'im/resetCurrSession' });
   }
   // computed
   // sysMsgUnread = () => {
@@ -42,20 +42,20 @@ class Session extends React.Component {
     // 此时设置当前会话
     let session = this.props.sessionlist[key]
     if (session && session.id) {
-      this.props.dispatch({ type: 'chat/setCurrSession', sessionId: session.id });
+      this.props.dispatch({ type: 'im/setCurrSession', sessionId: session.id });
     }
   };
   enterMyChat = () => {
     // 我的手机页面
-    this.props.dispatch({ type: 'chat/setCurrSession', sessionId: `p2p-${this.myPhoneId}` });
+    this.props.dispatch({ type: 'im/setCurrSession', sessionId: `p2p-${this.myPhoneId}` });
   };
   initSession = () => {
     // 发起会话
-    this.props.dispatch({ type: 'chat/initSession', expertAccid: `4633e46abbef4c83bae2a3ab2713d7de` });
+    this.props.dispatch({ type: 'im/initSession', expertAccid: `4633e46abbef4c83bae2a3ab2713d7de` });
   };
   render() {
-    const { chat } = this.props;
-    const { myInfo, userInfos, currSessionMsgs, sessionlist } = chat;
+    const { im } = this.props;
+    const { myInfo, userInfos, currSessionMsgs, sessionlist } = im;
     return (
       <Menu
         theme="light"
@@ -97,15 +97,15 @@ class Session extends React.Component {
 }
 
 // export default Chat;
-export default connect(({ chat }) => ({
-  chat,
-  currSessionId: chat.currSessionId,
-  userUID: chat.userUID,
-  sessionlist: chat.sessionlist,
-  myInfo: chat.myInfo,
-  userInfos: chat.userInfos,
-  robotInfos: chat.robotInfos,
-  customSysMsgUnread: chat.customSysMsgUnread,
-  sysMsgUnread: chat.sysMsgUnread,
-  teamlist: chat.teamlist,
+export default connect(({ im }) => ({
+  im,
+  currSessionId: im.currSessionId,
+  userUID: im.userUID,
+  sessionlist: im.sessionlist,
+  myInfo: im.myInfo,
+  userInfos: im.userInfos,
+  robotInfos: im.robotInfos,
+  customSysMsgUnread: im.customSysMsgUnread,
+  sysMsgUnread: im.sysMsgUnread,
+  teamlist: im.teamlist,
 }))(Session);

@@ -10,7 +10,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import config from '../configs';
 import { message, Tooltip } from 'antd'
 
 class ChatEditor extends React.Component {
@@ -33,8 +32,8 @@ class ChatEditor extends React.Component {
   state = {
     isEmojiShown: false,
     msgToSent: '',
-    icon1: `/im/ic_im_document.svg`,
-    icon2: `/im/ic_im_star.svg`,
+    icon1: `/app/ic_im_document.svg`,
+    icon2: `/app/ic_im_star.svg`,
     icon3: ``,
     sendTxt: true,
     recording: false,
@@ -83,7 +82,7 @@ class ChatEditor extends React.Component {
     text = text.trim();
     if (this.props.type === 'session') {
       this.props.dispatch({
-        type: 'chat/sendMsg',
+        type: 'im/sendMsg',
         method: 'text',
         scene: this.props.scene,
         to: this.props.to,
@@ -91,7 +90,7 @@ class ChatEditor extends React.Component {
       });
     } else if (this.props.type === 'chatroom') {
       this.props.dispatch({
-        type: 'chat/sendChatroomMsg',
+        type: 'im/sendChatroomMsg',
         method: 'text',
         text: text,
       });
@@ -109,14 +108,14 @@ class ChatEditor extends React.Component {
     if (ipt.value) {
       if (this.props.type === 'session') {
         this.props.dispatch({
-          type: 'chat/sendFileMsg',
+          type: 'im/sendFileMsg',
           scene: this.props.scene,
           to: this.props.to,
           fileInput: ipt,
         });
       } else if (this.props.type === 'chatroom') {
         this.props.dispatch({
-          type: 'chat/sendChatroomFileMsg',
+          type: 'im/sendChatroomFileMsg',
           fileInput: ipt,
         });
       }
@@ -137,7 +136,7 @@ class ChatEditor extends React.Component {
       }
       if (this.props.type === 'session') {
         this.props.dispatch({
-          type: 'chat/fileUpload',
+          type: 'im/fileUpload',
           file,
           fileName: file.name,
           callback: (res) => {
@@ -154,7 +153,7 @@ class ChatEditor extends React.Component {
                   data.width=image.width
                   data.height=image.height
                   this.props.dispatch({
-                    type: 'chat/sendMsg',
+                    type: 'im/sendMsg',
                     method: 'custom',
                     scene: this.props.scene,
                     to: this.props.to,
@@ -174,7 +173,7 @@ class ChatEditor extends React.Component {
               }
               if(type!==12){
                 this.props.dispatch({
-                  type: 'chat/sendMsg',
+                  type: 'im/sendMsg',
                   method: 'custom',
                   scene: this.props.scene,
                   to: this.props.to,
@@ -263,6 +262,6 @@ class ChatEditor extends React.Component {
     );
   }
 }
-export default connect(({ chat }) => ({
-  chat,
+export default connect(({ im }) => ({
+  im,
 }))(ChatEditor);

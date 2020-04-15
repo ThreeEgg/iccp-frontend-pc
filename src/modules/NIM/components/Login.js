@@ -13,9 +13,6 @@ import { Form, Input, Button, Modal } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
-import md5 from '../utils/md5';
-import config from '../configs';
-
 function LoginButton(props) {
   const { isLogin, clickLogin, clickLogout } = props;
   if (isLogin) {
@@ -35,7 +32,6 @@ function LoginButton(props) {
 
 class Login extends React.Component {
   state = {
-    logo: config.logo,
     account: '',
     password: '',
     errorMsg: '',
@@ -55,7 +51,7 @@ class Login extends React.Component {
   };
 
   logout = () => {
-    this.props.dispatch({ type: 'chat/logout' })
+    this.props.dispatch({ type: 'im/logout' })
   };
   login = e => {
     if (this.state.account === '') {
@@ -83,7 +79,7 @@ class Login extends React.Component {
     imInfo.token = this.state.password.toLowerCase()
     localStorage.imInfo = JSON.stringify(imInfo)
     // 提交sdk连接请求
-    this.props.dispatch({ type: 'chat/connect' })
+    this.props.dispatch({ type: 'im/connect' })
       .then((result) => {
         this.setState({
           visible: !this.props.isLogin,
@@ -98,7 +94,7 @@ class Login extends React.Component {
 
   componentDidMount = () => {
     // 提交sdk连接请求
-    this.props.dispatch({ type: 'chat/connect' })
+    this.props.dispatch({ type: 'im/connect' })
   };
 
   componentDidUpdate = (prevProps, prevState) => {
@@ -110,8 +106,8 @@ class Login extends React.Component {
   };
 
   render() {
-    const { chat } = this.props;
-    const { isLogin } = chat;
+    const { im } = this.props;
+    const { isLogin } = im;
     return (
       <div>
         {<Button className='login' type="primary" danger={isLogin} onClick={isLogin ? this.logout : this.showLogin}> 登{isLogin ? '出' : '录'}NIM </Button> }
@@ -163,7 +159,7 @@ class Login extends React.Component {
     );
   }
 }
-export default connect(({ chat }) => ({
-  chat,
-  isLogin: chat.isLogin
+export default connect(({ im }) => ({
+  im,
+  isLogin: im.isLogin
 }))(Login);

@@ -80,7 +80,7 @@ class CaseInfo extends React.Component {
     })
     if (clientUserId && expertUserId) {
       this.props.dispatch({
-        type: 'chat/getCaseInfo',
+        type: 'im/getCaseInfo',
         clientUserId,
         expertUserId,
         callback: (res) => {
@@ -121,7 +121,7 @@ class CaseInfo extends React.Component {
     // let caseId = '39ffc00816344654969da7825ee3fb4'
     if (caseId) {
       this.props.dispatch({
-        type: 'chat/downloadCaseBatch',
+        type: 'im/downloadCaseBatch',
         caseId,
         callback: (res) => {
           if (res instanceof Blob) {
@@ -139,7 +139,6 @@ class CaseInfo extends React.Component {
         }
       });
     }
-
   };
 
   saveCaseInfo = async () => {
@@ -148,7 +147,7 @@ class CaseInfo extends React.Component {
       if (this.state.isEdit) {
         const values = await form.validateFields();
         this.props.dispatch({
-          type: 'chat/saveCaseInfo',
+          type: 'im/saveCaseInfo',
           extIccpCase: this.state.caseInfo,
           callback: (res) => {
             if (res.code === '0') {
@@ -156,7 +155,7 @@ class CaseInfo extends React.Component {
                 isEdit: false,
               });
               this.props.dispatch({
-                type: 'chat/getCaseInfo',
+                type: 'im/getCaseInfo',
                 clientUserId: this.state.clientUserId,
                 expertUserId: this.state.expertUserId,
                 callback: (res) => {
@@ -195,7 +194,7 @@ class CaseInfo extends React.Component {
         return
       }
       this.props.dispatch({
-        type: 'chat/fileUpload',
+        type: 'im/fileUpload',
         clientUserId: this.state.clientUserId,
         expertUserId: this.state.expertUserId,
         uploadUserId: this.state.expertUserId,
@@ -413,17 +412,17 @@ class CaseInfo extends React.Component {
           {caseInfo.iccpCaseEnclosureList && caseInfo.iccpCaseEnclosureList.map((file, index) => {
             return file.isValid === 1 && (
               <div className='file-item' key={index}>
-                <div className='file-box'><img className='file-icon' src='/im/ic_im_file.svg' /><span className='file-name'>{file.oldFileName}</span></div>
-                <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/im/ic_im_download.svg' />下载</a></span>
-                {canSave && isEdit && <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/im/ic_im_replace.svg' />替换</span>}
-                {canSave && isEdit && <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/im/ic_im_delete.svg' />删除</span>}
+                <div className='file-box'><img className='file-icon' src='/app/ic_im_file.svg' /><span className='file-name'>{file.oldFileName}</span></div>
+                <span className='file-tool'><a href={file.webUrl} target="_blank"><img src='/app/ic_im_download.svg' />下载</a></span>
+                {canSave && isEdit && <span className='file-tool' onClick={this.replaceFile.bind(this, index)}><img src='/app/ic_im_replace.svg' />替换</span>}
+                {canSave && isEdit && <span className='file-tool' onClick={this.deleteFile.bind(this, index)}><img src='/app/ic_im_delete.svg' />删除</span>}
                 <div className='clear'></div>
               </div>
             );
           })}
           {canSave && isEdit && <div className='file-item' >
             <div className='file-box'>
-              <img className='file-add' src='/im/ic_im_add.svg' />
+              <img className='file-add' src='/app/ic_im_add.svg' />
               <input className='add-file' type="file" ref="fileToSent" onChange={this.addFile} />
             </div>
           </div>}
@@ -432,7 +431,7 @@ class CaseInfo extends React.Component {
     );
   }
 }
-export default connect(({ chat, user }) => ({
-  chat,
+export default connect(({ im, user }) => ({
+  im,
   user,
 }))(CaseInfo);

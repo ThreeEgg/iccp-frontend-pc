@@ -112,12 +112,12 @@ class AreaSelector extends Component {
   startChat = (accid) => {
     message.loading('正在连线...');
     this.props.dispatch({
-      type: 'chat/initSession',
+      type: 'im/initSession',
       expertAccid: accid,
       callback: () => {
         message.destroy();
         this.props.dispatch({
-          type: 'im/showChat',
+          type: 'app/showChat',
         });
       },
     });

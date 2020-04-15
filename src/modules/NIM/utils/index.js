@@ -1,5 +1,3 @@
-import store from '../dva'
-
 if(!Function.prototype.bind){
   Function.prototype.bind = function(){
     var fn = this, args = Array.prototype.slice.call(arguments), object = args.shift();
@@ -306,7 +304,7 @@ Utils.generateTeamSysmMsg = function (data) {
 // todo 写成私有成员方法
 Utils.getNickNames = function(users) {
   return users.map(user => {
-    return user.account === store.state.userUID? '你' : user.nick
+    return user.account === state.userUID? '你' : user.nick
   })
 }
 

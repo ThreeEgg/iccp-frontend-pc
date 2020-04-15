@@ -24,8 +24,8 @@ var audio = { // 正在播放音频的 audio、target
   $node: null,
   $audio: null,
   timeout: '',
-  imgPlay0: 'https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fplay0.gif',
-  imgPlay1: 'https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fplay1.gif'
+  imgPlay0: 'https://yx-web-nosdn.netease.app/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fplay0.gif',
+  imgPlay1: 'https://yx-web-nosdn.netease.app/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fplay1.gif'
 }
 
 class ChatItem extends React.Component {
@@ -48,7 +48,7 @@ class ChatItem extends React.Component {
     translate: '',
     isFullImgShow: false,
     msgUnRead: false,
-    icon1: `/im/ic_im_failed.svg`,
+    icon1: `/app/ic_im_failed.svg`,
   };
   componentWillMount() {
     this.computedItem()
@@ -195,10 +195,10 @@ class ChatItem extends React.Component {
       if (/\[[^\]]+\]/.test(item.showText)) {
         let emojiItems = item.showText.match(/\[[^\]]+\]/g)
         emojiItems.forEach(text => {
-          let emojiCnt = emojiObj.emojiList.emoji
-          if (emojiCnt[text]) {
-            item.showText = item.showText.replace(text, `<img className="emoji-small" src="${emojiCnt[text].img}">`)
-          }
+          // let emojiCnt = emojiObj.emojiList.emoji
+          // if (emojiCnt[text]) {
+          //   item.showText = item.showText.replace(text, `<img className="emoji-small" src="${emojiCnt[text].img}">`)
+          // }
         })
       }
     } else if (item.type === 'custom') {
@@ -207,9 +207,9 @@ class ChatItem extends React.Component {
       if (content.type === 1) {
         let data = content.data
         let resourceUrl = config.resourceUrl
-        // item.showText = `<img class="emoji-middle" src="${resourceUrl}/im/play-${data.value}.png">`
+        // item.showText = `<img class="emoji-middle" src="${resourceUrl}/app/play-${data.value}.png">`
         item.type = 'custom-type1'
-        item.imgUrl = `${resourceUrl}/im/play-${data.value}.png`
+        item.imgUrl = `${resourceUrl}/app/play-${data.value}.png`
         // type 3 为贴图表情
       } else if (content.type === 3) {
         let data = content.data
@@ -299,7 +299,7 @@ class ChatItem extends React.Component {
             content: '',
             onOk() {
               that.props.dispatch({
-                type: 'chat/revocateMsg',
+                type: 'im/revocateMsg',
                 idClient: attrs.idClient
               })
             },
@@ -320,7 +320,7 @@ class ChatItem extends React.Component {
   }
   getTranslate = (idClient) => {
     this.props.dispatch({
-      type: 'chat/getTranslate',
+      type: 'im/getTranslate',
       idClient,
       // idClient:'63570c14312f3a3366b61a74d0ac4ab5',
       callback: (res) => {
@@ -427,9 +427,9 @@ class ChatItem extends React.Component {
     );
   }
 }
-export default connect(({ chat }) => ({
-  chat,
-  userUID: chat.userUID,
-  teamMsgReads: chat.teamMsgReads,
-  currSessionId: chat.currSessionId,
+export default connect(({ im }) => ({
+  im,
+  userUID: im.userUID,
+  teamMsgReads: im.teamMsgReads,
+  currSessionId: im.currSessionId,
 }))(ChatItem);

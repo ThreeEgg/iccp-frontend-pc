@@ -23,15 +23,15 @@ class Index extends React.Component {
   // 进入该页面，文档被挂载
   async componentDidMount() {
     // 提交sdk连接请求
-    // this.props.dispatch({ type: 'chat/connect' })
+    // this.props.dispatch({ type: 'im/connect' })
     if (!window.dispatch) {
       window.dispatch = this.props.dispatch;
     }
     // 提交sdk连接请求
-    this.props.dispatch({ type: 'chat/connect' })
+    this.props.dispatch({ type: 'im/connect' })
   }
   async componentDidUpdate(prevProps, prevState) {
-    // this.props.dispatch({ type: 'chat/updateRefreshState' })
+    // this.props.dispatch({ type: 'im/updateRefreshState' })
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {
@@ -39,8 +39,8 @@ class Index extends React.Component {
   // computed
   // methods
   render() {
-    const { chat } = this.props;
-    const { currSessionId } = chat;
+    const { im } = this.props;
+    const { currSessionId } = im;
     return (
       <Layout style={{ height: '100%' }} className='nim'>
         <Sider
@@ -60,7 +60,7 @@ class Index extends React.Component {
   }
 }
 
-export default connect(({ chat }) => ({
-  chat,
-  currSessionId: chat.currSessionId,
+export default connect(({ im }) => ({
+  im,
+  currSessionId: im.currSessionId,
 }))(Index);

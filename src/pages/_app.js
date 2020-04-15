@@ -10,9 +10,25 @@ import global from '@/global';
 import AuthorityLayout from '../layouts/AuthorityLayout';
 import IMLayout from '../layouts/IMLayout';
 import withDva from '../utils/withDva';
+import { inject } from 'iccp-frontend-im';
+import * as commonService from '@/services/common';
+import * as imService from '@/services/im';
 import './_app.less';
 
 const buildId = process.env.BUILD_ID;
+
+// 启动im模块
+inject({
+  service: {
+    common: commonService,
+    im: imService,
+  },
+  global,
+  storageApi: {
+    set: window.localStorage.setItem,
+    get: window.localStorage.getItem,
+  },
+});
 
 const locales = {
   'zh-CN': require('../locales/zh-CN.json'),

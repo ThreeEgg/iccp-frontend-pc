@@ -15,7 +15,6 @@ import CaseInfo from './CaseInfo';
 import { Layout, Popconfirm, Form, Input, message, Button } from 'antd';
 const { Header, Footer, Content } = Layout;
 import util from '../utils';
-import page from '../utils/page';
 import Link from 'next/link';
 class Chat extends React.Component {
   state = {
@@ -26,8 +25,8 @@ class Chat extends React.Component {
     hasCaseInfo: false,
     canCaseInfoSave: false,
     hasEvaluation: false,
-    icon1: `/im/ic_im_evaluate.svg`,
-    icon2: `/im/ic_im_star.svg`,
+    icon1: `/app/ic_im_evaluate.svg`,
+    icon2: `/app/ic_im_star.svg`,
     evaluation: {
       service: 3,
       professional: 3,
@@ -51,7 +50,7 @@ class Chat extends React.Component {
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {
-    this.props.dispatch({ type: 'chat/resetCurrSession' });
+    this.props.dispatch({ type: 'im/resetCurrSession' });
   }
   // computed
   sessionName = () => {
@@ -88,7 +87,7 @@ class Chat extends React.Component {
                 hasCaseInfo = true
                 // 获取专家评价
                 this.props.dispatch({
-                  type: 'chat/getExpertUserRating', expertUserId: userInfo.userId,
+                  type: 'im/getExpertUserRating', expertUserId: userInfo.userId,
                   callback: (res) => {
                     if (res.code === '0') {
                       evaluation.service = res.data.attitudeRating
@@ -126,13 +125,12 @@ class Chat extends React.Component {
     window.history.go(-1);
   };
   msgsLoaded = () => {
-    page.scrollChatListDown();
   };
 
   confirmEvaluation = () => {
     // 获取专家评价
     this.props.dispatch({
-      type: 'chat/saveExpertUserRating',
+      type: 'im/saveExpertUserRating',
       expertUserId: this.state.userInfo.userId,
       attitudeRating: this.state.evaluation.service,
       skillRating: this.state.evaluation.professional,
@@ -171,7 +169,7 @@ class Chat extends React.Component {
         orderInfoShow: false
       })
       this.props.dispatch({
-        type: 'chat/saveOrder',
+        type: 'im/saveOrder',
         clientUserId: this.state.userInfo.userId,
         expertExplain: values.expertExplain,
         callback: (res) => {
@@ -188,9 +186,9 @@ class Chat extends React.Component {
   }
   render() {
     const { userInfo, otherIsExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow, orderInfoShow, canCaseInfoSave } = this.state;
-    const { chat, user } = this.props;
+    const { im, user } = this.props;
     const { userInfo: myInfo } = user;
-    const { currSessionMsgs, } = chat;
+    const { currSessionMsgs, } = im;
     let Evaluation = (
       <div className='evaluate-box'>
         <div className='evaluate-title'>服务评价</div>
@@ -261,14 +259,14 @@ class Chat extends React.Component {
 }
 
 // export default Chat;
-export default connect(({ chat, user }) => ({
-  chat,
+export default connect(({ im, user }) => ({
+  im,
   user,
-  currSessionId: chat.currSessionId,
-  userUID: chat.userUID,
-  sessionId: chat.sessionId,
+  currSessionId: im.currSessionId,
+  userUID: im.userUID,
+  sessionId: im.sessionId,
   myInfo: user.userInfo,
-  serviceInfo: chat.serviceInfo,
-  iccpUserInfos: chat.iccpUserInfos,
-  currSessionMsgs: chat.currSessionMsgs,
+  serviceInfo: im.serviceInfo,
+  iccpUserInfos: im.iccpUserInfos,
+  currSessionMsgs: im.currSessionMsgs,
 }))(Chat);

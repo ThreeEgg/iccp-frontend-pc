@@ -22,25 +22,25 @@ const NIMChat = dynamic(import('../modules/NIM'), {
 export class IMLayout extends Component {
   imLogin = () => {
     this.props.dispatch({
-      type: 'chat/connect',
+      type: 'im/connect',
     });
   }
 
   imLogout = () => {
     this.props.dispatch({
-      type: 'chat/logout',
+      type: 'im/logout',
     });
   }
 
   showChat = () => {
     this.props.dispatch({
-      type: 'im/showChat',
+      type: 'app/showChat',
     });
   }
 
   hideChat = () => {
     this.props.dispatch({
-      type: 'im/hideChat',
+      type: 'app/hideChat',
     });
   };
 
@@ -105,9 +105,9 @@ export class IMLayout extends Component {
   }
 }
 
-export default connect(({ user, chat, im }) => ({
+export default connect(({ user, im, app }) => ({
   isLogin: user.isLogin,
-  unreadCount: chat.unreadCount,
-  canShowChat: im.canShowChat,
-  chatVisible: im.chatVisible,
+  unreadCount: im.unreadCount,
+  canShowChat: app.canShowChat,
+  chatVisible: app.chatVisible,
 }))(IMLayout);

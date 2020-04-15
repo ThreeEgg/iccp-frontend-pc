@@ -10,9 +10,8 @@
 import homepage from './homepage';
 import app from './app';
 import user from './user';
-import im from './im';
-import chat from '../modules/NIM/dva';
+import im from 'iccp-frontend-im/model';
 
-const model = [app, homepage, user, im, chat];
+const model = [app, homepage, user, im];
 
 export default model;
