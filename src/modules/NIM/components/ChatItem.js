@@ -147,13 +147,13 @@ class ChatItem extends React.Component {
 
   // computed
   msgUnRead = () => {
-    var obj = !this.props.isHistory
-      && this.state.msg.needMsgReceipt
-      && this.state.msg.flow === 'out'
-      && this.props.teamMsgReads.find(item => item.idServer === this.state.msg.idServer)
-    this.setState({
-      msgUnRead: obj ? parseInt(obj.unread) : -1
-    })
+    // var obj = !this.props.isHistory
+    //   && this.state.msg.needMsgReceipt
+    //   && this.state.msg.flow === 'out'
+    //   && this.props.teamMsgReads.find(item => item.idServer === this.state.msg.idServer)
+    // this.setState({
+    //   msgUnRead: obj ? parseInt(obj.unread) : -1
+    // })
   }
   // methods
   computedItem = () => {
@@ -420,8 +420,5 @@ class ChatItem extends React.Component {
   }
 }
 export default connect(({ im }) => ({
-  im,
-  userUID: im.userUID,
-  teamMsgReads: im.teamMsgReads,
   currSessionId: im.currSessionId,
 }))(ChatItem);
