@@ -1,72 +1,88 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: 毛翔宇
- * @Date: 2020-03-12 18:04:56
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 14:23:27
- * @FilePath: \PC端-前端\src\modules\NIM\components\ChatList.js
- */
 import React, { createRef } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ChatItem from './ChatItem';
 import VirtualList from '../../../components/VirtualList';
 import { Button } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
 
-
-export default class ChatList extends React.Component {
+class ChatList extends React.Component {
   //在这里进行类型检测(这里的名字不是随便自定义的，规定这样写的)
   static propTypes = {
     type: PropTypes.string,
     canLoadMore: PropTypes.bool,
-    msglist: PropTypes.array,
+    currSessionMsgs: PropTypes.array,
     userInfo: PropTypes.object,
-    myInfo: PropTypes.object,
     isHistory: PropTypes.bool,
-    /** 有下一页 */
-    hasNextPage: PropTypes.bool,
-    /** 正在加载 */
-    isNextPageLoading: PropTypes.bool,
-    /** 加载下一页 */
-    loadNextPage: PropTypes.func,
+    otherIsExpert: PropTypes.bool,
+    scene: PropTypes.string,
+    to: PropTypes.string,
+    // 翻译字典
+    msgTranslateMap: PropTypes.object,
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
-    msglist: [],
+    scene: '',
+    to: '',
+    currSessionMsgs: [],
     userInfo: {},
-    myInfo: {},
     isHistory: false,
-    hasNextPage: false,
-    isNextPageLoading: false,
-    loadNextPage: () => { },
+    otherIsExpert: false,
+    msgTranslateMap: {},
   };
   state = {
-    to:'',
+    // 当因第一次拉取历史消息导致信息错误时，直接跳转底部
+    firstToBottom: 1,
     msgLoadedTimer: null,
+    isNextPageLoading: false,
+    msgList: [],
   };
   async componentDidMount() {
   }
   async componentDidUpdate(prevProps, prevState) {
-    // 监听会话对象改变
-    if (prevProps.userInfo.userId !== this.props.userInfo.userId) {
-      this.scrollToBottom();
-    }
     // 监听会话改变
-    if (prevProps.msglist !== this.props.msglist) {
-      let prevLastMsg = prevProps.msglist[prevProps.msglist.length - 1];
-      let lastMsg = this.props.msglist[this.props.msglist.length - 1];
-      if (prevLastMsg && lastMsg){
-        if(prevLastMsg.idClient !== lastMsg.idClient){
-          this.scrollToBottom();
-        }
-        if(prevState.to !== lastMsg.to){
-          this.scrollToBottom(lastMsg.to);
+    if (prevProps.currSessionId !== this.props.currSessionId) {
+      this.scrollToBottom(1);
+    }
+    // 监听消息列表改变
+    if (prevProps.currSessionMsgs !== this.props.currSessionMsgs) {
+      this.initMsgList()
+    }
+    // 监听消息列表改变
+    if (prevProps.noMoreHistoryMsgs !== this.props.noMoreHistoryMsgs) {
+      this.initMsgList()
+    }
+    // 监听消息列表改变
+    if (prevState.msgList !== this.state.msgList && this.state.msgList.length !== 0) {
+      if (this.state.firstToBottom >= 0) {
+        this.scrollToBottom();
+      } else {
+        let prevLastMsg = prevState.msgList[prevState.msgList.length - 1];
+        let lastMsg = this.state.msgList[this.state.msgList.length - 1];
+        if (prevLastMsg && lastMsg) {
+          if (prevLastMsg.idClient !== lastMsg.idClient) {
+            this.scrollToBottom();
+          }
         }
       }
     }
   }
   itemList = createRef();
-
+  initMsgList = () => {
+    const { currSessionMsgs, noMoreHistoryMsgs } = this.props;
+    let msgList = [...currSessionMsgs];
+    // 没有数据的时候，在数组顶部
+    if (noMoreHistoryMsgs) {
+      const msg = {
+        flow: 'noMore',
+        idClient: uuidv4(),
+      };
+      msgList.unshift(msg);
+    }
+    this.setState({
+      msgList
+    })
+  }
   showFullImg = src => {
     this.props.dispatch('showFullscreenImg', {
       src,
@@ -79,40 +95,71 @@ export default class ChatList extends React.Component {
     }, 20);
   };
   renderItem = (msg, index, measure) => {
+    const { userInfo, myInfo, type, isHistory, msgTranslateMap, otherIsExpert } = this.props;
+
     return <ChatItem
-      type={this.props.type}
+      type={type}
       rawMsg={msg}
-      userInfo={this.props.userInfo}
-      myInfo={this.props.myInfo}
+      userInfo={userInfo}
+      myInfo={myInfo}
       key={msg.idClient || index}
-      isHistory={this.props.isHistory}
+      isHistory={isHistory}
       measure={measure}
       msgLoaded={this.msgLoaded}
+      translate={msgTranslateMap[msg.idClient]}
+      otherIsExpert={otherIsExpert}
     />
   }
-  scrollToBottom = (to) => {
-    if(to){
+  scrollToBottom = (firstToBottom) => {
+    this.setState({
+      firstToBottom: firstToBottom || this.state.firstToBottom - 1
+    })
+    this.itemList.current.list.scrollToRow(this.props.currSessionMsgs.length);
+  }
+
+  loadMore = () => {
+    const { scene, to, noMoreHistoryMsgs } = this.props;
+    if (!noMoreHistoryMsgs) {
       this.setState({
-        to,
+        isNextPageLoading: true
       })
+      this.props.dispatch({
+        type: 'im/getHistoryMsgs',
+        scene,
+        to,
+      }).then(() => {
+        this.setState({
+          isNextPageLoading: false
+        })
+      });
     }
-    this.itemList.current.list.scrollToRow(this.props.msglist.length);
   }
   render() {
-    const { msglist, hasNextPage, isNextPageLoading } = this.props;
+    const { noMoreHistoryMsgs } = this.props;
+    const { isNextPageLoading, msgList } = this.state;
+
     return (
       <div id="chat-list" className="chat-list">
         {/* <Button onClick={()=>{this.itemList.current.list.scrollToRow(0)}}>top</Button>
         <Button onClick={()=>{this.itemList.current.list.scrollToRow(msgList.length)}}>bottom</Button> */}
         <VirtualList
           ref={this.itemList}
-          data={msglist}
+          data={msgList}
           itemRender={this.renderItem}
-          hasNextPage={hasNextPage}
+          /** 有下一页 */
+          hasNextPage={!noMoreHistoryMsgs}
+          /** 正在加载 */
           isNextPageLoading={isNextPageLoading}
-          loadNextPage={this.props.loadNextPage}
+          /** 加载下一页 */
+          loadNextPage={this.loadMore}
         />
       </div>
     );
   }
 }
+export default connect(({ im, user }) => ({
+  currSessionId: im.currSessionId,
+  myInfo: user.userInfo,
+  currSessionMsgs: im.currSessionMsgs,
+  noMoreHistoryMsgs: im.noMoreHistoryMsgs,
+}))(ChatList);

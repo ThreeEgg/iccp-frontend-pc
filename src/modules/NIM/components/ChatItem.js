@@ -1,18 +1,8 @@
-/*
- * @Descripttion: 
- * @version: 
- * @Author: 毛翔宇
- * @Date: 2020-03-18 13:42:19
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-04 19:22:59
- * @FilePath: \PC端-前端\src\modules\NIM\components\ChatItem.js
- */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 const { confirm } = Modal;
 import Link from 'next/link';
 
@@ -35,6 +25,8 @@ class ChatItem extends React.Component {
     userInfo: PropTypes.object,
     myInfo: PropTypes.object,
     isHistory: PropTypes.bool,
+    otherIsExpert: PropTypes.bool,
+    translate: PropTypes.string,
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
@@ -42,10 +34,11 @@ class ChatItem extends React.Component {
     userInfo: {},
     myInfo: {},
     isHistory: false,
+    otherIsExpert: false,
+    translate: '',
   };
   state = {
     msg: '',
-    translate: '',
     isFullImgShow: false,
     msgUnRead: false,
     icon1: `/im/ic_im_failed.svg`,
@@ -147,7 +140,7 @@ class ChatItem extends React.Component {
     if (prevProps.userInfo !== this.props.userInfo) {
       this.computedItem()
     }
-    if (prevState.translate !== this.state.translate) {
+    if (prevProps.translate !== this.props.translate) {
       this.props.measure();
     }
   }
@@ -311,7 +304,7 @@ class ChatItem extends React.Component {
     }
   }
   showFullImg = (src) => {
-    if(this.state.isFullImgShow){
+    if (this.state.isFullImgShow) {
       let newwin = window.open()
       let myimg = newwin.document.createElement("img")
       myimg.src = src
@@ -322,30 +315,27 @@ class ChatItem extends React.Component {
     this.props.dispatch({
       type: 'im/getTranslate',
       idClient,
-      // idClient:'63570c14312f3a3366b61a74d0ac4ab5',
       callback: (res) => {
         if (res.code === '0') {
           if (res.data.flag === 0) {
-            this.setState({
+            this.props.dispatch({
+              type: 'im/saveTranslate',
+              sessionId: this.props.currSessionId,
+              idClient,
               translate: res.data.translate,
             });
           } else {
-            this.setState({
-              translate: res.data.msg,
-            });
+            message.error(res.data.msg)
           }
         } else {
-          this.setState({
-            translate: '网络错误',
-          });
         }
       },
-    })
-  }
+    });
+  };
 
   render() {
-    const { msg, msgUnRead, translate, icon1 } = this.state;
-    const { type, userInfo } = this.props;
+    const { msg, msgUnRead, icon1 } = this.state;
+    const { type, userInfo, translate, otherIsExpert } = this.props;
     return (
       msg.flow === 'noMore' ?
         <div className="item-more"> ---- 已无更多记录 ---- </div> :
@@ -367,12 +357,14 @@ class ChatItem extends React.Component {
             >
               {/* 信息来源 */}
               {msg.avatar && msg.type !== 'notification' &&
-                <Link href={`/professor?id=${userInfo.userId}`}>
-                  <span className="msg-head">
-                    <img src={msg.avatar} />
-                  </span>
-                </Link>
-
+                <span
+                  className={`msg-head ${otherIsExpert && 'pointer'}`}
+                  onClick={() =>
+                    otherIsExpert &&
+                    router.push(`/professor?id=${userInfo.userId}`)
+                  }>
+                  <img src={msg.avatar} />
+                </span>
               }
               {msg.name &&
                 <span className="msg-name" >{msg.name}</span>

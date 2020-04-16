@@ -24,6 +24,8 @@ class ChatEditor extends React.Component {
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
+    scene: '',
+    to: '',
     invalid: false,
     invalidHint: '您无权限发送消息',
     advancedTeam: false,

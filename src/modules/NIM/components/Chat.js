@@ -1,12 +1,3 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: 毛翔宇
- * @Date: 2020-03-06 16:48:06
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-04 19:17:45
- * @FilePath: \PC端-前端\src\modules\NIM\components\Chat.js
- */
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import ChatList from './ChatList';
@@ -16,7 +7,6 @@ import { Layout, Popconfirm, Form, Input, message, Button } from 'antd';
 const { Header, Footer, Content } = Layout;
 import util from 'iccp-frontend-im/dist/utils';
 import Link from 'next/link';
-import { v4 as uuidv4 } from 'uuid';
 
 class Chat extends React.Component {
   state = {
@@ -35,7 +25,6 @@ class Chat extends React.Component {
     },
     caseInfoShow: false,
     orderInfoShow: false,
-    isNextPageLoading: false,
   };
 
   // 表单
@@ -44,11 +33,17 @@ class Chat extends React.Component {
   // 进入该页面，文档被挂载
   async componentDidMount() {
     this.initSession()
+    this.setMsgTranslateMap()
   }
   async componentDidUpdate(prevProps, prevState) {
     // 监听会话改变
     if (prevProps.currSessionId !== this.props.currSessionId) {
       this.initSession()
+      this.setMsgTranslateMap()
+    }
+    // 监听会话对象改变
+    if (prevProps.translateMap !== this.props.translateMap) {
+      this.setMsgTranslateMap()
     }
   }
   // 离开该页面，此时重置当前会话
@@ -56,8 +51,11 @@ class Chat extends React.Component {
     // this.props.dispatch({ type: 'im/resetCurrSession' });
   }
   // computed
-  sessionName = () => {
-
+  setMsgTranslateMap = () => {
+    const { translateMap, currSessionId } = this.props;
+    this.setState({
+      msgTranslateMap: translateMap[currSessionId]
+    })
   };
   // methods
   initSession = () => {
@@ -187,27 +185,9 @@ class Chat extends React.Component {
     } catch (errorInfo) {
     }
   }
-  loadMore = () => {
-    const { scene, to } = this.state;
-    const { noMoreHistoryMsgs } = this.props;
-    if (!noMoreHistoryMsgs) {
-      this.setState({
-        isNextPageLoading: true
-      })
-      this.props.dispatch({
-        type: 'im/getHistoryMsgs',
-        scene,
-        to,
-      }).then(() => {
-        this.setState({
-          isNextPageLoading: false
-        })
-      });
-    }
-  }
   render() {
-    const { userInfo, otherIsExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow, orderInfoShow, canCaseInfoSave, isNextPageLoading } = this.state;
-    const { myInfo, currSessionMsgs, noMoreHistoryMsgs } = this.props;
+    const { userInfo, otherIsExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow, orderInfoShow, canCaseInfoSave, msgTranslateMap } = this.state;
+    const { myInfo } = this.props;
     let Evaluation = (
       <div className='evaluate-box'>
         <div className='evaluate-title'>服务评价</div>
@@ -225,15 +205,6 @@ class Chat extends React.Component {
         </div>
       </div>
     );
-    const msgList = [...currSessionMsgs];
-    // 没有数据的时候，在数组顶部
-    if (noMoreHistoryMsgs) {
-      const msg = {
-        flow: 'noMore',
-        idClient: uuidv4(),
-      };
-      msgList.unshift(msg);
-    }
     return (
       <div className="chat-box">
         {hasCaseInfo && <CaseInfo
@@ -269,14 +240,12 @@ class Chat extends React.Component {
           </div>
           <ChatList
             type="session"
-            hasNextPage={!noMoreHistoryMsgs}
-            isNextPageLoading={isNextPageLoading}
-            loadNextPage={this.loadMore}
-            msglist={msgList}
+            scene={scene}
+            to={to}
             userInfo={userInfo}
             otherIsExpert={otherIsExpert}
-            myInfo={myInfo}
             msgsLoaded={this.msgsLoaded}
+            msgTranslateMap={msgTranslateMap}
           />
           <ChatEditor
             type="session"
@@ -289,16 +258,13 @@ class Chat extends React.Component {
   }
 }
 
-// export default Chat;
 export default connect(({ im, user }) => ({
   im,
   user,
   currSessionId: im.currSessionId,
   userUID: im.userUID,
-  sessionId: im.sessionId,
   myInfo: user.userInfo,
   serviceInfo: im.serviceInfo,
   iccpUserInfos: im.iccpUserInfos,
-  currSessionMsgs: im.currSessionMsgs,
-  noMoreHistoryMsgs: im.noMoreHistoryMsgs,
+  translateMap: im.translateMap,
 }))(Chat);
