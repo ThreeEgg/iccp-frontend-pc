@@ -12,6 +12,7 @@ import { Badge } from 'antd';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
+import global from '../global';
 import { CloseOutlined, MinusOutlined } from '@ant-design/icons';
 import './IMLayout.less';
 
@@ -60,7 +61,7 @@ export class IMLayout extends Component {
       return;
     }
     // 提供dispatch注入
-    window.dispatch = this.props.dispatch;
+    global.dispatch = this.props.dispatch;
   }
 
   render() {

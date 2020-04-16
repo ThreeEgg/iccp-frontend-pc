@@ -15,6 +15,30 @@ if (typeof window !== 'undefined') {
   // }
 }
 
+const setCurrSessionCallbackFunc = () => {
+  //TODO
+}
+const goToLogInPageFunc = () => {
+  //TODO
+}
+const showLoadingFunc = () => {
+  //TODO
+}
+const hideLoadingFunc = () => {
+  //TODO
+}
+
 export default {
+  dispatch: null,
+  nim: null,
   lang: initLang,
+  
+  // 设定当前会话后的回调函数
+  setCurrSessionCallbackFunc,
+  // 跳转到登陆页
+  goToLogInPageFunc,
+  // 显示加载
+  showLoadingFunc,
+  // 隐藏加载
+  hideLoadingFunc,
 };

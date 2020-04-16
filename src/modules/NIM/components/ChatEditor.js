@@ -32,8 +32,8 @@ class ChatEditor extends React.Component {
   state = {
     isEmojiShown: false,
     msgToSent: '',
-    icon1: `/app/ic_im_document.svg`,
-    icon2: `/app/ic_im_star.svg`,
+    icon1: `/im/ic_im_document.svg`,
+    icon2: `/im/ic_im_star.svg`,
     icon3: ``,
     sendTxt: true,
     recording: false,

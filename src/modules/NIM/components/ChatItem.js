@@ -48,7 +48,7 @@ class ChatItem extends React.Component {
     translate: '',
     isFullImgShow: false,
     msgUnRead: false,
-    icon1: `/app/ic_im_failed.svg`,
+    icon1: `/im/ic_im_failed.svg`,
   };
   componentWillMount() {
     this.computedItem()
@@ -207,9 +207,9 @@ class ChatItem extends React.Component {
       if (content.type === 1) {
         let data = content.data
         let resourceUrl = config.resourceUrl
-        // item.showText = `<img class="emoji-middle" src="${resourceUrl}/app/play-${data.value}.png">`
+        // item.showText = `<img class="emoji-middle" src="${resourceUrl}/im/play-${data.value}.png">`
         item.type = 'custom-type1'
-        item.imgUrl = `${resourceUrl}/app/play-${data.value}.png`
+        item.imgUrl = `${resourceUrl}/im/play-${data.value}.png`
         // type 3 为贴图表情
       } else if (content.type === 3) {
         let data = content.data
@@ -258,9 +258,9 @@ class ChatItem extends React.Component {
       item.width = (5.3 + Math.round(item.file.dur / 1000) * 0.03).toFixed(2) + 'rem'
       item.audioSrc = item.file.mp3Url
       item.showText = '<i>' + Math.round(item.file.dur / 1000) + '"</i> 点击播放'
-      if (!this.isHistory && nim.useDb) {
-        item.unreadAudio = !item.localCustom
-      }
+      // if (!this.isHistory && nim.useDb) {
+      //   item.unreadAudio = !item.localCustom
+      // }
     } else if (item.type === 'file') {
       item.fileLink = item.file.url
       item.showText = item.file.name
@@ -347,7 +347,7 @@ class ChatItem extends React.Component {
     const { msg, msgUnRead, translate, icon1 } = this.state;
     const { type, userInfo } = this.props;
     return (
-      msg.flow === 'onmore' ?
+      msg.flow === 'noMore' ?
         <div className="item-more"> ---- 已无更多记录 ---- </div> :
         /* 信息类型*/
         <div className={

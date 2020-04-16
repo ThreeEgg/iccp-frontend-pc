@@ -22,13 +22,13 @@ class Index extends React.Component {
   };
   // 进入该页面，文档被挂载
   async componentDidMount() {
-    // 提交sdk连接请求
-    // this.props.dispatch({ type: 'im/connect' })
-    if (!window.dispatch) {
-      window.dispatch = this.props.dispatch;
+    if (!global.dispatch) {
+      global.dispatch = this.props.dispatch;
     }
     // 提交sdk连接请求
-    this.props.dispatch({ type: 'im/connect' })
+    if (!this.props.isLogin) {
+      this.props.dispatch({ type: 'im/connect' });
+    }
   }
   async componentDidUpdate(prevProps, prevState) {
     // this.props.dispatch({ type: 'im/updateRefreshState' })
@@ -62,5 +62,6 @@ class Index extends React.Component {
 
 export default connect(({ im }) => ({
   im,
+  isLogin: im.isLogin,
   currSessionId: im.currSessionId,
 }))(Index);

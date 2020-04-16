@@ -16,6 +16,8 @@ import { Layout, Popconfirm, Form, Input, message, Button } from 'antd';
 const { Header, Footer, Content } = Layout;
 import util from 'iccp-frontend-im/dist/utils';
 import Link from 'next/link';
+import { v4 as uuidv4 } from 'uuid';
+
 class Chat extends React.Component {
   state = {
     scene: null,
@@ -25,14 +27,15 @@ class Chat extends React.Component {
     hasCaseInfo: false,
     canCaseInfoSave: false,
     hasEvaluation: false,
-    icon1: `/app/ic_im_evaluate.svg`,
-    icon2: `/app/ic_im_star.svg`,
+    icon1: `/im/ic_im_evaluate.svg`,
+    icon2: `/im/ic_im_star.svg`,
     evaluation: {
       service: 3,
       professional: 3,
     },
     caseInfoShow: false,
     orderInfoShow: false,
+    isNextPageLoading: false,
   };
 
   // 表单
@@ -50,7 +53,7 @@ class Chat extends React.Component {
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {
-    this.props.dispatch({ type: 'im/resetCurrSession' });
+    // this.props.dispatch({ type: 'im/resetCurrSession' });
   }
   // computed
   sessionName = () => {
@@ -184,11 +187,27 @@ class Chat extends React.Component {
     } catch (errorInfo) {
     }
   }
+  loadMore = () => {
+    const { scene, to } = this.state;
+    const { noMoreHistoryMsgs } = this.props;
+    if (!noMoreHistoryMsgs) {
+      this.setState({
+        isNextPageLoading: true
+      })
+      this.props.dispatch({
+        type: 'im/getHistoryMsgs',
+        scene,
+        to,
+      }).then(() => {
+        this.setState({
+          isNextPageLoading: false
+        })
+      });
+    }
+  }
   render() {
-    const { userInfo, otherIsExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow, orderInfoShow, canCaseInfoSave } = this.state;
-    const { im, user } = this.props;
-    const { userInfo: myInfo } = user;
-    const { currSessionMsgs, } = im;
+    const { userInfo, otherIsExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow, orderInfoShow, canCaseInfoSave, isNextPageLoading } = this.state;
+    const { myInfo, currSessionMsgs, noMoreHistoryMsgs } = this.props;
     let Evaluation = (
       <div className='evaluate-box'>
         <div className='evaluate-title'>服务评价</div>
@@ -206,6 +225,15 @@ class Chat extends React.Component {
         </div>
       </div>
     );
+    const msgList = [...currSessionMsgs];
+    // 没有数据的时候，在数组顶部
+    if (noMoreHistoryMsgs) {
+      const msg = {
+        flow: 'noMore',
+        idClient: uuidv4(),
+      };
+      msgList.unshift(msg);
+    }
     return (
       <div className="chat-box">
         {hasCaseInfo && <CaseInfo
@@ -241,7 +269,10 @@ class Chat extends React.Component {
           </div>
           <ChatList
             type="session"
-            msglist={currSessionMsgs}
+            hasNextPage={!noMoreHistoryMsgs}
+            isNextPageLoading={isNextPageLoading}
+            loadNextPage={this.loadMore}
+            msglist={msgList}
             userInfo={userInfo}
             otherIsExpert={otherIsExpert}
             myInfo={myInfo}
@@ -269,4 +300,5 @@ export default connect(({ im, user }) => ({
   serviceInfo: im.serviceInfo,
   iccpUserInfos: im.iccpUserInfos,
   currSessionMsgs: im.currSessionMsgs,
+  noMoreHistoryMsgs: im.noMoreHistoryMsgs,
 }))(Chat);

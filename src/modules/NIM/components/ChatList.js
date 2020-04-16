@@ -23,6 +23,12 @@ export default class ChatList extends React.Component {
     userInfo: PropTypes.object,
     myInfo: PropTypes.object,
     isHistory: PropTypes.bool,
+    /** 有下一页 */
+    hasNextPage: PropTypes.bool,
+    /** 正在加载 */
+    isNextPageLoading: PropTypes.bool,
+    /** 加载下一页 */
+    loadNextPage: PropTypes.func,
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
@@ -30,19 +36,33 @@ export default class ChatList extends React.Component {
     userInfo: {},
     myInfo: {},
     isHistory: false,
+    hasNextPage: false,
+    isNextPageLoading: false,
+    loadNextPage: () => { },
   };
   state = {
-    msgList: [],
-    isFullImgShow: false,
+    to:'',
     msgLoadedTimer: null,
   };
   async componentDidMount() {
-    this.initMsgList()
   }
   async componentDidUpdate(prevProps, prevState) {
+    // 监听会话对象改变
+    if (prevProps.userInfo.userId !== this.props.userInfo.userId) {
+      this.scrollToBottom();
+    }
     // 监听会话改变
     if (prevProps.msglist !== this.props.msglist) {
-      this.initMsgList()
+      let prevLastMsg = prevProps.msglist[prevProps.msglist.length - 1];
+      let lastMsg = this.props.msglist[this.props.msglist.length - 1];
+      if (prevLastMsg && lastMsg){
+        if(prevLastMsg.idClient !== lastMsg.idClient){
+          this.scrollToBottom();
+        }
+        if(prevState.to !== lastMsg.to){
+          this.scrollToBottom(lastMsg.to);
+        }
+      }
     }
   }
   itemList = createRef();
@@ -70,31 +90,27 @@ export default class ChatList extends React.Component {
       msgLoaded={this.msgLoaded}
     />
   }
-  initMsgList = () => {
-    let msgList = [...this.props.msglist];
-    let msg = {}
-    msg.flow = 'onmore'
-    msgList.splice(0, 0, msg)
-    this.setState({
-      msgList,
-    },
-      () => {
-        this.scrollToBottom()
+  scrollToBottom = (to) => {
+    if(to){
+      this.setState({
+        to,
       })
-  }
-  scrollToBottom = () => {
-    this.itemList.current.list.scrollToRow(this.state.msgList.length);
+    }
+    this.itemList.current.list.scrollToRow(this.props.msglist.length);
   }
   render() {
-    const { msgList } = this.state;
+    const { msglist, hasNextPage, isNextPageLoading } = this.props;
     return (
       <div id="chat-list" className="chat-list">
         {/* <Button onClick={()=>{this.itemList.current.list.scrollToRow(0)}}>top</Button>
         <Button onClick={()=>{this.itemList.current.list.scrollToRow(msgList.length)}}>bottom</Button> */}
         <VirtualList
           ref={this.itemList}
-          data={msgList}
+          data={msglist}
           itemRender={this.renderItem}
+          hasNextPage={hasNextPage}
+          isNextPageLoading={isNextPageLoading}
+          loadNextPage={this.props.loadNextPage}
         />
       </div>
     );

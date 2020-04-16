@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  AutoSizer, List, CellMeasurer, CellMeasurerCache,
+  AutoSizer, InfiniteLoader, List, CellMeasurer, CellMeasurerCache,
 } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
@@ -147,27 +147,40 @@ class VirtualList extends Component {
   }
 
   render() {
-    const { response, classes, emptyRenderer, listProps = {} } = this.props;
+    const { response, classes, emptyRenderer, listProps = {}, isNextPageLoading, hasNextPage, loadNextPage, dropdownLoad, loadThreshold } = this.props;
+    const loadMoreRows = isNextPageLoading ? () => { } : loadNextPage;
+    const isRowLoaded = ({ index }) => {
+      return !hasNextPage || (dropdownLoad ? index > 0 : index < this.getRowCount())
+    };
     return (
-      <AutoSizer>
-        {({ width, height }) => (
-          <List
-            ref={ref => this.list = ref}
-            // className={classes.list}
-            style={{ outline: 'none' }}
-            width={width}
-            height={height}
-            overscanRowCount={100}
-            rowCount={this.getRowCount()}
-            rowHeight={this.measurerCache.rowHeight}
-            deferredMeasurementCache={this.measurerCache}
-            rowRenderer={response ? this.responsiveRowRender : this.rowRenderer}
-            noRowsRenderer={emptyRenderer}
-            onScroll={this.scrollHandler}
-            {...listProps}
-          />
+      <InfiniteLoader
+        isRowLoaded={isRowLoaded}
+        loadMoreRows={loadMoreRows}
+        rowCount={hasNextPage ? this.getRowCount() + 1 : this.getRowCount()}
+        threshold={loadThreshold}>
+        {({ onRowsRendered, registerChild }) => (
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                ref={registerChild => this.list = registerChild}
+                // className={classes.list}
+                style={{ outline: 'none' }}
+                width={width}
+                height={height}
+                overscanRowCount={100}
+                rowCount={this.getRowCount()}
+                rowHeight={this.measurerCache.rowHeight}
+                deferredMeasurementCache={this.measurerCache}
+                rowRenderer={response ? this.responsiveRowRender : this.rowRenderer}
+                noRowsRenderer={emptyRenderer}
+                onScroll={this.scrollHandler}
+                onRowsRendered={onRowsRendered}
+                {...listProps}
+              />
+            )}
+          </AutoSizer>
         )}
-      </AutoSizer>
+      </InfiniteLoader>
     );
   }
 }
@@ -211,6 +224,16 @@ VirtualList.propTypes = {
     PropTypes.bool,
     PropTypes.func,
   ]),
+  /** 有下一页 */
+  hasNextPage: PropTypes.bool,
+  /** 正在加载 */
+  isNextPageLoading: PropTypes.bool,
+  /** 加载下一页 */
+  loadNextPage: PropTypes.func,
+  /** 下拉加载 */
+  dropdownLoad: PropTypes.bool,
+  /** 触发加载阈值 */
+  loadThreshold: PropTypes.number,
 };
 
 VirtualList.defaultProps = {
@@ -223,6 +246,11 @@ VirtualList.defaultProps = {
   scrollUpperThreshold: 0,
   scrollLowerThreshold: 0,
   scrollHandler: false,
+  hasNextPage: false,
+  isNextPageLoading: false,
+  dropdownLoad: true,
+  loadThreshold: 5,
+  loadNextPage: () => { },
 };
 
 export default VirtualList;

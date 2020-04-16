@@ -71,6 +71,7 @@
     "shortid": "^2.2.15",
     "swiper": "^5.3.6",
     "umi-request": "^1.2.19",
+    "uuid": "^7.0.3",
     "wangeditor": "^3.1.1"
   },
   "devDependencies": {

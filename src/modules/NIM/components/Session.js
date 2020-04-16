@@ -16,17 +16,29 @@ class Session extends React.Component {
   state = {
     delSessionId: null,
     stopBubble: false,
+    isExpert: false,
   };
   // 进入该页面，文档被挂载
   async componentDidMount() {
+    this.isExpert();
   }
   async componentDidUpdate(prevProps, prevState) {
+    if (prevProps.myInfo !== this.props.myInfo) {
+      this.isExpert();
+    }
   }
   // 离开该页面，此时重置当前会话
   async componentWillUnmount() {
     // this.props.dispatch({ type: 'im/resetCurrSession' });
   }
   // computed
+  isExpert = () => {
+    if (this.props.myInfo.type === 'expert') {
+      this.setState({
+        isExpert: true,
+      });
+    }
+  };
   // sysMsgUnread = () => {
   //   let temp = this.props.sysMsgUnread;
   //   let sysMsgUnread = temp.addFriend || 0;
@@ -35,14 +47,33 @@ class Session extends React.Component {
   //   return sysMsgUnread + customSysMsgUnread;
   // };
   // methods
-  enterSysMsgs = () => {
-    location.href = '#/sysmsgs';
-  };
   enterChat = ({ item, key, keyPath, domEvent }) => {
     // 此时设置当前会话
     let session = this.props.sessionlist[key]
-    if (session && session.id) {
-      this.props.dispatch({ type: 'im/setCurrSession', sessionId: session.id });
+    if (session && session.id && session.id !== this.props.currSessionId) {
+      // 重置当前会话
+      this.props.dispatch({ type: 'im/resetCurrSession' });
+      if (session.isService) {
+        // 此时设置当前会话
+        this.props.dispatch({
+          type: 'im/setCurrSession',
+          sessionId: session.id,
+        });
+      } else {
+        let expertAccid = session.to;
+        let userAccid = this.props.userUID;
+        if (this.state.isExpert) {
+          expertAccid = this.props.userUID;
+          userAccid = session.dispatchto;
+        }
+        // 发起会话
+        this.props.dispatch({
+          type: 'im/initSession',
+          expertAccid,
+          userAccid,
+          to: session.to,
+        });
+      }
     }
   };
   enterMyChat = () => {
@@ -55,7 +86,7 @@ class Session extends React.Component {
   };
   render() {
     const { im } = this.props;
-    const { myInfo, userInfos, currSessionMsgs, sessionlist } = im;
+    const { sessionlist } = im;
     return (
       <Menu
         theme="light"
@@ -97,15 +128,15 @@ class Session extends React.Component {
 }
 
 // export default Chat;
-export default connect(({ im }) => ({
+export default connect(({ im, user }) => ({
   im,
   currSessionId: im.currSessionId,
   userUID: im.userUID,
   sessionlist: im.sessionlist,
-  myInfo: im.myInfo,
+  myInfo: user.userInfo,
   userInfos: im.userInfos,
   robotInfos: im.robotInfos,
   customSysMsgUnread: im.customSysMsgUnread,
   sysMsgUnread: im.sysMsgUnread,
-  teamlist: im.teamlist,
+  currSessionId: im.currSessionId,
 }))(Session);
