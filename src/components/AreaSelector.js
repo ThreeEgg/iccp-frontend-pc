@@ -114,12 +114,13 @@ class AreaSelector extends Component {
     this.props.dispatch({
       type: 'im/initSession',
       expertAccid: accid,
-      callback: () => {
-        message.destroy();
-        this.props.dispatch({
-          type: 'app/showChat',
-        });
-      },
+      userAccid: this.props.imInfo.accid,
+      to: accid,
+    }).then(() => {
+      message.destroy();
+      this.props.dispatch({
+        type: 'app/showChat',
+      });
     });
   }
 
@@ -315,4 +316,6 @@ class AreaSelector extends Component {
   }
 }
 
-export default connect(({ }) => ({}))(AreaSelector);
+export default connect(({ user }) => ({
+  imInfo: user.imInfo,
+}))(AreaSelector);

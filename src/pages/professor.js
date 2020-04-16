@@ -36,7 +36,7 @@ class Professor extends React.Component {
       // 专家动态
       const activityRes = await fetch(
         `${api.baseUrl}/api${
-          api.getExpertActivityList
+        api.getExpertActivityList
         }?userId=${id}&pageSize=10&pageNum=${pageNum}`,
       );
       const activityContent = await activityRes.json();
@@ -165,12 +165,13 @@ class Professor extends React.Component {
     this.props.dispatch({
       type: 'im/initSession',
       expertAccid: accid,
-      callback: () => {
-        message.destroy();
-        this.props.dispatch({
-          type: 'app/showChat',
-        });
-      },
+      userAccid: this.props.imInfo.accid,
+      to: accid,
+    }).then(() => {
+      message.destroy();
+      this.props.dispatch({
+        type: 'app/showChat',
+      });
     });
   };
 
@@ -313,9 +314,9 @@ class Professor extends React.Component {
                                 navigation:
                                   item.images.length > 3
                                     ? {
-                                        nextEl: '.swiper-button-next',
-                                        prevEl: '.swiper-button-prev',
-                                      }
+                                      nextEl: '.swiper-button-next',
+                                      prevEl: '.swiper-button-prev',
+                                    }
                                     : {},
                               }}
                             >
@@ -342,22 +343,22 @@ class Professor extends React.Component {
                 </TabPane>
               </Tabs>
             ) : (
-              // 文章详情
-              <div className="article-detail grey-shadow">
-                {/* 返回按钮 */}
-                <img
-                  className="back-btn"
-                  src="/images/ic_header_leadback.png"
-                  onClick={this.backFromArticleDetail}
-                />
-                <h1 className="article-title">{articleDetail.title}</h1>
-                <h2 className="article-brief">{articleDetail.brief}</h2>
-                <div
-                  className="article-rich-text"
-                  dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
-                />
-              </div>
-            )}
+                // 文章详情
+                <div className="article-detail grey-shadow">
+                  {/* 返回按钮 */}
+                  <img
+                    className="back-btn"
+                    src="/images/ic_header_leadback.png"
+                    onClick={this.backFromArticleDetail}
+                  />
+                  <h1 className="article-title">{articleDetail.title}</h1>
+                  <h2 className="article-brief">{articleDetail.brief}</h2>
+                  <div
+                    className="article-rich-text"
+                    dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
+                  />
+                </div>
+              )}
           </div>
         </div>
         <div className="con-pro-l">
@@ -421,4 +422,6 @@ class Professor extends React.Component {
   }
 }
 
-export default connect(({}) => ({}))(Professor);
+export default connect(({ user }) => ({
+  imInfo: user.imInfo,
+}))(Professor);

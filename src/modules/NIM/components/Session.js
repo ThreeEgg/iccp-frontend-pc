@@ -51,9 +51,9 @@ class Session extends React.Component {
     // 此时设置当前会话
     let session = this.props.sessionlist[key]
     if (session && session.id && session.id !== this.props.currSessionId) {
-      // 重置当前会话
-      this.props.dispatch({ type: 'im/resetCurrSession' });
       if (session.isService) {
+        // 重置当前会话
+        this.props.dispatch({ type: 'im/resetCurrSession' });
         // 此时设置当前会话
         this.props.dispatch({
           type: 'im/setCurrSession',
