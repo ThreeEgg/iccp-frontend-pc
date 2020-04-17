@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  AutoSizer, InfiniteLoader, List, CellMeasurer, CellMeasurerCache,
+  AutoSizer, InfiniteLoader, List, CellMeasurer, CellMeasurerCache, Grid,
 } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 

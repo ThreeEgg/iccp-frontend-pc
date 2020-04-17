@@ -1,22 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { Modal, message } from 'antd';
-const { confirm } = Modal;
-import Link from 'next/link';
-
 import util from 'iccp-frontend-im/dist/utils'
 import config from '../configs'
-import emojiObj from '../configs/emoji'
-
-var audio = { // 正在播放音频的 audio、target
-  $node: null,
-  $audio: null,
-  timeout: '',
-  imgPlay0: 'https://yx-web-nosdn.netease.app/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fplay0.gif',
-  imgPlay1: 'https://yx-web-nosdn.netease.app/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fplay1.gif'
-}
+const { confirm } = Modal;
+// import emojiObj from '../configs/emoji'
 
 class ChatItem extends React.Component {
   //在这里进行类型检测(这里的名字不是随便自定义的，规定这样写的)
@@ -48,12 +37,12 @@ class ChatItem extends React.Component {
   }
   componentDidMount() {
     // window.stopPlayAudio = this.stopPlayAudio.bind(this)
-    let item = this.state.msg
+    const item = this.state.msg
     let media = null
     if (item.type === 'image') {
       // 图片消息缩略图
       media = new Image()
-      media.src = item.file.url + '?imageView&thumbnail=180x0&quality=85'
+      media.src = `${item.file.url}?imageView&thumbnail=180x0&quality=85`
     } else if (item.type === 'custom-type1') {
       // 猜拳消息
       media = new Image()
@@ -65,13 +54,12 @@ class ChatItem extends React.Component {
       media.className = 'emoji-big'
       media.src = item.imgUrl
     } else if (item.type === 'custom-image') {
-      let scale = 12.5
+      const scale = 12.5
       // 自定义图片
       media = new Image()
       media.className = 'custom-image'
       media.src = item.imgUrl
-      let width = item.width
-      let height = item.height
+      let { width, height } = item
       if (width > height) {
         if (width > scale) {
           height = scale * height / width;
@@ -80,17 +68,15 @@ class ChatItem extends React.Component {
             isFullImgShow: true,
           })
         }
-      } else {
-        if (height > scale) {
-          width = scale * width / height;
-          height = scale
-          this.setState({
-            isFullImgShow: true,
-          })
-        }
+      } else if (height > scale) {
+        width = scale * width / height;
+        height = scale
+        this.setState({
+          isFullImgShow: true,
+        })
       }
-      this.refs.mediaMsg.style.width = width + 'rem'
-      this.refs.mediaMsg.style.height = height + 'rem'
+      this.refs.mediaMsg.style.width = `${width}rem`
+      this.refs.mediaMsg.style.height = `${height}rem`
     } else if (item.type === 'video') {
       if (/(mov|mp4|ogg|webm)/i.test(item.file.ext)) {
         media = document.createElement('video')
@@ -101,7 +87,7 @@ class ChatItem extends React.Component {
         media.preload = 'metadata'
         media.controls = 'controls'
       } else {
-        let aLink = document.createElement('a')
+        const aLink = document.createElement('a')
         aLink.href = item.file.url
         aLink.target = '_blank'
         aLink.innerHTML = `<i class="u-icon icon-file"></i>${video.name}`
@@ -124,15 +110,13 @@ class ChatItem extends React.Component {
     }
     this.props.measure();
   }
-  componentWillUnmount() {
-  }
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.rawMsg !== this.props.rawMsg) {
-      let newCustom = this.props.rawMsg && this.props.rawMsg.localCustom
+      const newCustom = this.props.rawMsg && this.props.rawMsg.localCustom
       if (!newCustom || !this.props.rawMsg || this.props.rawMsg.type !== 'audio') {
         return
       }
-      let oldCustom = prevProps.rawMsg && prevProps.rawMsg.localCustom
+      const oldCustom = prevProps.rawMsg && prevProps.rawMsg.localCustom
       if (newCustom !== oldCustom) {
         this.computedItem()
       }
@@ -157,7 +141,7 @@ class ChatItem extends React.Component {
   }
   // methods
   computedItem = () => {
-    let item = Object.assign({}, this.props.rawMsg)
+    const item = Object.assign({}, this.props.rawMsg)
     // 标记用户，区分聊天室、普通消息
     if (this.props.type === 'session') {
       let defaultIcon = config.defaultUserIcon;
@@ -186,7 +170,7 @@ class ChatItem extends React.Component {
       // 文本消息
       item.showText = util.escape(item.text)
       if (/\[[^\]]+\]/.test(item.showText)) {
-        let emojiItems = item.showText.match(/\[[^\]]+\]/g)
+        const emojiItems = item.showText.match(/\[[^\]]+\]/g)
         emojiItems.forEach(text => {
           // let emojiCnt = emojiObj.emojiList.emoji
           // if (emojiCnt[text]) {
@@ -195,7 +179,7 @@ class ChatItem extends React.Component {
         })
       }
     } else if (item.type === 'custom') {
-      let content = JSON.parse(item.content.replace(/\n\r/g, "<br>").replace(/\r\n/g, "<br>").replace(/\n/g, "<br>").replace(/\r/g, "<br>"))
+      const content = JSON.parse(item.content.replace(/\n\r/g, "<br>").replace(/\r\n/g, "<br>").replace(/\n/g, "<br>").replace(/\r/g, "<br>"))
       // type 1 为猜拳消息
       if (content.type === 1) {
         let data = content.data
@@ -207,12 +191,12 @@ class ChatItem extends React.Component {
       } else if (content.type === 3) {
         let data = content.data
         let emojiCnt = ''
-        if (emojiObj.pinupList[data.catalog]) {
-          emojiCnt = emojiObj.pinupList[data.catalog][data.chartlet]
-          // item.showText = `<img class="emoji-big" src="${emojiCnt.img}">`
-          item.type = 'custom-type3'
-          item.imgUrl = `${emojiCnt.img}`
-        }
+        // if (emojiObj.pinupList[data.catalog]) {
+        //   emojiCnt = emojiObj.pinupList[data.catalog][data.chartlet]
+        //   // item.showText = `<img class="emoji-big" src="${emojiCnt.img}">`
+        //   item.type = 'custom-type3'
+        //   item.imgUrl = `${emojiCnt.img}`
+        // }
       }
       // 10提示信息
       else if (content.type === 10) {
@@ -235,7 +219,7 @@ class ChatItem extends React.Component {
       }
       // 13视频信息
       else if (content.type === 13) {
-
+        // 视频消息
       } else {
         item.showText = util.parseCustomMsg(item)
         if (item.showText !== '[自定义消息]') {
@@ -248,9 +232,9 @@ class ChatItem extends React.Component {
     } else if (item.type === 'video') {
       // ...
     } else if (item.type === 'audio') {
-      item.width = (5.3 + Math.round(item.file.dur / 1000) * 0.03).toFixed(2) + 'rem'
+      item.width = `${(5.3 + Math.round(item.file.dur / 1000) * 0.03).toFixed(2)}rem`
       item.audioSrc = item.file.mp3Url
-      item.showText = '<i>' + Math.round(item.file.dur / 1000) + '"</i> 点击播放'
+      item.showText = `<i>${Math.round(item.file.dur / 1000)}"</i> 点击播放`
       // if (!this.isHistory && nim.useDb) {
       //   item.unreadAudio = !item.localCustom
       // }
@@ -285,7 +269,7 @@ class ChatItem extends React.Component {
         }
         // 自己发的消息
         if (attrs.flow === 'out') {
-          let that = this
+          const that = this
           confirm({
             title: '确定需要撤回消息?',
             icon: <ExclamationCircleOutlined />,
@@ -305,8 +289,8 @@ class ChatItem extends React.Component {
   }
   showFullImg = (src) => {
     if (this.state.isFullImgShow) {
-      let newwin = window.open()
-      let myimg = newwin.document.createElement("img")
+      const newwin = window.open()
+      const myimg = newwin.document.createElement("img")
       myimg.src = src
       newwin.document.body.appendChild(myimg)
     }

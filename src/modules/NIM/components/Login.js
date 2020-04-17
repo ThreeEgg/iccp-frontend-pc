@@ -1,12 +1,3 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: 毛翔宇
- * @Date: 2020-03-19 14:11:19
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-03-30 17:56:10
- * @FilePath: \PC端-前端\src\modules\NIM\components\Login.js
- */
 import React from 'react';
 import { connect } from 'react-redux';
 import { Form, Input, Button, Modal } from 'antd';
@@ -21,13 +12,12 @@ function LoginButton(props) {
         登出NIM
       </Button>
     )
-  } else {
-    return (
-      <Button type="primary" onClick={clickLogin}>
-        登录NIM
-      </Button>
-    )
   }
+  return (
+    <Button type="primary" onClick={clickLogin}>
+      登录NIM
+    </Button>
+  )
 }
 
 class Login extends React.Component {
@@ -74,7 +64,7 @@ class Login extends React.Component {
       errorMsg: '',
     });
     // 服务端帐号均为小写
-    let imInfo={}
+    let imInfo = {}
     imInfo.accid = this.state.account.toLowerCase()
     imInfo.token = this.state.password.toLowerCase()
     localStorage.imInfo = JSON.stringify(imInfo)
@@ -110,7 +100,7 @@ class Login extends React.Component {
     const { isLogin } = im;
     return (
       <div>
-        {<Button className='login' type="primary" danger={isLogin} onClick={isLogin ? this.logout : this.showLogin}> 登{isLogin ? '出' : '录'}NIM </Button> }
+        {<Button className='login' type="primary" danger={isLogin} onClick={isLogin ? this.logout : this.showLogin}> 登{isLogin ? '出' : '录'}NIM </Button>}
         <Modal
           title="登录NIM"
           visible={this.state.visible}

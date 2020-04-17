@@ -10,7 +10,6 @@ class ChatList extends React.Component {
   //在这里进行类型检测(这里的名字不是随便自定义的，规定这样写的)
   static propTypes = {
     type: PropTypes.string,
-    canLoadMore: PropTypes.bool,
     currSessionMsgs: PropTypes.array,
     userInfo: PropTypes.object,
     isHistory: PropTypes.bool,
@@ -22,6 +21,7 @@ class ChatList extends React.Component {
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
+    type: '',
     scene: '',
     to: '',
     currSessionMsgs: [],
@@ -37,8 +37,7 @@ class ChatList extends React.Component {
     isNextPageLoading: false,
     msgList: [],
   };
-  async componentDidMount() {
-  }
+  itemList = createRef();
   async componentDidUpdate(prevProps, prevState) {
     // 监听会话改变
     if (prevProps.currSessionId !== this.props.currSessionId) {
@@ -57,8 +56,8 @@ class ChatList extends React.Component {
       if (this.state.firstToBottom >= 0) {
         this.scrollToBottom();
       } else {
-        let prevLastMsg = prevState.msgList[prevState.msgList.length - 1];
-        let lastMsg = this.state.msgList[this.state.msgList.length - 1];
+        const prevLastMsg = prevState.msgList[prevState.msgList.length - 1];
+        const lastMsg = this.state.msgList[this.state.msgList.length - 1];
         if (prevLastMsg && lastMsg) {
           if (prevLastMsg.idClient !== lastMsg.idClient) {
             this.scrollToBottom();
@@ -67,10 +66,9 @@ class ChatList extends React.Component {
       }
     }
   }
-  itemList = createRef();
   initMsgList = () => {
     const { currSessionMsgs, noMoreHistoryMsgs } = this.props;
-    let msgList = [...currSessionMsgs];
+    const msgList = [...currSessionMsgs];
     // 没有数据的时候，在数组顶部
     if (noMoreHistoryMsgs) {
       const msg = {
@@ -111,8 +109,9 @@ class ChatList extends React.Component {
     />
   }
   scrollToBottom = (firstToBottom) => {
+    const { firstToBottom: firstToBottomOld } = this.state;
     this.setState({
-      firstToBottom: firstToBottom || this.state.firstToBottom - 1
+      firstToBottom: firstToBottom || firstToBottomOld - 1
     })
     this.itemList.current.list.scrollToRow(this.props.currSessionMsgs.length);
   }

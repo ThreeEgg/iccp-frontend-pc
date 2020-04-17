@@ -1,12 +1,3 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: 毛翔宇
- * @Date: 2020-03-19 14:11:19
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-07 18:13:39
- * @FilePath: \PC端-前端\src\modules\NIM\components\CaseInfo.js
- */
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -101,7 +92,7 @@ class CaseInfo extends React.Component {
   };
 
   replaceFile = (index) => {
-    let ipt = this.refs.fileToSent;
+    const ipt = this.refs.fileToSent;
     ipt.click()
     this.setState({
       deleteFileIndex: index,
@@ -109,7 +100,7 @@ class CaseInfo extends React.Component {
   };
 
   deleteFile = (index) => {
-    let caseInfo = this.state.caseInfo;
+    const { caseInfo } = this.state;
     caseInfo.iccpCaseEnclosureList[index].isValid = 0;
     this.setState({
       caseInfo,
@@ -117,8 +108,7 @@ class CaseInfo extends React.Component {
   };
 
   downloadCaseBatch = () => {
-    let caseId = this.state.caseInfo.caseId
-    // let caseId = '39ffc00816344654969da7825ee3fb4'
+    const { caseId } = this.state.caseInfo
     if (caseId) {
       this.props.dispatch({
         type: 'im/downloadCaseBatch',
@@ -158,13 +148,13 @@ class CaseInfo extends React.Component {
                 type: 'im/getCaseInfo',
                 clientUserId: this.state.clientUserId,
                 expertUserId: this.state.expertUserId,
-                callback: (res) => {
-                  if (res.code === '0') {
+                callback: (res2) => {
+                  if (res2.code === '0') {
                     this.setState({
-                      caseInfo: res.data
+                      caseInfo: res2.data
                     })
                   } else {
-                    // message.error(res.errorInfo);
+                    // message.error(res2.errorInfo);
                   }
                 }
               });
@@ -179,6 +169,7 @@ class CaseInfo extends React.Component {
         });
       }
     } catch (errorInfo) {
+      console.error(errorInfo);
     }
   };
 
@@ -231,8 +222,8 @@ class CaseInfo extends React.Component {
         width='280'
         collapsed={collapsed}
         collapsedWidth={0}
-        collapsible={true}
-        defaultCollapsed={true}
+        collapsible
+        defaultCollapsed
         trigger={null}
         className='case-info'
       >

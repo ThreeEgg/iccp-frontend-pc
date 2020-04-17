@@ -1,12 +1,3 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: 毛翔宇
- * @Date: 2020-03-12 18:04:56
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-04 19:14:54
- * @FilePath: \PC端-前端\src\modules\NIM\components\ChatEditor.js
- */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,33 +11,21 @@ class ChatEditor extends React.Component {
     to: PropTypes.string,
     invalid: PropTypes.bool,
     invalidHint: PropTypes.string,
-    advancedTeam: PropTypes.bool,
   };
   //如果没有传值，可以给一个默认值
   static defaultProps = {
+    type: 'session',
     scene: '',
     to: '',
     invalid: false,
     invalidHint: '您无权限发送消息',
-    advancedTeam: false,
   };
 
   state = {
-    isEmojiShown: false,
     msgToSent: '',
     icon1: `/im/ic_im_document.svg`,
-    icon2: `/im/ic_im_star.svg`,
-    icon3: ``,
-    sendTxt: true,
-    recording: false,
-    recordDisable: false,
-    toRecordCount: 0,
-    recordTime: 0,
-    $recordTime: null,
-    recordTimeout: '',
-    recorder: null,
-    audioContext: null,
     ctrlDown: false,
+    // isEmojiShown: false,
   };
 
   componentDidMount = () => {
@@ -64,7 +43,7 @@ class ChatEditor extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     // 监听输入框
     if (prevState.msgToSent !== this.state.msgToSent) {
-
+      // 对输入内容做处理
     }
   }
 
@@ -77,7 +56,8 @@ class ChatEditor extends React.Component {
     if (/^\s*$/.test(text)) {
       message.warning('请不要发送空消息');
       return;
-    } else if (text.length > 800) {
+    }
+    if (text.length > 800) {
       message.warning('请不要超过800个');
       return;
     }
@@ -88,13 +68,13 @@ class ChatEditor extends React.Component {
         method: 'text',
         scene: this.props.scene,
         to: this.props.to,
-        text: text,
+        text,
       });
     } else if (this.props.type === 'chatroom') {
       this.props.dispatch({
         type: 'im/sendChatroomMsg',
         method: 'text',
-        text: text,
+        text,
       });
     }
     this.setState({
@@ -106,7 +86,7 @@ class ChatEditor extends React.Component {
       message.error(this.state.invalidHint);
       return;
     }
-    let ipt = this.refs.fileToSent2;
+    const ipt = this.refs.fileToSent2;
     if (ipt.value) {
       if (this.props.type === 'session') {
         this.props.dispatch({
@@ -128,11 +108,11 @@ class ChatEditor extends React.Component {
       message.error(this.state.invalidHint);
       return;
     }
-    let ipt = this.refs.fileToSent;
+    const ipt = this.refs.fileToSent;
     if (ipt.value) {
-      let file = ipt.files[0]
+      const file = ipt.files[0]
       // 大于50Mb不可上传
-      if(file.size>52428800){
+      if (file.size > 52428800) {
         message.error('上传文件不要大于50Mb');
         return
       }
@@ -143,17 +123,17 @@ class ChatEditor extends React.Component {
           fileName: file.name,
           callback: (res) => {
             if (res.code === '0') {
-              let type = 11 //'file'
-              let pushContent = '[文件]' 
-              let data = res.data;
+              let type = 11 // 'file'
+              let pushContent = '[文件]'
+              const {data} = res;
               if (/(png|jpg|bmp|jpeg|gif)$/i.test(res.data.fileSuffix)) {
-                type = 12 //'image'
+                type = 12 // 'image'
                 pushContent = '[图片]'
-                let image = new Image();
+                const image = new Image();
                 image.src = data.webUrl;
                 image.onload = () => {
-                  data.width=image.width
-                  data.height=image.height
+                  data.width = image.width
+                  data.height = image.height
                   this.props.dispatch({
                     type: 'im/sendMsg',
                     method: 'custom',
@@ -162,7 +142,7 @@ class ChatEditor extends React.Component {
                     pushContent,
                     content: {
                       type,
-                      data:res.data
+                      data: res.data
                     }
                   });
                 }
@@ -170,10 +150,10 @@ class ChatEditor extends React.Component {
                   message.error('图片上传失败');
                 }
               } else if (/\.(mov|mp4|ogg|webm)$/i.test(res.data.fileSuffix)) {
-                type = 13 //'video'
+                type = 13 // 'video'
                 pushContent = '[视频]'
               }
-              if(type!==12){
+              if (type !== 12) {
                 this.props.dispatch({
                   type: 'im/sendMsg',
                   method: 'custom',
@@ -182,7 +162,7 @@ class ChatEditor extends React.Component {
                   pushContent,
                   content: {
                     type,
-                    data:res.data
+                    data: res.data
                   }
                 });
               }
@@ -192,6 +172,7 @@ class ChatEditor extends React.Component {
           },
         });
       } else if (this.props.type === 'chatroom') {
+        // 聊天室
       }
     }
   }
@@ -215,22 +196,22 @@ class ChatEditor extends React.Component {
       });
     }
   }
-  showEmoji = () => {
-    this.setState({
-      isEmojiShown: true,
-    });
-  }
-  hideEmoji = () => {
-    this.setState({
-      isEmojiShown: false,
-    });
-  }
-  addEmoji = (emojiName) => {
-    this.setState({
-      msgToSent: this.state.msgToSent += emojiName,
-    });
-    this.hideEmoji();
-  }
+  // showEmoji = () => {
+  //   this.setState({
+  //     isEmojiShown: true,
+  //   });
+  // }
+  // hideEmoji = () => {
+  //   this.setState({
+  //     isEmojiShown: false,
+  //   });
+  // }
+  // addEmoji = (emojiName) => {
+  //   this.setState({
+  //     msgToSent: this.state.msgToSent += emojiName,
+  //   });
+  //   this.hideEmoji();
+  // }
   render() {
     return (
       <div className="chat-editor">

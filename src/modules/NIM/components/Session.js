@@ -1,15 +1,6 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: 毛翔宇
- * @Date: 2020-03-06 16:48:06
- * @LastEditors: 毛翔宇
- * @LastEditTime: 2020-04-03 16:18:12
- * @FilePath: \PC端-前端\src\modules\NIM\components\Session.js
- */
 import React from 'react';
 import { connect } from 'react-redux';
-import { Layout, Menu } from 'antd';
+import { Menu } from 'antd';
 import config from '../configs';
 
 class Session extends React.Component {
@@ -49,7 +40,7 @@ class Session extends React.Component {
   // methods
   enterChat = ({ item, key, keyPath, domEvent }) => {
     // 此时设置当前会话
-    let session = this.props.sessionlist[key]
+    const session = this.props.sessionlist[key]
     if (session && session.id && session.id !== this.props.currSessionId) {
       if (session.isService) {
         // 重置当前会话
@@ -138,5 +129,4 @@ export default connect(({ im, user }) => ({
   robotInfos: im.robotInfos,
   customSysMsgUnread: im.customSysMsgUnread,
   sysMsgUnread: im.sysMsgUnread,
-  currSessionId: im.currSessionId,
 }))(Session);

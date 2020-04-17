@@ -1,11 +1,10 @@
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
+import util from 'iccp-frontend-im/dist/utils';
+import { Popconfirm, Form, Input, message } from 'antd';
 import ChatList from './ChatList';
 import ChatEditor from './ChatEditor';
 import CaseInfo from './CaseInfo';
-import { Layout, Popconfirm, Form, Input, message, Button } from 'antd';
-const { Header, Footer, Content } = Layout;
-import util from 'iccp-frontend-im/dist/utils';
 import Link from 'next/link';
 
 class Chat extends React.Component {
@@ -59,52 +58,49 @@ class Chat extends React.Component {
   };
   // methods
   initSession = () => {
-    if (this.props.currSessionId) {
-      let scene = util.parseSession(this.props.currSessionId).scene
-      let to = util.parseSession(this.props.currSessionId).to
-      let sessionId = this.props.currSessionId;
+    const { currSessionId } = this.props;
+    if (currSessionId) {
+      const { scene, to } = util.parseSession(currSessionId)
       let userInfo = {};
       let otherIsExpert = false;
       let hasCaseInfo = false;
       let canCaseInfoSave = false;
       let hasEvaluation = false;
       let user = null;
-      let evaluation = {}
-      if (/^p2p-/.test(sessionId)) {
-        user = sessionId.replace(/^p2p-/, '');
+      const evaluation = {}
+      if (/^p2p-/.test(currSessionId)) {
+        user = currSessionId.replace(/^p2p-/, '');
         if (user === this.props.userUID) {
           userInfo.accid = user
           userInfo.name = '我的手机'
           userInfo.image = ''
+        } else if (user === this.props.serviceInfo.accid) {
+          userInfo = this.props.serviceInfo
         } else {
-          if (user === this.props.serviceInfo.accid) {
-            userInfo = this.props.serviceInfo
-          } else {
-            userInfo = this.props.iccpUserInfos[user];
-            if (userInfo.userType === 'expert') {
-              otherIsExpert = true
-              if (this.props.myInfo.type === 'user' || this.props.myInfo.type === 'guest') {
-                hasEvaluation = true
-                hasCaseInfo = true
-                // 获取专家评价
-                this.props.dispatch({
-                  type: 'im/getExpertUserRating', expertUserId: userInfo.userId,
-                  callback: (res) => {
-                    if (res.code === '0') {
-                      evaluation.service = res.data.attitudeRating
-                      evaluation.professional = res.data.skillRating
-                    } else {
-                      message.error(res.msg)
-                    }
-                  },
-                })
-              }
+          userInfo = this.props.iccpUserInfos[user];
+          if (userInfo.userType === 'expert') {
+            otherIsExpert = true
+            if (this.props.myInfo.type === 'user' || this.props.myInfo.type === 'guest') {
+              hasEvaluation = true
+              hasCaseInfo = true
+              // 获取专家评价
+              this.props.dispatch({
+                type: 'im/getExpertUserRating', expertUserId: userInfo.userId,
+                callback: (res) => {
+                  if (res.code === '0') {
+                    evaluation.service = res.data.attitudeRating
+                    evaluation.professional = res.data.skillRating
+                  } else {
+                    message.error(res.msg)
+                  }
+                },
+              })
             }
-            else if (userInfo.userType === 'user' || userInfo.userType === 'guest') {
-              if (this.props.myInfo.type === 'expert') {
-                hasCaseInfo = true
-                canCaseInfoSave = true
-              }
+          }
+          else if (userInfo.userType === 'user' || userInfo.userType === 'guest') {
+            if (this.props.myInfo.type === 'expert') {
+              hasCaseInfo = true
+              canCaseInfoSave = true
             }
           }
         }
@@ -117,6 +113,7 @@ class Chat extends React.Component {
         hasCaseInfo,
         canCaseInfoSave,
         hasEvaluation,
+        evaluation,
       })
     }
   };
@@ -146,22 +143,27 @@ class Chat extends React.Component {
   }
 
   evaluate = (item, data) => {
-    let temp = { ...this.state.evaluation }
-    temp[data] = item + 1;
+    const { evaluation } = this.state
+    evaluation[data] = item + 1;
     this.setState({
-      evaluation: temp,
+      evaluation,
     })
   }
+
   toggleCaseInfo = () => {
+    const { caseInfoShow } = this.state
     this.setState({
-      caseInfoShow: !this.state.caseInfoShow
+      caseInfoShow: !caseInfoShow
     })
   }
-  openOrder = () => {
+
+  toggleOrder = () => {
+    const { orderInfoShow } = this.state
     this.setState({
-      orderInfoShow: !this.state.orderInfoShow
+      orderInfoShow: !orderInfoShow
     })
   }
+
   saveOrder = async () => {
     const form = this.formRef.current;
     try {
@@ -175,7 +177,6 @@ class Chat extends React.Component {
         expertExplain: values.expertExplain,
         callback: (res) => {
           if (res.code === '0') {
-            console.log(res.msg);
             message.success('已向平台发送订单生成请求，请等待平台工作人员与您联系')
           } else {
             // message.error(res.msg)
@@ -183,12 +184,13 @@ class Chat extends React.Component {
         },
       })
     } catch (errorInfo) {
+      console.error(errorInfo);
     }
   }
   render() {
     const { userInfo, otherIsExpert, hasCaseInfo, hasEvaluation, scene, to, icon1, icon2, evaluation, caseInfoShow, orderInfoShow, canCaseInfoSave, msgTranslateMap } = this.state;
     const { myInfo } = this.props;
-    let Evaluation = (
+    const Evaluation = (
       <div className='evaluate-box'>
         <div className='evaluate-title'>服务评价</div>
         <div className='evaluate-content'>
@@ -229,7 +231,7 @@ class Chat extends React.Component {
               <Link href={`/professor?id=${userInfo.userId}`}>
                 <span className='expert-info'> 专家信息 </span>
               </Link>}
-            {canCaseInfoSave && <span className='expert-order' onClick={this.openOrder}>生成订单</span>}
+            {canCaseInfoSave && <span className='expert-order' onClick={this.toggleOrder}>生成订单</span>}
             {hasCaseInfo && <span className='expert-case' onClick={this.toggleCaseInfo}>案件信息表</span>}
             {orderInfoShow && <Form name="orderForm" className="order-form" ref={this.formRef}>
               <Form.Item name="expertExplain" rules={[{ required: true, message: '请填写说明信息!' }]}>

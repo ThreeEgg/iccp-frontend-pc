@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 
 const NIMChat = dynamic(import('../modules/NIM'), {
