@@ -39,8 +39,7 @@ class Index extends React.Component {
   // computed
   // methods
   render() {
-    const { im } = this.props;
-    const { currSessionId } = im;
+    const { currSessionId } = this.props;
     return (
       <Layout style={{ height: '100%' }} className='nim'>
         <Sider
@@ -61,7 +60,6 @@ class Index extends React.Component {
 }
 
 export default connect(({ im }) => ({
-  im,
   isLogin: im.isLogin,
   currSessionId: im.currSessionId,
 }))(Index);
