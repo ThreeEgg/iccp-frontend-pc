@@ -23,7 +23,7 @@ export class Schedule extends Component {
 
   state = {};
 
-  parseSchedule = scheduleString => {
+  parseSchedule = (scheduleString) => {
     // 从字符串中计算出表格的情况
     const parseScheduleData = [];
     if (!scheduleString) {
@@ -47,7 +47,7 @@ export class Schedule extends Component {
   };
 
   // 导入日程表用于编辑
-  importSchedule = scheduleString => {
+  importSchedule = (scheduleString) => {
     const scheduleMatrixData1 = this.parseSchedule(scheduleString)[0] || [];
     const scheduleMatrixData2 = this.parseSchedule(scheduleString)[1] || [];
     this.scheduleMatrixData1 = scheduleMatrixData1;
@@ -60,25 +60,19 @@ export class Schedule extends Component {
   exportSchedule = () => {
     const { scheduleMatrixData1, scheduleMatrixData2 } = this;
     // 当地本周第一天的8小时，为开始时间
-    const startTime =
-      Date.parse(
-        moment()
-          .startOf('week')
-          .hours(8)
-          .toDate(),
-      ) / 1000;
+    const startTime = Date.parse(moment().startOf('week').hours(8).toDate()) / 1000;
 
     // 从矩阵算出相应的日程字符串
     // 行、列，行数*24+列数+8
     const scheduleArray = Array(2 * 7 * 24).fill(0);
-    scheduleMatrixData1.forEach(key => {
+    scheduleMatrixData1.forEach((key) => {
       const [rowIndex, colIndex] = key.split('_');
       const index = rowIndex * 24 + 8 + parseInt(colIndex);
       scheduleArray[index] = 1;
     });
 
     // 第二周增加7*24偏差
-    scheduleMatrixData2.forEach(key => {
+    scheduleMatrixData2.forEach((key) => {
       const [rowIndex, colIndex] = key.split('_');
       const index = rowIndex * 24 + 8 + parseInt(colIndex) + 7 * 24;
       scheduleArray[index] = 1;
@@ -102,7 +96,7 @@ export class Schedule extends Component {
   };
 
   // 查看日程表
-  readSchedule = schedule => {
+  readSchedule = (schedule) => {
     this.importSchedule(schedule);
   };
 
@@ -113,7 +107,7 @@ export class Schedule extends Component {
   renderWeekRowHeader = (rowIndex, offset = 0) => {
     const time = moment()
       .startOf('week')
-      .days(rowIndex);
+      .days(rowIndex + offset);
     return (
       <span>
         {time.format('M月D日')}
@@ -152,7 +146,7 @@ export class Schedule extends Component {
               onChange={this.onCurrentWeekChange}
               rowCount={7}
               colCount={12}
-              renderRowHeader={rowIndex => this.renderWeekRowHeader(rowIndex)}
+              renderRowHeader={(rowIndex) => this.renderWeekRowHeader(rowIndex)}
               renderLeftTop={() => '本周'}
             />
             <ScheduleTable
@@ -160,7 +154,7 @@ export class Schedule extends Component {
               onChange={this.onNextWeekChange}
               rowCount={7}
               colCount={12}
-              renderRowHeader={rowIndex => this.renderWeekRowHeader(rowIndex, 7)}
+              renderRowHeader={(rowIndex) => this.renderWeekRowHeader(rowIndex, 7)}
               renderLeftTop={() => '下周'}
             />
           </Fragment>
@@ -172,6 +166,7 @@ export class Schedule extends Component {
               onChange={this.onCurrentWeekChange}
               rowCount={7}
               colCount={12}
+              renderRowHeader={(rowIndex) => this.renderWeekRowHeader(rowIndex)}
               readOnly
             />
             <ScheduleTable
@@ -179,6 +174,7 @@ export class Schedule extends Component {
               onChange={this.onNextWeekChange}
               rowCount={7}
               colCount={12}
+              renderRowHeader={(rowIndex) => this.renderWeekRowHeader(rowIndex, 7)}
               readOnly
             />
           </Fragment>

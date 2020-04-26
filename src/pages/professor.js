@@ -35,9 +35,7 @@ class Professor extends React.Component {
     if (!tabName || tabName == 'activity') {
       // 专家动态
       const activityRes = await fetch(
-        `${api.baseUrl}/api${
-        api.getExpertActivityList
-        }?userId=${id}&pageSize=10&pageNum=${pageNum}`,
+        `${api.baseUrl}/api${api.getExpertActivityList}?userId=${id}&pageSize=10&pageNum=${pageNum}`,
       );
       const activityContent = await activityRes.json();
       activity = activityContent.data.items;
@@ -116,7 +114,7 @@ class Professor extends React.Component {
     scheduleVisible: false,
   };
 
-  onPageChange = page => {
+  onPageChange = (page) => {
     let targetUrl = window.location.pathname + window.location.search;
 
     if (targetUrl.match('pageNum')) {
@@ -128,7 +126,7 @@ class Professor extends React.Component {
     router.push(targetUrl);
   };
 
-  changeTab = key => {
+  changeTab = (key) => {
     let targetUrl = window.location.pathname + window.location.search;
 
     if (targetUrl.match('tabName')) {
@@ -140,13 +138,13 @@ class Professor extends React.Component {
     router.push(targetUrl);
   };
 
-  gotoArticleDetail = articleId => {
+  gotoArticleDetail = (articleId) => {
     const targetUrl = window.location.pathname + window.location.search + '&articleId=' + articleId;
 
     router.push(targetUrl);
   };
 
-  onArticleClick = articleInfo => {
+  onArticleClick = (articleInfo) => {
     this.gotoArticleDetail(articleInfo.id);
   };
 
@@ -160,19 +158,21 @@ class Professor extends React.Component {
     router.push(targetUrl);
   };
 
-  goToCommunication = accid => {
+  goToCommunication = (accid) => {
     message.loading('正在连线...');
-    this.props.dispatch({
-      type: 'im/initSession',
-      expertAccid: accid,
-      userAccid: this.props.imInfo.accid,
-      to: accid,
-    }).then(() => {
-      message.destroy();
-      this.props.dispatch({
-        type: 'app/showChat',
+    this.props
+      .dispatch({
+        type: 'im/initSession',
+        expertAccid: accid,
+        userAccid: this.props.imInfo.accid,
+        to: accid,
+      })
+      .then(() => {
+        message.destroy();
+        this.props.dispatch({
+          type: 'app/showChat',
+        });
       });
-    });
   };
 
   showSchedule = (scheduleVisible = true) => {
@@ -274,7 +274,7 @@ class Professor extends React.Component {
                 <TabPane tab="专家文章" key="article">
                   {article && (
                     <Fragment>
-                      {article.map(item => {
+                      {article.map((item) => {
                         return (
                           <div
                             className="pro-essay-item"
@@ -300,7 +300,7 @@ class Professor extends React.Component {
                 </TabPane>
                 <TabPane tab="专家详情" key="information">
                   <div className="pro-info">
-                    {information.map(item => {
+                    {information.map((item) => {
                       return (
                         <div className="pro-info-item" key={item.id}>
                           <h1>{item.title}</h1>
@@ -314,13 +314,13 @@ class Professor extends React.Component {
                                 navigation:
                                   item.images.length > 3
                                     ? {
-                                      nextEl: '.swiper-button-next',
-                                      prevEl: '.swiper-button-prev',
-                                    }
+                                        nextEl: '.swiper-button-next',
+                                        prevEl: '.swiper-button-prev',
+                                      }
                                     : {},
                               }}
                             >
-                              {item.images.map(url => (
+                              {item.images.map((url) => (
                                 <div
                                   key={url}
                                   className="swiper-img-container"
@@ -343,22 +343,22 @@ class Professor extends React.Component {
                 </TabPane>
               </Tabs>
             ) : (
-                // 文章详情
-                <div className="article-detail grey-shadow">
-                  {/* 返回按钮 */}
-                  <img
-                    className="back-btn"
-                    src="/images/ic_header_leadback.png"
-                    onClick={this.backFromArticleDetail}
-                  />
-                  <h1 className="article-title">{articleDetail.title}</h1>
-                  <h2 className="article-brief">{articleDetail.brief}</h2>
-                  <div
-                    className="article-rich-text"
-                    dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
-                  />
-                </div>
-              )}
+              // 文章详情
+              <div className="article-detail grey-shadow">
+                {/* 返回按钮 */}
+                <img
+                  className="back-btn"
+                  src="/images/ic_header_leadback.png"
+                  onClick={this.backFromArticleDetail}
+                />
+                <h1 className="article-title">{articleDetail.title}</h1>
+                <h2 className="article-brief">{articleDetail.brief}</h2>
+                <div
+                  className="article-rich-text"
+                  dangerouslySetInnerHTML={{ __html: _.unescape(articleDetail.article || '') }}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="con-pro-l">
@@ -378,7 +378,7 @@ class Professor extends React.Component {
             <img src="/images/ic_tag.png" />
           </div>
           <div className="con-pro-r-label">
-            {serviceTag.map(tag => (
+            {serviceTag.map((tag) => (
               <span key={tag.id}>{tag.chineseContent}</span>
             ))}
           </div>
