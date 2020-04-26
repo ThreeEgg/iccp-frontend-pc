@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import { Button, Switch, Modal } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Switch, Modal, Avatar, Menu, Dropdown } from 'antd';
+import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import router, { withRouter } from 'next/router';
@@ -32,6 +32,24 @@ class Header extends React.Component {
       lang: flag ? 'zh-CN' : 'en',
     });
   };
+
+  renderMenu = () => {
+    return (
+      <Menu>
+        <Menu.Item>
+          <Link href="/modifyPWD">
+            <a>{intl.get('修改密码')}</a>
+          </Link>
+        </Menu.Item>
+        {/* <Menu.Item>
+          修改昵称
+        </Menu.Item> */}
+        <Menu.Item>
+          <a onClick={this.logout}>{intl.get('退出登录')}</a>
+        </Menu.Item>
+      </Menu>
+    );
+  }
 
   render() {
     const { isLogin, userInfo, pathname = '', lang } = this.props;
@@ -67,16 +85,14 @@ class Header extends React.Component {
               ) : null}
             </Fragment>
           ) : (
-            <>
-              <span>你好, {userInfo.name}</span>
+              <Dropdown overlay={this.renderMenu()} placement="bottomCenter" overlayClassName='menu-overlay'>
+                <span>
+                  <Avatar size="small" icon={<UserOutlined />} />
               &nbsp; &nbsp;
-              <Link href="/modifyPWD">
-                <a>{intl.get('修改密码')}</a>
-              </Link>
-              &nbsp; &nbsp;
-              <a onClick={this.logout}>{intl.get('退出登录')}</a>
-            </>
-          )}
+                  <span>你好, {userInfo.name}</span>
+                </span>
+              </Dropdown>
+            )}
           <div className="line" />
           <span className="en">En</span>
           <Switch size="small" checked={lang !== 'en'} onChange={this.changeLang} />

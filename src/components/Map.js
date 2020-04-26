@@ -32,7 +32,7 @@ export default class extends Component {
     animationDurationUpdate: 150,
     bmap: {
       zoom: defaultZoomScale,
-      roam: 'move',
+      roam: true,
       mapStyle: {
         styleJson: [
           {

@@ -92,9 +92,19 @@ class AreaSelector extends Component {
     this.setState(
       {
         country,
-        activeKey: ['service'],
+        // activeKey: ['service'],
       },
-      this.notifyAreaChange,
+      () => {
+        this.notifyAreaChange();
+
+        if (this.state.service) {
+          this.showInfoExpand();
+        } else {
+          this.setState({
+            activeKey: ['service'],
+          });
+        }
+      },
     );
   };
 
@@ -122,6 +132,15 @@ class AreaSelector extends Component {
         type: 'app/showChat',
       });
     });
+  }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (prevProps.serviceList !== this.props.serviceList) {
+      // 自动选中第一个服务
+      this.setState({
+        service: this.props.serviceList[0] || 0,
+      });
+    }
   }
 
   render() {
@@ -154,17 +173,9 @@ class AreaSelector extends Component {
           'area-selector flex flex-column',
           { active: expand },
         ])}>
-          <div className="flex flex-align flex-justifyBetween title">
+          {/* <div className="flex flex-align flex-justifyBetween title">
             <span>选择地区</span>
-            <Button
-              type="primary"
-              size="small"
-              disabled={!continent.id || !country.id || !service.id}
-              onClick={this.showInfoExpand}
-            >
-              Go!
-            </Button>
-          </div>
+          </div> */}
 
           {/* 各类选择器 */}
           <Collapse
