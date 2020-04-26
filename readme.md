@@ -20,6 +20,10 @@
 - 编译: build.sh --env test
 - 启动命令： run.sh
 
+### 依赖说明
+
+- git+http://wengpenghui:Qwe123...@172.16.1.165/source/iccp-frontend-im，此项目为npm包，用于统一代码
+
 ## Antd
 
 ### 主题定制
