@@ -11,33 +11,35 @@
     letter-spacing: 2px;
   }
   .coo-text {
+    position: relative;
     display: block;
     display: -webkit-box;
-    max-height: 100px;
     margin: 0 auto;
-    overflow: hidden;
     font-size: 14px;
-    letter-spacing: 1px;
-    text-overflow: ellipsis;
-    transition: all 0.3s;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    .coo-more {
-      position: absolute;
-      top: 150px;
-      left: 50%;
+    text-align: center;
+    &-content {
+      & > div {
+        text-align: left;
+      }
+    }
+    .clamp-lines__button {
+      padding-top: 8px;
       color: #666;
       font-size: 14px;
       letter-spacing: 1px;
-      transform: translateX(-50%);
+      border: none;
+      outline: none;
       cursor: pointer;
     }
-    &.show-more {
-      max-height: none;
-      -webkit-line-clamp: unset;
-      .coo-more {
-        display: none;
-      }
-    }
+    // .coo-more {
+    //   position: absolute;
+    //   top: 150px;
+    //   left: 50%;
+    //   color: #666;
+    //   font-size: 14px;
+    //   letter-spacing: 1px;
+    //   transform: translateX(-50%);
+    //   cursor: pointer;
+    // }
   }
 }
