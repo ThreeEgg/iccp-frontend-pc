@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: 毛翔宇
  * @Date: 2020-04-02 18:58:04
  * @LastEditors: 毛翔宇
@@ -8,7 +8,7 @@
  * @FilePath: \PC端-前端\src\layouts\IMLayout.js
  */
 import React, { Component } from 'react';
-import { Badge } from 'antd';
+import { Badge, Modal } from 'antd';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
@@ -25,19 +25,19 @@ export class IMLayout extends Component {
     this.props.dispatch({
       type: 'im/connect',
     });
-  }
+  };
 
   imLogout = () => {
     this.props.dispatch({
       type: 'im/logout',
     });
-  }
+  };
 
   showChat = () => {
     this.props.dispatch({
       type: 'app/showChat',
     });
-  }
+  };
 
   hideChat = () => {
     this.props.dispatch({
@@ -62,7 +62,7 @@ export class IMLayout extends Component {
     }
     // 提供dispatch注入
     global.dispatch = this.props.dispatch;
-  }
+  };
 
   render() {
     const { unreadCount, canShowChat, chatVisible } = this.props;
@@ -78,28 +78,34 @@ export class IMLayout extends Component {
     return (
       <>
         {this.props.children}
-        {
-          chatIconVisible ?
-            <div className='im-entry' onClick={this.showChat}>
-              <Badge count={unreadCount} />
-            </div> : null
-        }
-        {
-          chatVisible ?
-            <div className={classNames('chat-global-container flex')}>
-              <div className='chat-global-body flex-1'>
-                {/* FIXME: 2020.4.2 此处需要做缓存，提高性能 */}
-                {
-                  canShowChat ? <NIMChat /> : null
-                }
-              </div>
-              <div className="chat-global-navigator flex flex-column">
-                <CloseOutlined className='close' onClick={this.hideChat} />
-
-                <MinusOutlined className='min' onClick={this.hideChat} />
-              </div>
+        {chatIconVisible ? (
+          <div className="im-entry" onClick={this.showChat}>
+            <Badge count={unreadCount} />
+          </div>
+        ) : null}
+        <Modal
+          visible={chatVisible}
+          width={1000}
+          centered
+          title={null}
+          footer={null}
+          closable={false}
+          mask={false}
+          wrapClassName="chat-global-modal-container"
+          onCancel={this.hideChat}
+        >
+          <div className={classNames('chat-global-container flex')}>
+            <div className="chat-global-body flex-1">
+              {/* FIXME: 2020.4.2 此处需要做缓存，提高性能 */}
+              {canShowChat ? <NIMChat /> : null}
             </div>
-            : null
+            <div className="chat-global-navigator flex flex-column">
+              <CloseOutlined className="close" onClick={this.hideChat} />
+
+              <MinusOutlined className="min" onClick={this.hideChat} />
+            </div>
+          </div>
+        </Modal>
         }
       </>
     );

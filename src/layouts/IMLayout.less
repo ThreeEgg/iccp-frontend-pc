@@ -16,20 +16,21 @@
   }
 }
 
+.chat-global-modal-container {
+  .ant-modal-content {
+    overflow: hidden;
+    background: transparent;
+    border-radius: 10px;
+  }
+  .ant-modal-body {
+    padding: 0;
+  }
+}
+
 .chat-global-container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: 999;
-  width: 1000px;
-  height: 620px;
+  height: 70vh;
   overflow: hidden;
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.5);
-  transform: translateX(-50%) translateY(-50%);
-  // .chat-global-body{
-  // }
   .chat-global-navigator {
     flex-shrink: 0;
     width: 56px;
