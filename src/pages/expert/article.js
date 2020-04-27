@@ -3,6 +3,7 @@ import { Button, message, Form, Input, Pagination, Modal } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import router from 'next/router';
 import moment from 'moment';
+import classNames from 'classnames';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import ContentHeader from '../../components/ContentHeader';
 import api from '../../services/api';
@@ -49,18 +50,19 @@ export class Article extends Component {
   }
 
   state = {
-    edit: false,
+    previewMode: false,
+    canEdit: false,
     content: '',
     targetArticleId: null,
   };
 
   editorElem = createRef();
+  editorBarElem = createRef();
   formRef = createRef();
 
   initEditor = () => {
     const E = require('wangeditor');
-    const elem = this.editorElem.current; //获取editorElem盒子
-    const editor = new E(elem); //new 一个 editorElem富文本
+    const editor = new E(this.editorBarElem.current, this.editorElem.current); //new 一个 editorElem富文本
 
     // 配置菜单
     editor.customConfig.menus = [
@@ -127,7 +129,7 @@ export class Article extends Component {
     editor.create(); //创建
     editor.txt.html(this.state.content); //设置富文本默认内容
     // FIXME: 2020.4.1 校验图片大小的提示需要改成message
-    editor.customConfig.customAlert = function(info) {
+    editor.customConfig.customAlert = function (info) {
       // info 是需要提示的内容
       message.error(info);
     };
@@ -146,7 +148,7 @@ export class Article extends Component {
 
     // 查看是否没有异常
     const fieldError = form.getFieldsError();
-    const hasError = fieldError.find(item => item.errors.length >= 1);
+    const hasError = fieldError.find((item) => item.errors.length >= 1);
     if (hasError) {
       return;
     }
@@ -174,20 +176,22 @@ export class Article extends Component {
       // FIXME: 2020.4.3 此处考虑不在第一页的话，刷新页面会导致看不到自己刚刚新增的文章
       router.reload();
     }
+
+    this.setEditable(false);
   };
 
-  onChange = page => {
+  onChange = (page) => {
     router.push('/expert/article?pageNum=' + page);
   };
 
   add = () => {
     this.setState({
-      edit: true,
+      previewMode: true,
       targetArticleId: null,
     });
   };
 
-  remove = id => {
+  remove = (id) => {
     Modal.confirm({
       title: '警告',
       icon: <ExclamationCircleOutlined />,
@@ -206,8 +210,8 @@ export class Article extends Component {
     });
   };
 
-  editArticle = articleId => {
-    const articleData = this.props.articles.find(item => item.id === articleId);
+  previewArticle = (articleId, canEdit = false) => {
+    const articleData = this.props.articles.find((item) => item.id === articleId);
 
     if (!articleData) {
       console.log('article not find');
@@ -218,11 +222,12 @@ export class Article extends Component {
 
     this.setState(
       {
-        edit: true,
+        previewMode: true,
         targetArticleId: articleId,
       },
       () => {
         this.editor.txt.html(article);
+        this.setEditable(canEdit);
 
         this.formRef.current.setFieldsValue({
           title,
@@ -232,9 +237,20 @@ export class Article extends Component {
     );
   };
 
+  setEditable = (canEdit = true) => {
+    this.setState(
+      {
+        canEdit,
+      },
+      () => {
+        this.editor.$textElem.attr('contenteditable', canEdit);
+      },
+    );
+  };
+
   componentDidUpdate = (prevProps, prevState) => {
-    if (prevState.edit !== this.state.edit) {
-      if (this.state.edit) {
+    if (prevState.previewMode !== this.state.previewMode) {
+      if (this.state.previewMode) {
         this.initEditor();
       }
     }
@@ -248,7 +264,7 @@ export class Article extends Component {
 
   render() {
     const { articles, pageNum, pageInfo } = this.props;
-    const { edit } = this.state;
+    const { previewMode, canEdit } = this.state;
 
     return (
       <ContentLayoutExpert
@@ -256,7 +272,7 @@ export class Article extends Component {
         title="My Article"
         url="/images/ic_header_classcase1.png"
       >
-        {!edit ? (
+        {!previewMode ? (
           <div className="expert-article-list">
             <ContentHeader
               title="My Article"
@@ -267,16 +283,32 @@ export class Article extends Component {
                 </Button>
               }
             />
-            {articles.map(article => {
+            {articles.map((article) => {
               return (
-                <div className="article-item" key={article.id}>
+                <div
+                  className="article-item"
+                  key={article.id}
+                  onClick={() => this.previewArticle(article.id)}
+                >
                   <div className="article-title flex flex-align">
                     <div className="flex-1">{article.title}</div>
                     <span>{moment(new Date(article.updateTime)).format('YYYY/MM/DD')}</span>
-                    <i className="iconfont" onClick={() => this.editArticle(article.id)}>
+                    <i
+                      className="iconfont"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        this.previewArticle(article.id, true);
+                      }}
+                    >
                       &#xe6a3;
                     </i>
-                    <i className="iconfont" onClick={() => this.remove(article.id)}>
+                    <i
+                      className="iconfont"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        this.remove(article.id);
+                      }}
+                    >
                       &#xe695;
                     </i>
                   </div>
@@ -295,18 +327,24 @@ export class Article extends Component {
             </div>
           </div>
         ) : (
-          <div className="rich-text-editor">
+          <div className={classNames('rich-text-editor', { 'read-only': !canEdit })}>
             <div className="editor-navigator flex flex-justifyBetween">
               <div
                 className="editor-navigator-back flex flex-align"
-                onClick={() => this.setState({ edit: false })}
+                onClick={() => this.setState({ previewMode: false })}
               >
                 <img src="/images/ic_header_leadback.png" />
                 &nbsp; 返回
               </div>
-              <Button type="primary" size="small" onClick={this.save}>
-                Save
-              </Button>
+              {canEdit ? (
+                <Button type="primary" size="small" onClick={this.save}>
+                  Save
+                </Button>
+              ) : (
+                <i className="bar-tip iconfont" onClick={() => this.setEditable(true)}>
+                  &#xe693;
+                </i>
+              )}
             </div>
             {/* 编辑器 */}
             {/* FIXME: 2020.3.31 需要替换为TinyMCE */}
@@ -319,7 +357,7 @@ export class Article extends Component {
                   { max: 50, message: '最多输入50个字符' },
                 ]}
               >
-                <Input type="text" />
+                <Input type="text" readOnly={!canEdit} />
               </Form.Item>
               <Form.Item
                 label="简介"
@@ -329,7 +367,7 @@ export class Article extends Component {
                   { max: 400, message: '最多输入400个字符' },
                 ]}
               >
-                <Input.TextArea />
+                <Input.TextArea readOnly={!canEdit} />
               </Form.Item>
               <Form.Item
                 label="详情"
@@ -350,9 +388,19 @@ export class Article extends Component {
                   }),
                 ]}
               >
-                {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
-                <div className="editor" ref={this.editorElem}>
-                  <div />
+                <div>
+                  {/* 工具栏 */}
+                  <div
+                    className="custom-editor-bar"
+                    style={{ display: canEdit ? 'flex' : 'none' }}
+                    ref={this.editorBarElem}
+                  >
+                    <div />
+                  </div>
+                  {/* 此处通过一个空标签，解决手动操作dom导致的dom残留问题 */}
+                  <div className="custom-editor-content ant-input" ref={this.editorElem}>
+                    <div />
+                  </div>
                 </div>
               </Form.Item>
             </Form>

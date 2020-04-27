@@ -7,17 +7,19 @@
     flex: 1;
   }
   .article-item {
-    padding: 0 24px 24px 24px;
+    padding: 12px 24px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
     .article-title {
       padding: 16px 16px 16px 0;
       font-weight: bold;
       font-size: 16px;
-      border-bottom: 1px solid #eee;
-      i, span {
-        font-weight: normal;
-        color: #AAA;
-        font-size: 16px;
+      i,
+      span {
         margin-left: 16px;
+        color: #aaa;
+        font-weight: normal;
+        font-size: 16px;
       }
       i {
         cursor: pointer;
@@ -37,17 +39,27 @@
 
   .rich-text-editor {
     padding: 36px 24px;
+    .custom-editor-content {
+      min-height: 50vh;
+    }
     .editor-navigator {
       margin-bottom: 36px;
     }
     .w-e-toolbar,
     .w-e-text-container {
       background: transparent !important;
-      border-color: #d8d8d8 !important;
+      // border-color: #d8d8d8 !important;
     }
     // 处理富文本框层级比IMLayout高的问题
     .ant-form-item-control-input-content {
       z-index: 1;
+    }
+    &.read-only {
+      .ant-input {
+        border: none;
+        outline: none;
+        box-shadow: none;
+      }
     }
   }
 }

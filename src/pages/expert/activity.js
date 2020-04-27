@@ -50,7 +50,7 @@ export class Activity extends Component {
     publishContent: '',
   };
 
-  onChange = page => {
+  onChange = (page) => {
     router.push('/expert/activity?pageNum=' + page);
   };
 
@@ -68,7 +68,7 @@ export class Activity extends Component {
     }
   };
 
-  removeActivity = id => {
+  removeActivity = (id) => {
     Modal.confirm({
       title: '警告',
       icon: <ExclamationCircleOutlined />,
@@ -76,6 +76,7 @@ export class Activity extends Component {
       okText: '是的',
       okType: 'danger',
       cancelText: '取消',
+      centered: true,
       onOk: async () => {
         const res = await expertService.deleteExpertActivity({ id });
 
@@ -87,7 +88,7 @@ export class Activity extends Component {
     });
   };
 
-  onPublishContentChange = e => {
+  onPublishContentChange = (e) => {
     let str = e.target.value;
     if (str.length > 140) {
       str = str.slice(0, 140);
