@@ -98,8 +98,10 @@
     width: 620px;
     .con-pro-m-title {
       color: #333;
+
       .ant-tabs {
-        box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+        // box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+        overflow: visible;
       }
       .ant-tabs-nav {
         .ant-tabs-tab {
@@ -116,11 +118,15 @@
         padding-left: 30px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
       }
+      .con-pro-activity {
+        box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+      }
       .pro-essay-item,
       .pro-info-item {
+        margin-bottom: 8px;
         padding: 24px;
         word-break: break-all;
-        box-shadow: 0 6px 6px 0 rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
         h1 {
           padding-bottom: 15px;
           color: #333;
@@ -266,13 +272,14 @@
       }
       .site-calendar-demo-card {
         width: 100%;
-        border: 1px solid #f0f0f0;
+        // border: 1px solid #f0f0f0;
         border-radius: 4px;
       }
       .ant-picker-cell {
         .ant-picker-cell-inner {
           div {
             font-size: 14px;
+            text-align: center;
           }
         }
       }
@@ -307,7 +314,7 @@
   }
   // 分页样式重绘
   .common-pagination {
-    margin: 25px 0;
+    padding: 25px 0;
     text-align: center;
   }
   .ant-pagination-item-active {

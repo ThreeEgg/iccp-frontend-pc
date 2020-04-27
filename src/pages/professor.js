@@ -290,17 +290,19 @@ class Professor extends React.Component {
         <div className="con-pro-m">
           <div className="con-pro-m-title">
             {!articleDetail ? (
-              <Tabs activeKey={tabName} onChange={this.changeTab}>
+              <Tabs activeKey={tabName} animated={false} onChange={this.changeTab}>
                 <TabPane tab="专家动态" key="activity">
-                  <Timeline data={activity} onArticleClick={this.onArticleClick} />
-                  <div className="common-pagination">
-                    <Pagination
-                      current={pageNum}
-                      onChange={this.onPageChange}
-                      size="small"
-                      pageSize={10}
-                      total={pageInfo.totalResults}
-                    />
+                  <div className="con-pro-activity">
+                    <Timeline data={activity} onArticleClick={this.onArticleClick} />
+                    <div className="common-pagination">
+                      <Pagination
+                        current={pageNum}
+                        onChange={this.onPageChange}
+                        size="small"
+                        pageSize={10}
+                        total={pageInfo.totalResults}
+                      />
+                    </div>
                   </div>
                 </TabPane>
                 <TabPane tab="专家文章" key="article">
