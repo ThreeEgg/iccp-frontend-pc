@@ -12,9 +12,9 @@
       position: relative;
     }
     .map-footer {
-      background: #25272b;
-      color: rgba(255, 255, 255, 0.6);
       padding: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      background: #25272b;
       .icons {
         i {
           margin-right: 32px;
@@ -33,12 +33,12 @@
           color: white;
         }
       }
-
     }
     .map-selector {
       position: absolute;
       top: 50%;
       left: 8px;
+      z-index: 1000;
       transform: translateY(-50%);
     }
     .business-intro {
@@ -62,19 +62,17 @@
           font-size: 18px;
         }
         p {
+          display: -webkit-box;
+          overflow: hidden;
           color: white;
           font-size: 14px;
           line-height: 20px;
-
-          overflow : hidden;
           text-overflow: ellipsis;
-          display: -webkit-box;
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
         }
       }
     }
-
   }
   .content {
     width: 100%;
@@ -215,12 +213,12 @@
 
 .ant-dropdown {
   &.footer-overlay {
-    top: ~"calc(100vh - 94px)!important";
+    top: ~'calc(100vh - 94px)!important';
     .overlay {
-      background: #25272b;
       padding: 10px;
-      border-radius: 3px;
       color: white;
+      background: #25272b;
+      border-radius: 3px;
       a {
         color: white;
       }
@@ -231,7 +229,7 @@
       }
     }
     &.qrcode {
-      top: ~"calc(100vh - 172px)!important";
+      top: ~'calc(100vh - 172px)!important';
     }
   }
 }

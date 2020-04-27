@@ -1,5 +1,5 @@
 import React, { Component, createRef } from 'react';
-import { Button, Avatar, Pagination, Modal, Input, message, Form, Popconfirm } from 'antd';
+import { Button, Avatar, Pagination, Modal, Input, message, Form, Popconfirm, Tag } from 'antd';
 import {
   ExclamationCircleOutlined,
   ArrowRightOutlined,
@@ -418,20 +418,92 @@ export default class extends Component {
         removeContentStyle
       >
         <div className="expert-home">
-          <div className="user-info flex flex-justifyBetween flex-align grey-shadow">
-            <div className="flex flex-align">
-              <Avatar className="avatar" size={72} src={image} />
-              <div className="flex flex-column">
-                <h1 className="name">{name}</h1>
-                <h4 className="location flex">
-                  <i className="iconfont">&#xe698;</i>
-                  &nbsp;&nbsp; {cname}
-                </h4>
+          <div className="user-info flex flex-justifyBetween">
+            <div className="user-profile-container flex flex-1 flex-justifyBetween grey-shadow">
+              <Avatar shape="square" className="avatar" size={256} src={image} />
+              <div className="user-profile flex flex-column flex-1">
+                {/* 用户信息 */}
+                <div className="flex flex-justifyBetween flex-align">
+                  <h1 className="name">{name}</h1>
+                  <h4 className="location flex">
+                    <i className="iconfont">&#xe698;</i>
+                    &nbsp;&nbsp; {cname}
+                  </h4>
+                </div>
+
+                {/* 个人简介 */}
+                <div className="brief">
+                  <div className="flex flex-justifyBetween">
+                    <span className="title">个人简介</span>
+                    <span
+                      className="action"
+                      onClick={() =>
+                        this.setState({
+                          introductionModalVisible: true,
+                          editIntroduction: introduction,
+                        })
+                      }
+                    >
+                      <i className="iconfont">&#xe693;</i>
+                      &nbsp; Edit
+                    </span>
+                  </div>
+                  <div className="body text-overflow-2">{introduction}</div>
+                </div>
+
+                <div className="divider"></div>
+
+                {/* 服务标签 */}
+                <div className="service">
+                  <div className="flex flex-justifyBetween">
+                    <span className="title">服务标签</span>
+                    <span
+                      className="action"
+                      onClick={() => this.setState({ serviceTagModalVisible: true })}
+                    >
+                      <i className="iconfont">&#xe693;</i>
+                      &nbsp; Edit
+                    </span>
+                  </div>
+                  <div className="body text-overflow-2">
+                    {serviceTag.map((item) => {
+                      const { id, chineseContent, englishContent } = item;
+                      return (
+                        <Tag type="" key={id}>
+                          {chineseContent}
+                        </Tag>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
             {/* <i className='iconfont'>&#xe693;</i> */}
+            <div className="rating flex flex-column flex-algin  grey-shadow">
+              <div className="rating-header flex flex-justifyBetween flex-align">
+                <i className="iconfont">&#xe68c;</i>
+                <div className="flex flex-column">
+                  <strong>{averageRate.toFixed(1)}</strong>
+                  <b>综合评分</b>
+                </div>
+              </div>
+              <div className="rates flex-column flex flex-justifyCenter flex-1">
+                <div>
+                  <span>服务态度</span>
+                  <Rate value={attitudeRateAVG} max={3} />
+                </div>
+                <div>
+                  <span>专业能力</span>
+                  <Rate value={skillRateAVG} max={3} />
+                </div>
+                <div>
+                  <span>回复速度</span>
+                  <Rate value={responseRateAVG} max={3} />
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="infos flex">
+          {/* <div className="infos flex">
             <div className="introduction flex flex-column flex-1 grey-shadow">
               <div className="info-header flex flex-justifyBetween flex-align">
                 <strong>个人简介</strong>
@@ -467,31 +539,7 @@ export default class extends Component {
                 </i>
               </div>
             </div>
-            <div className="rating flex flex-column flex-algin flex-1 grey-shadow">
-              <div className="info-header flex flex-justifyBetween flex-align">
-                <strong>服务评价</strong>
-                <i className="iconfont">&#xe68c;</i>
-              </div>
-              <div className="flex-1 rate">
-                <div>
-                  <span>综合评分</span>
-                  <Rate value={averageRate} max={3} />
-                </div>
-                <div>
-                  <span>服务态度</span>
-                  <Rate value={attitudeRateAVG} max={3} />
-                </div>
-                <div>
-                  <span>专业能力</span>
-                  <Rate value={skillRateAVG} max={3} />
-                </div>
-                <div>
-                  <span>回复速度</span>
-                  <Rate value={responseRateAVG} max={3} />
-                </div>
-              </div>
-            </div>
-          </div>
+            </div> */}
           <div className="detail grey-shadow">
             <div className="bar flex flex-justifyBetween flex-align">
               专家详情

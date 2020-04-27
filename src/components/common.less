@@ -52,3 +52,14 @@ p,
 textarea {
   word-break: break-word;
 }
+
+.text-overflow {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  &-2 {
+    -webkit-line-clamp: 2;
+  }
+}

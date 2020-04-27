@@ -2,3 +2,21 @@
 .anchorBL {
   display: none;
 }
+
+.map-avatar-container {
+  position: absolute;
+  top: -50px;
+  left: -40px;
+  img {
+    width: 30px;
+    border-radius: 50%;
+  }
+}
+
+#map_ {
+  div {
+    &:first-child {
+      z-index: 900 !important;
+    }
+  }
+}

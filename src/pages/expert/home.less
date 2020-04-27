@@ -2,18 +2,80 @@
   padding-bottom: 80px;
   .user-info {
     margin-bottom: 16px;
-    padding: 24px 32px;
-    .avatar {
-      margin-right: 24px;
+    .user-profile-container {
+      margin-right: 16px;
+    }
+    .user-profile {
+      padding: 24px 16px 24px 24px;
     }
     .name {
-      margin-bottom: 4px;
-      font-size: 23px;
+      margin: 0;
+      font-weight: border;
+      font-size: 24px;
     }
     .location {
+      margin: 0;
       font-size: 13px;
       i {
         color: @primary-color;
+      }
+    }
+    .divider {
+      height: 1px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+    .brief,
+    .service {
+      margin-top: 16px;
+      .title {
+        margin-bottom: 10px;
+        color: #aaa;
+      }
+      .action {
+        color: #aaa;
+        font-size: 12px;
+      }
+      .body {
+        margin-bottom: 10px;
+        color: #666;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .ant-tag {
+        color: @primary-color;
+        font-size: 13px;
+        border-color: @primary-color;
+      }
+    }
+
+    .rating-header {
+      padding: 0 16px;
+      padding: 19px 36px 19px 26px;
+      color: white;
+      background: @primary-color;
+      strong {
+        font-size: 32px;
+      }
+      b {
+        font-size: 12px;
+      }
+      i {
+        color: rgba(0, 0, 0, 0.3);
+        font-size: 20px;
+        cursor: pointer;
+      }
+    }
+    .rates {
+      padding: 0 20px;
+      > div {
+        margin-bottom: 20px;
+        &:last-of-type {
+          margin: 0;
+        }
+      }
+      span {
+        display: inline-block;
+        margin-right: 24px;
       }
     }
   }
