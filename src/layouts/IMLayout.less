@@ -1,13 +1,14 @@
 .im-entry {
   position: fixed;
-  z-index: 999;
-  bottom: 60px;
   right: 40px;
+  bottom: 60px;
+  z-index: 999;
   width: 80px;
   height: 80px;
   background: url(/images/ic_float_talk.png) no-repeat ~'100% / 100%';
   border-radius: 50%;
-  box-shadow: 0px 0px 20px rgba(0,0,0,.5);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
   .ant-badge {
     p {
       color: white;
@@ -17,25 +18,25 @@
 
 .chat-global-container {
   position: fixed;
-  width: 1000px;
-  height: 620px;
   top: 50%;
   left: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  background: white;
   z-index: 999;
-  box-shadow:0px 2px 24px 0px rgba(0,0,0,0.5);
-  border-radius:10px;
+  width: 1000px;
+  height: 620px;
   overflow: hidden;
-  .chat-global-body{
-  }
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%) translateY(-50%);
+  // .chat-global-body{
+  // }
   .chat-global-navigator {
     flex-shrink: 0;
     width: 56px;
-    background: #337AFF;
     padding: 24px 0;
     color: white;
     font-size: 24px;
+    background: #337aff;
     .close {
       display: inline-block;
       margin-bottom: 30px;

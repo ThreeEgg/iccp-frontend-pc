@@ -1,6 +1,14 @@
 import api from './api';
 import request from './request';
 
+export const getExpertHomePage = async ({ userId }) => {
+  return request(api.getExpertHomePage, {
+    params: {
+      userId,
+    },
+  });
+};
+
 export const getCountryList = async ({ id }) => {
   return request(api.getCountryList, {
     params: { id },

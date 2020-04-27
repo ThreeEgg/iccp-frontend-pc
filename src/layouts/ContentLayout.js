@@ -21,21 +21,23 @@ export default class ContentLayout extends React.Component {
                 {this.props.title}
               </div>
               <div>
-                <a href="/"><i className="iconfont">&#xe684;</i>返回首页</a>
+                <a href="/">
+                  <i className="iconfont">&#xe684;</i>返回首页
+                </a>
               </div>
             </div>
           </div>
         </div>
         <div className="content">
-          <div className="content-plat-c commonWidth flex">
+          <div className="content-plat-c commonWidth flex flex-alignStart">
             {!this.props.hideSider ? (
               <Fragment>
                 <Sider />
                 <div className="content-c-r">{this.props.children}</div>
               </Fragment>
             ) : (
-                this.props.children
-              )}
+              this.props.children
+            )}
           </div>
         </div>
         <Footer />
