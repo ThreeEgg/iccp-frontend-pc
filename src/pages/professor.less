@@ -1,7 +1,6 @@
 .professor-detail-page {
   .con-pro-r {
     width: 270px;
-    height: 685px;
     margin-right: 20px;
     padding-top: 40px;
     box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
@@ -50,51 +49,47 @@
       background: #1b2857;
       border-radius: 28px;
     }
-    .con-pro-r-title {
-      padding-bottom: 8px;
-      padding-left: 16px;
+    .con-pro-r-list {
+      padding: 0 16px 8px;
       color: #333;
       font-weight: 600;
       font-size: 16px;
       border-bottom: 1px solid rgba(238, 238, 238, 0.8);
-    }
-    .con-pro-r-time {
-      padding: 10px;
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.05);
-      .time-date {
-        color: #1b2857;
-        font-size: 16px;
-        text-align: center;
-      }
-      .site-calendar-demo-card {
-        width: 100%;
-        border: 1px solid #f0f0f0;
-        border-radius: 4px;
-      }
-      .ant-picker-cell {
-        .ant-picker-cell-inner {
-          div {
-            font-size: 14px;
-          }
-        }
-      }
-      .ant-picker-date-panel {
-        .ant-picker-content {
-          th {
-            font-size: 14px;
-          }
-        }
-      }
-    }
-    .con-pro-r-list {
-      height: 66px;
-      padding: 0 16px;
-      color: #333;
-      font-size: 16px;
       img {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+    p {
+      padding: 20px;
+      color: #666;
+      font-size: 15px;
+      line-height: 21px;
+    }
+    .con-pro-r-label {
+      padding: 20px;
+      color: #999;
+      font-size: 13px;
+      span {
+        display: inline-block;
+        margin-right: 16px;
+        margin-bottom: 16px;
+      }
+    }
+    .con-pro-r-rate {
+      padding: 20px;
+      color: #333;
+      > div {
+        margin-bottom: 20px;
+        font-size: 14px;
+        line-height: 0;
+        .ant-rate {
+          margin-left: 18px;
+          color: #ff7d16;
+          .ant-rate-star:not(:last-child) {
+            margin-right: 14px;
+          }
+        }
       }
     }
   }
@@ -124,6 +119,7 @@
       .pro-essay-item,
       .pro-info-item {
         padding: 24px;
+        word-break: break-all;
         box-shadow: 0 6px 6px 0 rgba(0, 0, 0, 0.1);
         h1 {
           padding-bottom: 15px;
@@ -133,11 +129,21 @@
           border-bottom: 1px solid #eee;
         }
         p {
-          margin: 0;
-          padding: 15px 0 20px;
+          display: -webkit-box;
+          margin: 15px 0 10px;
+          overflow: hidden;
           color: #666;
           font-size: 16px;
           line-height: 22px;
+          text-overflow: ellipsis;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+        }
+        .show-more {
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 13px;
+          text-align: right;
+          cursor: pointer;
         }
         .swiper-img-container {
           width: 170.667px;
@@ -161,13 +167,11 @@
           }
         }
       }
-      .pro-essay-item {
-        cursor: pointer;
-      }
     }
     .article-detail {
       position: relative;
       padding: 56px 32px;
+      word-break: break-all;
       background-color: white;
       .back-btn {
         position: absolute;
@@ -243,47 +247,51 @@
     margin-left: 20px;
     padding-top: 30px;
     box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
-    .con-pro-r-list {
-      padding: 0 16px 8px;
+    .con-pro-r-title {
+      padding-bottom: 8px;
+      padding-left: 16px;
       color: #333;
       font-weight: 600;
       font-size: 16px;
       border-bottom: 1px solid rgba(238, 238, 238, 0.8);
-      img {
-        width: 20px;
-        height: 20px;
+    }
+    .con-pro-r-time {
+      padding: 10px;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.05);
+      .time-date {
+        color: #1b2857;
+        font-size: 16px;
+        text-align: center;
       }
-    }
-    p {
-      padding: 20px;
-      color: #666;
-      font-size: 15px;
-      line-height: 21px;
-    }
-    .con-pro-r-label {
-      padding: 20px;
-      color: #999;
-      font-size: 13px;
-      span {
-        display: inline-block;
-        margin-right: 16px;
-        margin-bottom: 16px;
+      .site-calendar-demo-card {
+        width: 100%;
+        border: 1px solid #f0f0f0;
+        border-radius: 4px;
       }
-    }
-    .con-pro-r-rate {
-      padding: 20px;
-      color: #333;
-      > div {
-        margin-bottom: 20px;
-        font-size: 14px;
-        line-height: 0;
-        .ant-rate {
-          margin-left: 18px;
-          color: #ff7d16;
-          .ant-rate-star:not(:last-child) {
-            margin-right: 14px;
+      .ant-picker-cell {
+        .ant-picker-cell-inner {
+          div {
+            font-size: 14px;
           }
         }
+      }
+      .ant-picker-date-panel {
+        .ant-picker-content {
+          th {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+    .con-pro-r-list {
+      height: 66px;
+      padding: 0 16px;
+      color: #333;
+      font-size: 16px;
+      img {
+        width: 24px;
+        height: 24px;
       }
     }
   }

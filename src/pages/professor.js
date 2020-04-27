@@ -240,19 +240,51 @@ class Professor extends React.Component {
           <div className="con-pro-r-name">{userInfo.name}</div>
           {onlineTime ? <div className="con-pro-r-status">最近在线：{onlineTime}</div> : null}
           <Button onClick={() => this.goToCommunication(imUser.accid)}>立即沟通</Button>
-          <div className="con-pro-r-title">本月日程</div>
-          <div className="con-pro-r-time">
-            <div className="time-date">Mar 2020</div>
-            <div className="site-calendar-demo-card">
-              <Calendar fullscreen={false} />
-            </div>
+
+          <div
+            className="con-pro-r-list flex flex-align flex-justifyBetween"
+            onClick={this.timeList}
+          >
+            专家简介
+            <img src="/images/ic_breif.png" />
+          </div>
+          <p>{introduction}</p>
+          <div
+            className="con-pro-r-list flex flex-align flex-justifyBetween"
+            onClick={this.timeList}
+          >
+            服务标签
+            <img src="/images/ic_tag.png" />
+          </div>
+          <div className="con-pro-r-label">
+            {serviceTag.map((tag) => (
+              <span key={tag.id}>{tag.chineseContent}</span>
+            ))}
           </div>
           <div
             className="con-pro-r-list flex flex-align flex-justifyBetween"
-            onClick={this.showSchedule}
+            onClick={this.timeList}
           >
-            查看专家时间表
-            <img src="/images/ic_date.png" />
+            服务评价
+            <img src="/images/ic_evaluate.png" />
+          </div>
+          <div className="con-pro-r-rate">
+            <div>
+              综合评分 &nbsp;&nbsp;
+              <Rate value={averageRate} max={3} />
+            </div>
+            <div>
+              服务态度 &nbsp;&nbsp;
+              <Rate value={attitudeRateAVG} max={3} />
+            </div>
+            <div>
+              专业能力 &nbsp;&nbsp;
+              <Rate value={skillRateAVG} max={3} />
+            </div>
+            <div>
+              回复速度 &nbsp;&nbsp;
+              <Rate value={responseRateAVG} max={3} />
+            </div>
           </div>
         </div>
         <div className="con-pro-m">
@@ -276,13 +308,12 @@ class Professor extends React.Component {
                     <Fragment>
                       {article.map((item) => {
                         return (
-                          <div
-                            className="pro-essay-item"
-                            key={item.id}
-                            onClick={() => this.gotoArticleDetail(item.id)}
-                          >
+                          <div className="pro-essay-item" key={item.id}>
                             <h1>{item.title}</h1>
                             <p>{item.brief}</p>
+                            <div className="show-more">
+                              <span onClick={() => this.gotoArticleDetail(item.id)}>查看全文</span>
+                            </div>
                           </div>
                         );
                       })}
@@ -362,50 +393,19 @@ class Professor extends React.Component {
           </div>
         </div>
         <div className="con-pro-l">
-          <div
-            className="con-pro-r-list flex flex-align flex-justifyBetween"
-            onClick={this.timeList}
-          >
-            专家简介
-            <img src="/images/ic_breif.png" />
-          </div>
-          <p>{introduction}</p>
-          <div
-            className="con-pro-r-list flex flex-align flex-justifyBetween"
-            onClick={this.timeList}
-          >
-            服务标签
-            <img src="/images/ic_tag.png" />
-          </div>
-          <div className="con-pro-r-label">
-            {serviceTag.map((tag) => (
-              <span key={tag.id}>{tag.chineseContent}</span>
-            ))}
+          <div className="con-pro-r-title">本月日程</div>
+          <div className="con-pro-r-time">
+            <div className="time-date">{moment().format('MMM YYYY')}</div>
+            <div className="site-calendar-demo-card">
+              <Calendar fullscreen={false} />
+            </div>
           </div>
           <div
             className="con-pro-r-list flex flex-align flex-justifyBetween"
-            onClick={this.timeList}
+            onClick={this.showSchedule}
           >
-            服务评价
-            <img src="/images/ic_evaluate.png" />
-          </div>
-          <div className="con-pro-r-rate">
-            <div>
-              综合评分 &nbsp;&nbsp;
-              <Rate value={averageRate} max={3} />
-            </div>
-            <div>
-              服务态度 &nbsp;&nbsp;
-              <Rate value={attitudeRateAVG} max={3} />
-            </div>
-            <div>
-              专业能力 &nbsp;&nbsp;
-              <Rate value={skillRateAVG} max={3} />
-            </div>
-            <div>
-              回复速度 &nbsp;&nbsp;
-              <Rate value={responseRateAVG} max={3} />
-            </div>
+            查看专家时间表
+            <img src="/images/ic_date.png" />
           </div>
         </div>
 
@@ -413,6 +413,7 @@ class Professor extends React.Component {
         <Modal
           visible={this.state.scheduleVisible}
           width={720}
+          closable={false}
           onCancel={() => this.showSchedule(false)}
         >
           <Schedule mode="read" schedule={schedule} />

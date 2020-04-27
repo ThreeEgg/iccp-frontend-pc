@@ -1,6 +1,10 @@
 import React, { Component, createRef } from 'react';
 import { Button, Avatar, Pagination, Modal, Input, message, Form, Popconfirm } from 'antd';
-import { ExclamationCircleOutlined, ArrowRightOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  ExclamationCircleOutlined,
+  ArrowRightOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import shortId from 'shortid';
@@ -83,6 +87,7 @@ export default class extends Component {
     introduction: '',
     editIntroduction: '',
     introductionModalVisible: false,
+    editMode: false,
     information: [
       // {
       //   id
@@ -101,6 +106,7 @@ export default class extends Component {
 
   SortableItem = SortableElement(({ value, itemIndex }) => {
     const { SortableHandlerItem } = this;
+    const { editMode } = this.state;
     const { title, content, images, id } = value;
     if (!this.formsRef[id]) {
       this.formsRef[id] = createRef();
@@ -127,18 +133,25 @@ export default class extends Component {
               <Input
                 className="title-edit flex-1"
                 value={title}
-                onChange={e => this.changeTitle(itemIndex, e)}
+                onChange={(e) => this.changeTitle(itemIndex, e)}
                 placeholder="标题"
+                readOnly={!editMode}
               />
               {/* 移动锚点 */}
-              <SortableHandlerItem />
-              &nbsp;
-              &nbsp;
-              <Popconfirm title="确认删除？" overlayClassName='expert-home-edit-popover' icon={<QuestionCircleOutlined style={{ color: 'red' }} />} onConfirm={() => this.removeInformation(itemIndex)}>
-                <i className="iconfont">
-                  &#xe695;
-                </i>
-              </Popconfirm>
+              {editMode ? (
+                <React.Fragment>
+                  <SortableHandlerItem />
+                  &nbsp; &nbsp;
+                  <Popconfirm
+                    title="确认删除？"
+                    overlayClassName="expert-home-edit-popover"
+                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                    onConfirm={() => this.removeInformation(itemIndex)}
+                  >
+                    <i className="iconfont">&#xe695;</i>
+                  </Popconfirm>
+                </React.Fragment>
+              ) : null}
             </div>
           </Form.Item>
           <Form.Item
@@ -153,22 +166,26 @@ export default class extends Component {
               autoSize={{ minRows: 4, maxRows: 10 }}
               value={content}
               placeholder="内容"
-              onChange={e => this.changeContent(itemIndex, e)}
+              onChange={(e) => this.changeContent(itemIndex, e)}
+              readOnly={!editMode}
             />
           </Form.Item>
           {/* <Form.Item name='images'> */}
           <div className="img">
             <ImageUpload
               images={images}
-              onChange={fileList => this.onImageChange(itemIndex, fileList)}
+              onChange={(fileList) => this.onImageChange(itemIndex, fileList)}
+              disabled={!editMode}
             />
           </div>
           {/* </Form.Item> */}
         </Form>
-        <div className="add" onClick={() => this.addInformation(itemIndex)}>
-          <i className="iconfont">&#xe694;</i>
-          &nbsp; ADD
-        </div>
+        {editMode ? (
+          <div className="add" onClick={() => this.addInformation(itemIndex)}>
+            <i className="iconfont">&#xe694;</i>
+            &nbsp; ADD
+          </div>
+        ) : null}
       </div>
     );
   });
@@ -202,7 +219,7 @@ export default class extends Component {
 
   modifyServiceTag = async () => {
     const tags = this.editableTagRef.current.state.tags;
-    const serviceIdStr = tags.map(item => item.id).join(',');
+    const serviceIdStr = tags.map((item) => item.id).join(',');
     const res = await expertService.saveServiceTagList({ serviceIdStr });
 
     if (res.code === '0') {
@@ -224,7 +241,7 @@ export default class extends Component {
       await form.validateFields();
       const fieldError = form.getFieldsError();
       // 查看是否没有异常
-      const hasError = fieldError.find(item => item.errors.length >= 1);
+      const hasError = fieldError.find((item) => item.errors.length >= 1);
       if (hasError) {
         message.warn('请按照提示检查您输入的内容');
         return;
@@ -236,6 +253,10 @@ export default class extends Component {
     if (res.code === '0') {
       message.success('已更新');
     }
+
+    this.setState({
+      editMode: false,
+    });
   };
 
   informationSortEnd = ({ oldIndex, newIndex }) => {
@@ -284,7 +305,7 @@ export default class extends Component {
     const imageLength = images.length;
     Array.from(result).forEach((file, fileIndex) => {
       const reader = new FileReader();
-      reader.onload = evt => {
+      reader.onload = (evt) => {
         const imageUrl = evt.target.result;
         // 控制显示顺序
         const targeIndex = imageLength + fileIndex;
@@ -318,7 +339,7 @@ export default class extends Component {
   // 图片上传发生变化，就保存到state中
   onImageChange = (itemIndex, imageList) => {
     const information = [...this.state.information];
-    const images = imageList.map(item => {
+    const images = imageList.map((item) => {
       if (item.response && item.response.code == '0') {
         return item.response.data.webUrl;
       } else {
@@ -333,7 +354,7 @@ export default class extends Component {
     });
   };
 
-  addInformation = index => {
+  addInformation = (index) => {
     const information = [...this.state.information];
 
     information.splice(index + 1, 0, {
@@ -348,7 +369,7 @@ export default class extends Component {
     });
   };
 
-  removeInformation = targeIndex => {
+  removeInformation = (targeIndex) => {
     const information = this.state.information.filter((item, index) => {
       // 删除引用，避免内存残留
       delete this.formsRef[item.id];
@@ -378,6 +399,7 @@ export default class extends Component {
       editIntroduction,
       serviceTag = [],
       information = [],
+      editMode,
     } = this.state;
     const {
       userInfo: { name, image },
@@ -431,7 +453,7 @@ export default class extends Component {
                 <i className="iconfont">&#xe68a;</i>
               </div>
               <p className="flex-1">
-                {serviceTag.map(item => {
+                {serviceTag.map((item) => {
                   const { id, chineseContent, englishContent } = item;
                   return <span key={id}>{chineseContent} &nbsp;&nbsp;</span>;
                 })}
@@ -473,19 +495,20 @@ export default class extends Component {
           <div className="detail grey-shadow">
             <div className="bar flex flex-justifyBetween flex-align">
               专家详情
-              <div className='bar-tip flex flex-align'>
-                请保存您的更改
-                &nbsp;
-                &nbsp;
-                <ArrowRightOutlined />
-                &nbsp;
-                &nbsp;
-                &nbsp;
-                &nbsp;
-                <Button type="primary" size="small" onClick={this.modifyExpertInformation}>
-                  Save
-                </Button>
-              </div>
+              {!editMode ? (
+                <i className="bar-tip iconfont" onClick={() => this.setState({ editMode: true })}>
+                  &#xe693;
+                </i>
+              ) : (
+                <div className="bar-tip flex flex-align">
+                  请保存您的更改 &nbsp; &nbsp;
+                  <ArrowRightOutlined />
+                  &nbsp; &nbsp; &nbsp; &nbsp;
+                  <Button type="primary" size="small" onClick={this.modifyExpertInformation}>
+                    Save
+                  </Button>
+                </div>
+              )}
             </div>
             {information.length ? (
               <SortableList
@@ -493,17 +516,17 @@ export default class extends Component {
                 onSortEnd={this.informationSortEnd}
                 pressDelay={300}
                 useDragHandle
-                lockAxis='y'
-                helperClass='dragging'
+                lockAxis="y"
+                helperClass="dragging"
               />
-            ) : (
-                <div className="expert-home-edit-item">
-                  <div className="add" onClick={() => this.addInformation(0)}>
-                    <i className="iconfont">&#xe694;</i>
-                    &nbsp; ADD
-                  </div>
+            ) : editMode ? (
+              <div className="expert-home-edit-item">
+                <div className="add" onClick={() => this.addInformation(0)}>
+                  <i className="iconfont">&#xe694;</i>
+                  &nbsp; ADD
                 </div>
-              )}
+              </div>
+            ) : null}
             {/* <div className="common-pagination">
               <Pagination current={1} onChange={this.onChange} size="small" total={50} />
             </div> */}
@@ -523,7 +546,7 @@ export default class extends Component {
             value={editIntroduction}
             autoSize={{ minRows: 7, maxRows: 12 }}
             allowClear
-            onChange={e => this.setState({ editIntroduction: e.target.value.slice(0, 400) })}
+            onChange={(e) => this.setState({ editIntroduction: e.target.value.slice(0, 400) })}
           />
           <div className="count-limit flex flex-justifyEnd">{editIntroduction.length} / 400</div>
         </Modal>

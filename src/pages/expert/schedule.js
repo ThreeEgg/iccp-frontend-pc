@@ -44,6 +44,10 @@ export class Schedule extends Component {
 
   scheduleComponent = createRef();
 
+  state = {
+    editMode: false,
+  };
+
   saveSchedule = async () => {
     const scheduleData = this.scheduleComponent.current.exportSchedule();
 
@@ -66,6 +70,8 @@ export class Schedule extends Component {
     } else {
       message.error(res.msg);
     }
+
+    this.setState({ editMode: false });
   };
 
   componentDidMount = () => {
@@ -75,15 +81,23 @@ export class Schedule extends Component {
   };
 
   render() {
+    const { editMode } = this.state;
+
     return (
       <ContentLayoutExpert title="Schedule" url="/images/ic_professor_schedule_white.png">
         <ContentHeader
           title="Schedule"
           image="/images/ic_professor_schedule.png"
           actions={
-            <Button type="primary" size="small" onClick={this.saveSchedule}>
-              Save
-            </Button>
+            editMode ? (
+              <Button type="primary" size="small" onClick={this.saveSchedule}>
+                Save
+              </Button>
+            ) : (
+              <i className="iconfont" onClick={() => this.setState({ editMode: true })}>
+                &#xe693;
+              </i>
+            )
           }
         />
         <div className="schedule-page">
@@ -101,7 +115,7 @@ export class Schedule extends Component {
               <span>不可预约</span>
             </div>
           </div>
-          <ScheduleComponent ref={this.scheduleComponent} />
+          <ScheduleComponent ref={this.scheduleComponent} readOnly={!editMode} />
         </div>
       </ContentLayoutExpert>
     );

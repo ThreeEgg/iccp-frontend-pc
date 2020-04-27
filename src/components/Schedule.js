@@ -125,7 +125,7 @@ export class Schedule extends Component {
   };
 
   render() {
-    const { mode } = this.props;
+    const { mode, readOnly = false } = this.props;
     return (
       <div>
         {/* <Button onClick={this.exportSchedule}>导出</Button>
@@ -148,6 +148,7 @@ export class Schedule extends Component {
               colCount={12}
               renderRowHeader={(rowIndex) => this.renderWeekRowHeader(rowIndex)}
               renderLeftTop={() => '本周'}
+              readOnly={readOnly}
             />
             <ScheduleTable
               ref={this.sche2}
@@ -156,6 +157,7 @@ export class Schedule extends Component {
               colCount={12}
               renderRowHeader={(rowIndex) => this.renderWeekRowHeader(rowIndex, 7)}
               renderLeftTop={() => '下周'}
+              readOnly={readOnly}
             />
           </Fragment>
         ) : (

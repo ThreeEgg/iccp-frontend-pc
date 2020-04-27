@@ -8,7 +8,7 @@ function getBase64(file) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
+    reader.onerror = (error) => reject(error);
   });
 }
 
@@ -22,7 +22,7 @@ export class ImageUpload extends Component {
 
   handleCancel = () => this.setState({ previewVisible: false });
 
-  handlePreview = async file => {
+  handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -40,7 +40,7 @@ export class ImageUpload extends Component {
       fileList = fileList.slice(0, 9);
     }
 
-    fileList = fileList.filter(file => {
+    fileList = fileList.filter((file) => {
       if (file.size > 2097152) {
         message.destroy();
         message.warn('上传图片不大于2M');
@@ -100,7 +100,7 @@ export class ImageUpload extends Component {
 
     if (images) {
       this.setState({
-        fileList: images.map(url => ({
+        fileList: images.map((url) => ({
           uid: url,
           name: 'image',
           status: 'done',
@@ -112,7 +112,7 @@ export class ImageUpload extends Component {
 
   render() {
     const { previewVisible, previewImage, fileList, uploadUrl } = this.state;
-    const { max = 9 } = this.props;
+    const { max = 9, disabled = false } = this.props;
     const uploadButton = (
       <div>
         <PlusOutlined />
@@ -131,6 +131,7 @@ export class ImageUpload extends Component {
           onPreview={this.handlePreview}
           onChange={this.handleChange}
           multiple
+          disabled={disabled}
         >
           {fileList.length >= max ? null : uploadButton}
         </Upload>
