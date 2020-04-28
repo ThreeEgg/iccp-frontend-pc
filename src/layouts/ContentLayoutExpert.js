@@ -15,7 +15,6 @@ class ContentLayoutExpert extends React.Component {
         <Head />
         <Header />
         <div className="banner">
-          <img src="/images/img_header_bg.png" />
           <div className="bannerTitle">
             <div className="bannerText commonWidth flex flex-align flex-justifyBetween">
               <div>
