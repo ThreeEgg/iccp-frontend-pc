@@ -258,6 +258,28 @@
         }
       }
     }
+
+    @upload-item-size: 170px;
+    .ant-upload-list-picture-card-container {
+      width: @upload-item-size;
+      height: @upload-item-size;
+    }
+    .ant-upload-list-item {
+      width: @upload-item-size;
+      height: @upload-item-size;
+      padding: 0;
+    }
+    .ant-upload-select {
+      width: @upload-item-size;
+      height: @upload-item-size;
+      &.ant-upload-disabled {
+        display: none;
+      }
+    }
+    .ant-upload-list-item-progress {
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }
 
