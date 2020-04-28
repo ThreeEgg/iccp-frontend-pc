@@ -8,6 +8,7 @@ import {
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import shortId from 'shortid';
+import classNames from 'classnames';
 import ContentLayoutExpert from '../../layouts/ContentLayoutExpert';
 import { getResponseRateAverage } from '../../common';
 import Rate from '../../components/Rate';
@@ -32,7 +33,9 @@ export default class extends Component {
       if (!userId) {
         // 301 重定向
         res.statusCode = 301;
-        res.headers.location = 'http://baidu.com';
+        if (res.headers) {
+          res.headers.location = 'http://baidu.com';
+        }
       }
     } else {
       // 客户端
@@ -96,6 +99,7 @@ export default class extends Component {
       //   content
       // }
     ],
+    currentRate: '综合评分',
   };
 
   editableTagRef = createRef();
@@ -400,6 +404,7 @@ export default class extends Component {
       serviceTag = [],
       information = [],
       editMode,
+      currentRate,
     } = this.state;
     const {
       userInfo: { name, image },
@@ -407,7 +412,33 @@ export default class extends Component {
       cname,
     } = this.props;
     const responseRateAVG = getResponseRateAverage(responseSpeed);
-    const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3;
+    const averageRate = (attitudeRateAVG + skillRateAVG + responseRateAVG) / 3 || 0;
+    const rates = [
+      {
+        name: '综合评分',
+        rate: averageRate,
+        text: averageRate.toFixed(1),
+        color: '#337AFF',
+      },
+      {
+        name: '服务态度',
+        rate: attitudeRateAVG,
+        text: attitudeRateAVG.toFixed(1),
+        color: '#45D49D',
+      },
+      {
+        name: '专业能力',
+        rate: skillRateAVG,
+        text: skillRateAVG.toFixed(1),
+        color: '#BE1E36',
+      },
+      {
+        name: '回复速度',
+        rate: responseRateAVG,
+        text: responseRateAVG.toFixed(1),
+        color: '#FF8B2F',
+      },
+    ];
 
     const { SortableList } = this;
 
@@ -420,7 +451,7 @@ export default class extends Component {
         <div className="expert-home">
           <div className="user-info flex flex-justifyBetween">
             <div className="user-profile-container flex flex-1 flex-justifyBetween grey-shadow">
-              <Avatar shape="square" className="avatar" size={256} src={image} />
+              <Avatar shape="square" className="user-profile-avatar" size={206} src={image} />
               <div className="user-profile flex flex-column flex-1">
                 {/* 用户信息 */}
                 <div className="flex flex-justifyBetween flex-align">
@@ -478,29 +509,60 @@ export default class extends Component {
                 </div>
               </div>
             </div>
-            {/* <i className='iconfont'>&#xe693;</i> */}
-            <div className="rating flex flex-column flex-algin  grey-shadow">
-              <div className="rating-header flex flex-justifyBetween flex-align">
-                <i className="iconfont">&#xe68c;</i>
-                <div className="flex flex-column">
-                  <strong>{averageRate.toFixed(1)}</strong>
-                  <b>综合评分</b>
-                </div>
+            <div
+              className="rating flex flex-column flex-algin  grey-shadow"
+              onMouseLeave={() => this.setState({ currentRate: '综合评分' })}
+            >
+              {rates.map((item) => {
+                const active = currentRate === item.name;
+                return (
+                  <div
+                    key={item.name}
+                    onMouseOver={() => this.setState({ currentRate: item.name })}
+                    className={classNames('rating-item flex', {
+                      'flex-justifyBetween flex-1 flex-align': !active,
+                      'rating-header flex-column': active,
+                    })}
+                    style={{
+                      background: active ? item.color : 'white',
+                    }}
+                  >
+                    {active ? (
+                      <React.Fragment>
+                        <i className="iconfont decoration">&#xe6af;</i>
+                        <b>{item.name}</b>
+                        <div className="flex flex-align flex-justifyBetween">
+                          <Rate
+                            color="white"
+                            dismissColor="rgba(255,255,255,0.5)"
+                            value={item.rate || 0}
+                            max={3}
+                          />
+                          <strong>{item.text}</strong>
+                        </div>
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        <span className="text">{item.name}</span>
+                        <span className="num">{item.text}</span>
+                      </React.Fragment>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* <div className='rating-item flex flex-justifyBetween flex-1 flex-align'>
+                <span className='text'>服务态度</span>
+                <span className='num'>{attitudeRateAVG.toFixed(1)}</span>
               </div>
-              <div className="rates flex-column flex flex-justifyCenter flex-1">
-                <div>
-                  <span>服务态度</span>
-                  <Rate value={attitudeRateAVG} max={3} />
-                </div>
-                <div>
-                  <span>专业能力</span>
-                  <Rate value={skillRateAVG} max={3} />
-                </div>
-                <div>
-                  <span>回复速度</span>
-                  <Rate value={responseRateAVG} max={3} />
-                </div>
+              <div className='rating-item flex flex-justifyBetween flex-1 flex-align'>
+                <span className='text'>专业能力</span>
+                <span className='num'>{skillRateAVG.toFixed(1)}</span>
               </div>
+              <div className='rating-item flex flex-justifyBetween flex-1 flex-align'>
+                <span className='text'>回复速度</span>
+                <span className='num'>{responseRateAVG.toFixed(1)}</span>
+              </div> */}
             </div>
           </div>
           {/* <div className="infos flex">

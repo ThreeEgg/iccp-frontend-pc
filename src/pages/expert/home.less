@@ -3,10 +3,14 @@
   .user-info {
     margin-bottom: 16px;
     .user-profile-container {
+      height: 256px;
       margin-right: 16px;
     }
     .user-profile {
-      padding: 24px 16px 24px 24px;
+      padding: 24px 16px 24px 36px;
+    }
+    .user-profile-avatar {
+      margin: 24px 0 0 37px;
     }
     .name {
       margin: 0;
@@ -34,6 +38,7 @@
       .action {
         color: #aaa;
         font-size: 12px;
+        cursor: pointer;
       }
       .body {
         margin-bottom: 10px;
@@ -48,34 +53,49 @@
       }
     }
 
+    .rating {
+      .rating-item {
+        padding: 12px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .text {
+        display: inline-block;
+        margin-right: 24px;
+      }
+      .num {
+        color: @primary-color;
+      }
+    }
     .rating-header {
+      position: relative;
       padding: 0 16px;
-      padding: 19px 36px 19px 26px;
+      padding: 9px 12px 15px 12px;
+      overflow: hidden;
       color: white;
       background: @primary-color;
+      .decoration {
+        position: absolute;
+        top: -86px;
+        left: -40px;
+        color: white;
+        font-size: 120px;
+        opacity: 0.18;
+      }
       strong {
+        margin-left: 48px;
         font-size: 32px;
+        line-height: 1;
       }
       b {
+        margin-bottom: 28px;
+        font-weight: normal;
         font-size: 12px;
       }
       i {
         color: rgba(0, 0, 0, 0.3);
         font-size: 20px;
         cursor: pointer;
-      }
-    }
-    .rates {
-      padding: 0 20px;
-      > div {
-        margin-bottom: 20px;
-        &:last-of-type {
-          margin: 0;
-        }
-      }
-      span {
-        display: inline-block;
-        margin-right: 24px;
       }
     }
   }
