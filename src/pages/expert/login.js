@@ -5,7 +5,7 @@ import { MailOutlined, LockOutlined, CheckSquareOutlined } from '@ant-design/ico
 import { connect } from 'react-redux';
 import router from 'next/router';
 import LoginLayout from '../../layouts/LoginLayout';
-import './login.less';
+// import './login.less';
 const { TabPane } = Tabs;
 
 class Login extends React.Component {

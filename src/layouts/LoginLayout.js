@@ -10,8 +10,10 @@ export default class extends React.Component {
       <div className="login">
         <Head />
         <Header />
-        <div className="content">{this.props.children}</div>
-        <SimpleFooter />
+        <div className="content">
+          <div className="content_container">{this.props.children}</div>
+          <SimpleFooter />
+        </div>
       </div>
     );
   }
