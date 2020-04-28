@@ -510,7 +510,7 @@ export default class extends Component {
               </div>
             </div>
             <div
-              className="rating flex flex-column flex-algin  grey-shadow"
+              className="rating flex flex-column grey-shadow"
               onMouseLeave={() => this.setState({ currentRate: '综合评分' })}
             >
               {rates.map((item) => {
@@ -519,34 +519,27 @@ export default class extends Component {
                   <div
                     key={item.name}
                     onMouseOver={() => this.setState({ currentRate: item.name })}
-                    className={classNames('rating-item flex', {
+                    className={classNames('rating-item flex flex-justifyBetween flex-align', {
                       'flex-justifyBetween flex-1 flex-align': !active,
-                      'rating-header flex-column': active,
+                      'rating-header flex-alignEnd': active,
                     })}
                     style={{
                       background: active ? item.color : 'white',
                     }}
                   >
-                    {active ? (
-                      <React.Fragment>
-                        <i className="iconfont decoration">&#xe6af;</i>
-                        <b>{item.name}</b>
-                        <div className="flex flex-align flex-justifyBetween">
-                          <Rate
-                            color="white"
-                            dismissColor="rgba(255,255,255,0.5)"
-                            value={item.rate || 0}
-                            max={3}
-                          />
-                          <strong>{item.text}</strong>
-                        </div>
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
-                        <span className="text">{item.name}</span>
-                        <span className="num">{item.text}</span>
-                      </React.Fragment>
-                    )}
+                    {active ? <i className="iconfont decoration">&#xe6af;</i> : null}
+                    <div className="flex flex-column flex-justifyBetween">
+                      <b className="text">{item.name}</b>
+                      {active ? (
+                        <Rate
+                          color="white"
+                          dismissColor="rgba(255,255,255,0.5)"
+                          value={item.rate || 0}
+                          max={3}
+                        />
+                      ) : null}
+                    </div>
+                    <strong className="num">{item.text}</strong>
                   </div>
                 );
               })}

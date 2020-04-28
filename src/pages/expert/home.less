@@ -55,47 +55,54 @@
 
     .rating {
       .rating-item {
+        position: relative;
         padding: 12px;
         cursor: pointer;
         transition: background 0.3s;
+        .decoration {
+          position: absolute;
+          top: -86px;
+          left: -40px;
+          color: white;
+          font-size: 120px;
+          opacity: 0.18;
+        }
+        i {
+          color: rgba(0, 0, 0, 0.3);
+          font-size: 20px;
+          cursor: pointer;
+        }
       }
       .text {
         display: inline-block;
         margin-right: 24px;
+        font-weight: normal;
+        font-size: 12px;
       }
       .num {
+        min-width: 48px;
         color: @primary-color;
+        font-weight: normal;
+        text-align: right;
+        // transition: font-size .3s;
       }
     }
     .rating-header {
-      position: relative;
       padding: 0 16px;
       padding: 9px 12px 15px 12px;
       overflow: hidden;
       color: white;
       background: @primary-color;
-      .decoration {
-        position: absolute;
-        top: -86px;
-        left: -40px;
-        color: white;
-        font-size: 120px;
-        opacity: 0.18;
-      }
-      strong {
+      transition: height 0.3s;
+      .num {
         margin-left: 48px;
+        color: white;
         font-size: 32px;
         line-height: 1;
       }
-      b {
+      .text {
         margin-bottom: 28px;
         font-weight: normal;
-        font-size: 12px;
-      }
-      i {
-        color: rgba(0, 0, 0, 0.3);
-        font-size: 20px;
-        cursor: pointer;
       }
     }
   }
