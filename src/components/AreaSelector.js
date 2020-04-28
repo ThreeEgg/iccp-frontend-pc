@@ -58,25 +58,12 @@ class AreaSelector extends Component {
       infoExpand: true,
     });
 
-    this.getExpertList();
-  };
-
-  getExpertList = async () => {
-    const { country, service } = this.state;
-
-    const res = await expertService.getExpertList({
-      countryCode: country.countryCode,
-      serviceTagIdList: [service.id],
-    });
-
-    if (res.code === '0') {
-      this.setState({
-        expertList: res.data,
-      });
+    if (this.props.onSearch) {
+      this.props.onSearch(this.state.country, this.state.service);
     }
   };
 
-  selectContinent = continent => {
+  selectContinent = (continent) => {
     const modifyState = {
       continent,
       activeKey: ['country'],
@@ -88,7 +75,7 @@ class AreaSelector extends Component {
     this.setState(modifyState, this.notifyAreaChange);
   };
 
-  selectCountry = country => {
+  selectCountry = (country) => {
     this.setState(
       {
         country,
@@ -121,18 +108,20 @@ class AreaSelector extends Component {
 
   startChat = (accid) => {
     message.loading('正在连线...');
-    this.props.dispatch({
-      type: 'im/initSession',
-      expertAccid: accid,
-      userAccid: this.props.imInfo.accid,
-      to: accid,
-    }).then(() => {
-      message.destroy();
-      this.props.dispatch({
-        type: 'app/showChat',
+    this.props
+      .dispatch({
+        type: 'im/initSession',
+        expertAccid: accid,
+        userAccid: this.props.imInfo.accid,
+        to: accid,
+      })
+      .then(() => {
+        message.destroy();
+        this.props.dispatch({
+          type: 'app/showChat',
+        });
       });
-    });
-  }
+  };
 
   componentDidUpdate = (prevProps, prevState) => {
     if (prevProps.serviceList !== this.props.serviceList) {
@@ -141,7 +130,7 @@ class AreaSelector extends Component {
         service: this.props.serviceList[0] || 0,
       });
     }
-  }
+  };
 
   render() {
     const {
@@ -151,28 +140,33 @@ class AreaSelector extends Component {
       continent,
       country,
       service,
-      expertList,
       currentExpertIndex,
     } = this.state;
-    const { continentList, countryList, serviceList } = this.props;
+    const { continentList, countryList, serviceList, expertList } = this.props;
 
     return (
       <div className={classNames(['as-container flex flex-justifyCenter', { expand }])}>
         {/* 展开文本 */}
         <div
-          className='flex flex-justifyCenter as-expand-text flex-align' onClick={this.toggleExpand}
+          className="flex flex-justifyCenter as-expand-text flex-align"
+          onClick={this.toggleExpand}
         >
-          <span dangerouslySetInnerHTML={{ __html: !expand ? '展&nbsp;&nbsp;开&nbsp;&nbsp;筛&nbsp;&nbsp;选' : '收&nbsp;&nbsp;起&nbsp;&nbsp;筛&nbsp;&nbsp;选' }}></span>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: !expand
+                ? '展&nbsp;&nbsp;开&nbsp;&nbsp;筛&nbsp;&nbsp;选'
+                : '收&nbsp;&nbsp;起&nbsp;&nbsp;筛&nbsp;&nbsp;选',
+            }}
+          ></span>
           &nbsp;&nbsp;
-          {
-            !expand ? <CaretRightOutlined className='as-expand-icon' /> : <CaretLeftOutlined className='as-expand-icon' />
-          }
+          {!expand ? (
+            <CaretRightOutlined className="as-expand-icon" />
+          ) : (
+            <CaretLeftOutlined className="as-expand-icon" />
+          )}
         </div>
 
-        <div className={classNames([
-          'area-selector flex flex-column',
-          { active: expand },
-        ])}>
+        <div className={classNames(['area-selector flex flex-column', { active: expand }])}>
           {/* <div className="flex flex-align flex-justifyBetween title">
             <span>选择地区</span>
           </div> */}
@@ -183,13 +177,13 @@ class AreaSelector extends Component {
             bordered={false}
             activeKey={activeKey}
             expandIconPosition="right"
-            expandIcon={props => {
+            expandIcon={(props) => {
               if (props.isActive) {
                 return <CaretDownOutlined />;
               }
               return <CaretRightOutlined />;
             }}
-            onChange={activeKey => this.setState({ activeKey })}
+            onChange={(activeKey) => this.setState({ activeKey })}
           >
             <Panel
               key="continent"
@@ -201,7 +195,7 @@ class AreaSelector extends Component {
               }
             >
               <div className="expand-content">
-                {continentList.map(item => (
+                {continentList.map((item) => (
                   <span
                     key={item.id}
                     className={classNames({ active: continent.id == item.id })}
@@ -222,7 +216,7 @@ class AreaSelector extends Component {
               }
             >
               <div className="expand-content">
-                {countryList.map(item => (
+                {countryList.map((item) => (
                   <span
                     key={item.id}
                     className={classNames({ active: country.id == item.id })}
@@ -243,7 +237,7 @@ class AreaSelector extends Component {
               }
             >
               <div className="expand-content">
-                {serviceList.map(item => (
+                {serviceList.map((item) => (
                   <span
                     key={item.id}
                     className={classNames({ active: service.id == item.id })}
@@ -312,14 +306,19 @@ class AreaSelector extends Component {
                           <a style={{ color: 'white' }}>专家主页</a>
                         </Link>
                       </div>
-                      <div className="goto-im active" onClick={() => this.startChat(expertList[currentExpertIndex].accid)}>立即沟通</div>
+                      <div
+                        className="goto-im active"
+                        onClick={() => this.startChat(expertList[currentExpertIndex].accid)}
+                      >
+                        立即沟通
+                      </div>
                     </div>
                   </Fragment>
                 ) : null}
               </Fragment>
             ) : (
-                <Empty />
-              )}
+              <Empty />
+            )}
           </div>
         </div>
       </div>

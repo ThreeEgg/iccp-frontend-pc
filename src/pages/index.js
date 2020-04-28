@@ -53,11 +53,12 @@ export default class extends React.Component {
   state = {
     countryList: [],
     serviceList: [],
+    expertList: [],
   };
 
   mapRef = React.createRef();
 
-  getCountryList = async continentId => {
+  getCountryList = async (continentId) => {
     const res = await expertService.getCountryList({ id: continentId });
 
     if (res.code === '0') {
@@ -77,36 +78,63 @@ export default class extends React.Component {
     }
   };
 
-  onAreaChange = areaData => {
-    const { continent, country } = areaData;
+  getExpertList = async (country, service) => {
+    const res = await expertService.getExpertList({
+      countryCode: country.countryCode,
+      serviceTagIdList: [service.id],
+    });
+
+    if (res.code === '0') {
+      this.setState({
+        expertList: res.data,
+      });
+    }
+
+    if (!this.country || country.id !== this.country.id) {
+      this.mapRef.current.updateArea(
+        country.capitalLongitude,
+        country.capitalLatitude,
+        res.data.length,
+        res.data,
+      );
+    }
+  };
+
+  onAreaChange = async (areaData) => {
+    const { continent, country, service } = areaData;
 
     if (!this.continent || continent.id !== this.continent.id) {
-      this.getCountryList(continent.id);
+      await this.getCountryList(continent.id);
 
       this.continent = continent;
     }
 
     if (country.capitalLatitude && country.capitalLongitude) {
-      if (!this.country || country.id !== this.country.id) {
-        this.mapRef.current.updateArea(country.capitalLongitude, country.capitalLatitude);
-      }
+      await this.getExpertList(country, service);
     }
   };
 
+  initAreaData = async () => {
+    // 取第一个地区的第一个国家
+    await this.getCountryList(this.props.continentList[0].id);
+    await this.getServiceList();
+    await this.getExpertList(this.state.countryList[0], this.state.serviceList[0]);
+  };
+
   componentDidMount = () => {
-    this.getServiceList();
+    this.initAreaData();
   };
 
   render() {
     const { aboutUs, classicCase, businessIntro } = this.props;
     const { continentList } = this.props;
-    const { countryList, serviceList } = this.state;
+    const { countryList, serviceList, expertList } = this.state;
 
     return (
       <div className="map">
         <Header />
         <div className="mapT flex flex-column">
-          <div className='mapT-container flex-1'>
+          <div className="mapT-container flex-1">
             <Map ref={this.mapRef} />
           </div>
           <div className="map-selector">
@@ -114,7 +142,9 @@ export default class extends React.Component {
               continentList={continentList}
               countryList={countryList}
               serviceList={serviceList}
+              expertList={expertList}
               onChange={this.onAreaChange}
+              onSearch={this.getExpertList}
             />
           </div>
           <div className="business-intro">
@@ -128,54 +158,74 @@ export default class extends React.Component {
             })}
           </div>
           <div className="map-footer flex flex-justifyAround flex-alignCenter">
-            <div className='icons'>
-              <Dropdown placement='topCenter' overlayClassName='footer-overlay' overlay={
-                <div className='overlay'>
-                  <a href='tel:0532-53232532'>
-                    0532-53232532
-                  </a>
-                </div>
-              }>
+            <div className="icons">
+              <Dropdown
+                placement="topCenter"
+                overlayClassName="footer-overlay"
+                overlay={
+                  <div className="overlay">
+                    <a href="tel:0532-53232532">0532-53232532</a>
+                  </div>
+                }
+              >
                 <i className="iconfont">&#xe6ad;</i>
               </Dropdown>
-              <Dropdown placement='topCenter' overlayClassName='footer-overlay' overlay={
-                <div className='overlay'>
-                  <a href='mailto:lianxinjituan@lxjt.net'>
-                    lianxinjituan@lxjt.net
-                  </a>
-                </div>
-              }>
+              <Dropdown
+                placement="topCenter"
+                overlayClassName="footer-overlay"
+                overlay={
+                  <div className="overlay">
+                    <a href="mailto:lianxinjituan@lxjt.net">lianxinjituan@lxjt.net</a>
+                  </div>
+                }
+              >
                 <i className="iconfont">&#xe6aa;</i>
               </Dropdown>
-              <Dropdown placement='topCenter' overlayClassName='footer-overlay' overlay={
-                <div className='overlay'>
-                  百盛商务中心#楼
-                </div>
-              }>
+              <Dropdown
+                placement="topCenter"
+                overlayClassName="footer-overlay"
+                overlay={<div className="overlay">百盛商务中心#楼</div>}
+              >
                 <i className="iconfont">&#xe6ab;</i>
               </Dropdown>
-              <Dropdown placement='topCenter' overlayClassName='footer-overlay qrcode' overlay={
-                <div className='overlay qrcode'>
-                  <img src="/images/qrcode.png" />
-                </div>
-              }>
+              <Dropdown
+                placement="topCenter"
+                overlayClassName="footer-overlay qrcode"
+                overlay={
+                  <div className="overlay qrcode">
+                    <img src="/images/qrcode.png" />
+                  </div>
+                }
+              >
                 <i className="iconfont">&#xe6ac;</i>
               </Dropdown>
             </div>
             <div className="flex flex-alignCenter">
               <div className="flex flex-alignCenter links">
-                <a className="fz-qingke" href="/aboutUs">平台介绍</a>
-                <a className="fz-qingke" href="/problems">常见问题</a>
-                <a className="fz-qingke" href="/classic">经典案例</a>
-                <a className="fz-qingke" href="/business">业务介绍</a>
-                <a className="fz-qingke" href="/cooperative">合作伙伴</a>
-                <a className="fz-qingke" href="/regulation">条款规定</a>
+                <a className="fz-qingke" href="/aboutUs">
+                  平台介绍
+                </a>
+                <a className="fz-qingke" href="/problems">
+                  常见问题
+                </a>
+                <a className="fz-qingke" href="/classic">
+                  经典案例
+                </a>
+                <a className="fz-qingke" href="/business">
+                  业务介绍
+                </a>
+                <a className="fz-qingke" href="/cooperative">
+                  合作伙伴
+                </a>
+                <a className="fz-qingke" href="/regulation">
+                  条款规定
+                </a>
               </div>
             </div>
-            <Divider type='vertical' />
+            <Divider type="vertical" />
             <div className="ft-copy flex flex-alignCenter">
               Copyright © 2020 青岛联信商务咨询有限公司 | ICP证: 鲁ICP备xxxxxxxx号-n
-          </div>
+            </div>
           </div>
         </div>
         {/* <div className="content contentAbout">

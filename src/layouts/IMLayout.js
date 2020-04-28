@@ -106,7 +106,6 @@ export class IMLayout extends Component {
             </div>
           </div>
         </Modal>
-        }
       </>
     );
   }
