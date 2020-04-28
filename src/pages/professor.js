@@ -269,20 +269,20 @@ class Professor extends React.Component {
             <img src="/images/ic_evaluate.png" />
           </div>
           <div className="con-pro-r-rate">
-            <div>
-              综合评分 &nbsp;&nbsp;
+            <div className="flex flex-justifyBetween flex-align">
+              <span>综合评分</span>
               <Rate value={averageRate} max={3} />
             </div>
-            <div>
-              服务态度 &nbsp;&nbsp;
+            <div className="flex flex-justifyBetween flex-align">
+              <span>服务态度</span>
               <Rate value={attitudeRateAVG} max={3} />
             </div>
-            <div>
-              专业能力 &nbsp;&nbsp;
+            <div className="flex flex-justifyBetween flex-align">
+              <span>专业能力</span>
               <Rate value={skillRateAVG} max={3} />
             </div>
-            <div>
-              回复速度 &nbsp;&nbsp;
+            <div className="flex flex-justifyBetween flex-align">
+              <span>回复速度</span>
               <Rate value={responseRateAVG} max={3} />
             </div>
           </div>
