@@ -26,7 +26,7 @@ class Header extends React.Component {
     router.push('/');
   };
 
-  changeLang = flag => {
+  changeLang = (flag) => {
     this.props.dispatch({
       type: 'app/setLang',
       lang: flag ? 'zh-CN' : 'en',
@@ -49,7 +49,7 @@ class Header extends React.Component {
         </Menu.Item>
       </Menu>
     );
-  }
+  };
 
   render() {
     const { isLogin, userInfo, pathname = '', lang } = this.props;
@@ -85,14 +85,18 @@ class Header extends React.Component {
               ) : null}
             </Fragment>
           ) : (
-              <Dropdown overlay={this.renderMenu()} placement="bottomCenter" overlayClassName='menu-overlay'>
-                <span>
-                  <Avatar size="small" icon={<UserOutlined />} />
-              &nbsp; &nbsp;
-                  <span>你好, {userInfo.name}</span>
-                </span>
-              </Dropdown>
-            )}
+            <Dropdown
+              overlay={this.renderMenu()}
+              placement="bottomCenter"
+              overlayClassName="menu-overlay"
+            >
+              <span>
+                <Avatar size="small" src={userInfo.image} icon={<UserOutlined />} />
+                &nbsp; &nbsp;
+                <span>你好, {userInfo.name}</span>
+              </span>
+            </Dropdown>
+          )}
           <div className="line" />
           <span className="en">En</span>
           <Switch size="small" checked={lang !== 'en'} onChange={this.changeLang} />
