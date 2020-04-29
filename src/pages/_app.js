@@ -13,7 +13,9 @@ import withDva from '../utils/withDva';
 import { inject } from 'iccp-frontend-im/dist';
 import * as commonService from '@/services/common';
 import * as imService from '@/services/im';
-import './_app.less';
+// 全局注入样式
+import '@/common/common.less';
+import '@/common/custom.less';
 
 const buildId = process.env.BUILD_ID;
 

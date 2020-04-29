@@ -1,3 +1,65 @@
+// 工具类
+.flex {
+  display: flex;
+}
+.flex-1 {
+  flex: 1;
+}
+.flex-column {
+  flex-direction: column;
+}
+.flex-align {
+  align-items: center;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-justifyCenter {
+  justify-content: center;
+}
+.flex-justifyBetween {
+  justify-content: space-between;
+}
+.flex-justifyAround {
+  justify-content: space-around;
+}
+.flex-justifyEnd {
+  justify-content: flex-end;
+}
+.flex-alignCenter {
+  align-items: center;
+}
+.flex-alignStart {
+  align-items: flex-start;
+}
+.flex-alignEnd {
+  align-items: flex-end;
+}
+.commonWidth {
+  width: 1200px;
+  margin: 0 auto;
+}
+
+.grey-shadow {
+  box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.1);
+}
+
+p,
+textarea {
+  word-break: break-word;
+}
+
+.text-overflow {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  &-2 {
+    -webkit-line-clamp: 2;
+  }
+}
+
 // 全局样式
 #__next {
   width: 100%;
