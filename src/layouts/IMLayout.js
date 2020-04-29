@@ -85,7 +85,7 @@ export class IMLayout extends Component {
         ) : null}
         <Modal
           visible={chatVisible}
-          width={1000}
+          width={1150}
           centered
           title={null}
           footer={null}

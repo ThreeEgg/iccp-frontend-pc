@@ -40,7 +40,7 @@ class Session extends React.Component {
   // methods
   enterChat = ({ item, key, keyPath, domEvent }) => {
     // 此时设置当前会话
-    const session = this.props.sessionlist[key]
+    const session = this.props.sessionlist[key];
     if (session && session.id && session.id !== this.props.currSessionId) {
       if (session.isService) {
         // 重置当前会话
@@ -55,7 +55,7 @@ class Session extends React.Component {
         let userAccid = this.props.userUID;
         if (this.state.isExpert) {
           expertAccid = this.props.userUID;
-          userAccid = session.dispatchto;
+          userAccid = session.to;
         }
         // 发起会话
         this.props.dispatch({
@@ -73,39 +73,42 @@ class Session extends React.Component {
   };
   initSession = () => {
     // 发起会话
-    this.props.dispatch({ type: 'im/initSession', expertAccid: `4633e46abbef4c83bae2a3ab2713d7de` });
+    this.props.dispatch({
+      type: 'im/initSession',
+      expertAccid: `4633e46abbef4c83bae2a3ab2713d7de`,
+    });
   };
   render() {
     const { im } = this.props;
     const { sessionlist } = im;
     return (
-      <Menu
-        theme="light"
-        mode="inline"
-        defaultSelectedKeys={['-1']}
-      >
-        {sessionlist && sessionlist.map((session, index) => (
-          session.show &&
-          <Menu.Item key={index} onClick={this.enterChat} className='nav-item' data-session={session.id}>
-            <img className='nav-avatar' src={session.avatar || (session.isService ? config.defaultServiceIcon : config.defaultUserIcon)} />
-            <span className='nav-info' >
-              <span className='nav-name' >
-                {session.name}
-              </span>
-              <span className='nav-time' >
-                {session.updateTimeShow}
-              </span>
-              <span className='nav-text' >
-                {session.lastMsgShow}
-              </span>
-              {session.unread > 0 &&
-                <span className='nav-unread' >
-                  {session.unread}
-                </span>
-              }
-            </span>
-          </Menu.Item>
-        ))}
+      <Menu theme="light" mode="inline" defaultSelectedKeys={['-1']}>
+        {sessionlist &&
+          sessionlist.map(
+            (session, index) =>
+              session.show && (
+                <Menu.Item
+                  key={index}
+                  onClick={this.enterChat}
+                  className="nav-item"
+                  data-session={session.id}
+                >
+                  <img
+                    className="nav-avatar"
+                    src={
+                      session.avatar ||
+                      (session.isService ? config.defaultServiceIcon : config.defaultUserIcon)
+                    }
+                  />
+                  <span className="nav-info">
+                    <span className="nav-name">{session.name}</span>
+                    <span className="nav-time">{session.updateTimeShow}</span>
+                    <span className="nav-text">{session.lastMsgShow}</span>
+                    {session.unread > 0 && <span className="nav-unread">{session.unread}</span>}
+                  </span>
+                </Menu.Item>
+              ),
+          )}
         {/* <Menu.Item onClick={this.initSession} className='nav-item'>
           <span className='nav-info' >
             <span className='nav-name'>
