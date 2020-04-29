@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { LockOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import LoginLayout from '../../layouts/LoginLayout';
+import LoginLayout from '../layouts/LoginLayout';
 import './login.less';
 
 class ChangePWD extends React.Component {
