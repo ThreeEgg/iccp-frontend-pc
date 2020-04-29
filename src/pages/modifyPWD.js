@@ -1,9 +1,8 @@
 import React from 'react';
-import { Form, Input, Button, Switch } from 'antd';
-import { MailOutlined, UserOutlined, LockOutlined, CheckSquareOutlined } from '@ant-design/icons';
-import Router from 'next/router';
+import { Form, Input, Button } from 'antd';
+import { LockOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
-import LoginLayout from '../layouts/LoginLayout';
+import LoginLayout from '../../layouts/LoginLayout';
 import './login.less';
 
 class ChangePWD extends React.Component {
@@ -25,14 +24,26 @@ class ChangePWD extends React.Component {
           <Form.Item>
             <div className="retrieve">修改密码</div>
           </Form.Item>
-          <Form.Item name="oldPassword" rules={[{ required: true, message: '请输入原密码' }]}>
+          <Form.Item
+            name="oldPassword"
+            rules={[
+              { required: true, message: '请输入原密码' },
+              { max: 20, min: 8, message: '密码长度请在8-20位之间' },
+            ]}
+          >
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
               placeholder="原密码"
             />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, message: '请输入新密码' }]}>
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: '请输入新密码' },
+              { max: 20, min: 8, message: '密码长度请在8-20位之间' },
+            ]}
+          >
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
@@ -44,6 +55,7 @@ class ChangePWD extends React.Component {
             dependencies={['password']}
             rules={[
               { required: true, message: '请再次输入您的新密码' },
+              { max: 20, min: 8, message: '密码长度请在8-20位之间' },
               ({ getFieldValue }) => ({
                 validator(rule, value) {
                   if (!value || getFieldValue('password') === value) {
