@@ -1,7 +1,7 @@
 import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Layout, Form, Input, Button, message } from 'antd';
+import { Layout, Form, Input, Button, message, Empty } from 'antd';
 const { TextArea } = Input;
 const { Sider } = Layout;
 import PropTypes from 'prop-types';
@@ -457,6 +457,7 @@ class CaseInfo extends React.Component {
               )}
               <div className="clear"></div>
               {caseInfo.iccpCaseEnclosureList &&
+                caseInfo.iccpCaseEnclosureList.length &&
                 caseInfo.iccpCaseEnclosureList.map((file, index) => {
                   return (
                     file.isValid === 1 && (
@@ -501,6 +502,10 @@ class CaseInfo extends React.Component {
                   </div>
                 </div>
               )}
+              {!isEdit &&
+              (!caseInfo.iccpCaseEnclosureList || !caseInfo.iccpCaseEnclosureList.length) ? (
+                <Empty description={false} />
+              ) : null}
             </Form>
           </div>
         </div>
