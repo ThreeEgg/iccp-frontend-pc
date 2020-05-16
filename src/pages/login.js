@@ -10,15 +10,7 @@ const { TabPane } = Tabs;
 
 class Login extends React.Component {
   static async getInitialProps({ req, query }) {
-    // const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
-
-    // 服务端请求
-    // const fetch = require('isomorphic-unfetch');
-    // const res = await fetch('http://gank.io/api/data/Android/10/1');
-    // const json = await res.json();
     return {
-      // stars: json.results[0].desc,
-      // userAgent,
       activeTab: query.register ? 'register' : 'login',
     };
   }

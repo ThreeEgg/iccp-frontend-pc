@@ -55,35 +55,40 @@ class Header extends React.Component {
     const { isLogin, userInfo, pathname = '', lang } = this.props;
 
     let isExpertPage = false;
-    // TODO: 需要获取到pathname
-    // // 如果专家端，则隐藏注册按钮
-    // if (pathname.match('/expert')) {
-    //   isExpertPage = true;
-    // }
+
+    // 如果专家端，则隐藏注册按钮
+    if (pathname && pathname.match('/expert')) {
+      isExpertPage = true;
+    }
+    if (typeof window !== 'undefined') {
+      if (window.location.href.match('/expert')) {
+        isExpertPage = true;
+      }
+    }
 
     return (
       <div className="header flex flex-align flex-justifyBetween">
         <div className="band flex flex-align" onClick={this.gotoHome}>
           <img className="logo" src="/logo-full.svg" alt="" />
           <div className="line" />
-          <div className="platName">国际风险管理平台</div>
+          <div className="platName">{intl.get('国际风险管理平台')}</div>
         </div>
         <div className="type">
           {!isLogin ? (
-            <Fragment>
+            <>
               <Button className="login-btn">
                 <Link href="/login">
-                  <a>登录</a>
+                  <a>{intl.get('登录')}</a>
                 </Link>
               </Button>
               {!isExpertPage ? (
                 <Button type="primary">
                   <Link href="/login?register=1">
-                    <a>注册</a>
+                    <a>{intl.get('注册')}</a>
                   </Link>
                 </Button>
               ) : null}
-            </Fragment>
+            </>
           ) : (
             <Dropdown
               overlay={this.renderMenu()}

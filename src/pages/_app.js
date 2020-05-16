@@ -4,7 +4,9 @@ import intl from 'react-intl-universal';
 import { Provider } from 'react-redux';
 import { Badge, ConfigProvider } from 'antd';
 import antdZhLocale from 'antd/lib/locale/zh_CN';
-import antdEnLocale from 'antd/lib/locale/zh_CN';
+import antdEnLocale from 'antd/lib/locale/en_US';
+import 'moment/locale/zh-cn';
+import moment from 'moment';
 import 'normalize.css';
 import global from '@/global';
 import AuthorityLayout from '../layouts/AuthorityLayout';
@@ -88,7 +90,9 @@ class MainApp extends App {
     if (this.props.dvaStore) {
       this.props.dvaStore.dispatch({
         type: 'app/save',
-        lang: initLang,
+        payload: {
+          lang: initLang,
+        },
       });
     }
     this.loadLocales(initLang);
@@ -101,6 +105,11 @@ class MainApp extends App {
         locales,
       })
       .then(() => {
+        if (global.initLang == 'en') {
+          moment.locale();
+        } else {
+          moment.locale('zh-cn');
+        }
         this.setState({ initDone: true, lang: global.initLang });
       });
   }
@@ -112,12 +121,12 @@ class MainApp extends App {
     return (
       <ConfigProvider locale={lang === 'en' ? antdEnLocale : antdZhLocale}>
         <Provider store={dvaStore}>
+          <BuildInfo />
           <IMLayout>
             <AuthorityLayout>
               <Component {...pageProps} />
             </AuthorityLayout>
           </IMLayout>
-          <BuildInfo />
         </Provider>
       </ConfigProvider>
     );

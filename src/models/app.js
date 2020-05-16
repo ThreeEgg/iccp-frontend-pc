@@ -42,17 +42,18 @@ export default {
       return { ...state, ...payload };
     },
     setLang(state, { lang }) {
-      Modal.confirm({
-        title: '语言切换重启后起效',
-        mask: false,
-        confirmColor: '#1b2857',
-        confirmText: '切换',
-        onOk: () => {
-          localStorage.setItem('lang', lang);
-          message.loading('重启中');
-          window.location.reload();
-        },
-      });
+      // Modal.confirm({
+      //   title: '刷新后起效',
+      //   mask: true,
+      //   confirmColor: '#1b2857',
+      //   confirmText: '切换',
+      //   centered: true,
+      //   size: 'small',
+      //   onOk: () => {
+      localStorage.setItem('lang', lang);
+      window.location.reload();
+      //   },
+      // });
       return { ...state };
     },
   },
