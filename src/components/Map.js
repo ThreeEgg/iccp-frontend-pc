@@ -240,8 +240,10 @@ export default class extends Component {
 
     const script = document.createElement('script');
     script.type = 'text/javascript';
+    //<-注意 callback回调，同步加载没有&callback
+    // s=1启用https
     script.src =
-      'http://api.map.baidu.com/api?v=2.0&ak=RsyPXj9APuxPHxDTR5nPQkz6no2C4Rv2&callback=initMap'; //<-注意 callback回调，同步加载没有&callback
+      'https://api.map.baidu.com/api?v=2.0&ak=RsyPXj9APuxPHxDTR5nPQkz6no2C4Rv2&callback=initMap&s=1';
     document.body.appendChild(script);
   };
 
