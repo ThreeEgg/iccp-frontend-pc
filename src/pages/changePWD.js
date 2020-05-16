@@ -32,7 +32,12 @@ class ChangePWD extends React.Component {
   render() {
     return (
       <LoginLayout>
-        <Form ref={this.formRef} name="register" initialValues={{ remember: true }}>
+        <Form
+          ref={this.formRef}
+          name="register"
+          initialValues={{ remember: true }}
+          onFinish={this.resetPassword}
+        >
           <Form.Item>
             <div className="retrieve">找回密码</div>
           </Form.Item>
@@ -65,7 +70,7 @@ class ChangePWD extends React.Component {
             />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" onClick={this.resetPassword}>
+            <Button type="primary" htmlType="submit">
               立即找回
             </Button>
           </Form.Item>

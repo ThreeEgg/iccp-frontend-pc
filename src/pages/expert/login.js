@@ -43,6 +43,7 @@ class Login extends React.Component {
               name="normal_login"
               className="login-form"
               initialValues={{ remember: true }}
+              onFinish={this.login}
             >
               <Form.Item
                 name="userName"
@@ -71,12 +72,7 @@ class Login extends React.Component {
                 />
               </Form.Item>
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
-                  onClick={this.login}
-                >
+                <Button type="primary" htmlType="submit" className="login-form-button">
                   立即登录
                 </Button>
               </Form.Item>

@@ -69,7 +69,7 @@ class Login extends React.Component {
     window.location.reload();
   };
 
-  onChangeTab = value => {
+  onChangeTab = (value) => {
     if (value === 'login') {
       router.replace('/login');
     }
@@ -101,6 +101,7 @@ class Login extends React.Component {
               name="register"
               className="login-form"
               initialValues={{ remember: true }}
+              onFinish={this.register}
             >
               <Form.Item
                 name="email"
@@ -152,13 +153,13 @@ class Login extends React.Component {
               <div className="agreement-check">
                 <Checkbox
                   checked={agreeRegister}
-                  onChange={e => this.setState({ agreeRegister: e.target.checked })}
+                  onChange={(e) => this.setState({ agreeRegister: e.target.checked })}
                 />
                 &nbsp;&nbsp; 我已认真阅读并同意
                 <a onClick={() => this.setState({ agreementVisible: true })}>《注册协议》</a>
               </div>
               <Form.Item>
-                <Button type="primary" htmlType="submit" onClick={this.register}>
+                <Button type="primary" htmlType="submit">
                   立即注册
                 </Button>
               </Form.Item>
@@ -171,6 +172,7 @@ class Login extends React.Component {
               name="normal_login"
               className="login-form"
               initialValues={{ remember: true }}
+              onFinish={this.login}
             >
               <Form.Item
                 name="userName"
@@ -199,12 +201,7 @@ class Login extends React.Component {
                 />
               </Form.Item>
               <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
-                  onClick={this.login}
-                >
+                <Button type="primary" htmlType="submit" className="login-form-button">
                   立即登录
                 </Button>
               </Form.Item>
